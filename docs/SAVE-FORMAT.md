@@ -74,13 +74,21 @@ changing the ID byte turns the record into a different character.
 | `q+37` | u16 ×3 | AGL | VERIFIED |
 | `q+43` | u16 ×3 | DEX | VERIFIED |
 | `q+49` | u16 ×3 | INT | VERIFIED |
-| `q+55, +57` | u16 ×2 | Base GUTS, stored twice | LIKELY |
-| `q+59` | u16 | Effective GUTS — base + every equipment slot's GUTS bonus + skill bonuses (e.g. Poker Face), computed like ATK/AC/HIT/AVD/MAG, not stored on its own | LIKELY |
+| `q+55, +57` | u16 ×2 | Base GUTS, stored twice | VERIFIED |
+| `q+59` | u16 | Effective GUTS — base + every equipment slot's GUTS bonus + skill bonuses (e.g. Poker Face), computed like ATK/AC/HIT/AVD/MAG, not stored on its own | VERIFIED |
 
 Stats can exceed 999 naturally (a level-255 STR of 1467 was observed). 999 is proven safe to write; 9999
 was tried once as part of a larger batched edit that corrupted the save, so the true cap is **not proven**
 — don't assume 9999 is safe on its own. ATK/AC/HIT/AVD/MAG are computed by the game, not stored.
 Precis's record is one byte shorter after HP (every later offset shifts by −1).
+
+**GUTS base/effective, controlled test (Chisato, q=0x745):** base pair was 75/75 with Atlas Ring
+equipped (effective 95, exact match to her Status screen); with Atlas Ring unequipped and nothing else
+changed, base pair stayed 75/75 and effective dropped to exactly 75 — proves the base value is
+independent of equipment and the effective value is a live computed sum. Removing that one accessory
+also broke this character's equipment read for that save (decoded as garbage) — unequipping *to* an
+empty slot appears to shift bytes differently than a slot that was never equipped, a separate open
+wrinkle in the equipment encoding, not investigated further.
 
 ## Character entry (relative to `name`, the start of the character's name string)
 
