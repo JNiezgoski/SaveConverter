@@ -166,8 +166,8 @@ detection is now `d[sp0-3:sp0-1] == 00 00` regardless of the third byte.
 
 | Status | Detail |
 |---|---|
-| VERIFIED | Full 7-slot layout; the 6-slot missing-accessory-2 layout above; Noel in both saves (full 7 slots in the current Game 2 save — confirmed against the user's real equip screen: Serpent's Tooth / Valiant Mail / Rare Gauntlets / Banded Helm / Bunny Shoe / Tri-emblem ×2, exact match) |
-| OPEN | Chisato's equipment: she's missing **armor**, not an accessory — the 6-slot recipe above does not generalize to this case, order not solved. Needs her real equipped Shield/Helmet/Greaves/Acc1/Acc2 (not a compatibility list) from her Equipment overview screen — blind item-ID pattern matching in the raw bytes has repeatedly produced false-positive noise and is not reliable evidence on its own |
+| VERIFIED | Full 7-slot layout; the 6-slot missing-accessory-2 layout above; Noel (full 7 slots in the current Game 2 save — confirmed exact match: Serpent's Tooth / Valiant Mail / Rare Gauntlets / Banded Helm / Bunny Shoe / Tri-emblem ×2); Chisato (also full 7 slots in the current save — confirmed exact match: Stun Gun / Bloody Armor / Star Guard / Bloody Helm / Mud Boots / Angle Hair / Atlas Ring) |
+| OPEN (edge case only, not currently blocking) | The compressed layout for a genuinely **empty armor slot** was seen once (Chisato's marker was `0x0A`, armor showed "(None)") but never solved before she re-equipped armor — if a future save has any character missing armor specifically, that byte order is still unmapped |
 
 Tool: `so2_equip.py`. Item ID table: `item_ids.txt` (save ID = published CodeBreaker code − `0x5000`).
 
