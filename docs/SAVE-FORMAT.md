@@ -74,8 +74,8 @@ changing the ID byte turns the record into a different character.
 | `q+37` | u16 ×3 | AGL | VERIFIED |
 | `q+43` | u16 ×3 | DEX | VERIFIED |
 | `q+49` | u16 ×3 | INT | VERIFIED |
-| `q+55, +57` | u16 ×2 | Unknown pair | OPEN |
-| `q+59` | u16 | GUTS | VERIFIED |
+| `q+55, +57` | u16 ×2 | Base GUTS, stored twice | LIKELY |
+| `q+59` | u16 | Effective GUTS — base + every equipment slot's GUTS bonus + skill bonuses (e.g. Poker Face), computed like ATK/AC/HIT/AVD/MAG, not stored on its own | LIKELY |
 
 Stats can exceed 999 naturally (a level-255 STR of 1467 was observed). 999 is proven safe to write; 9999
 was tried once as part of a larger batched edit that corrupted the save, so the true cap is **not proven**
