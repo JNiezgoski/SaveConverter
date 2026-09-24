@@ -355,7 +355,10 @@ def combine(inputs, outdir, base, ext=".mcd", fmt="raw"):
 
 def duckstation_running():
     try:
-        out = subprocess.run(["tasklist", "/FO", "CSV", "/NH"], capture_output=True, text=True).stdout.lower()
+        # Filter server-side (Windows only returns matching rows) instead of dumping every
+        # process and scanning the text here - much cheaper for a check that runs on a timer.
+        out = subprocess.run(["tasklist", "/FI", "IMAGENAME eq duckstation*", "/FO", "CSV", "/NH"],
+                              capture_output=True, text=True).stdout.lower()
         return "duckstation" in out
     except OSError:
         return False

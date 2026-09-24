@@ -9,6 +9,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
@@ -355,7 +356,15 @@ class App:
         self.poll()
 
     def poll(self):
-        self.ds_state.set("DuckStation is running - live cards will be saved when it closes" if s.duckstation_running() else "")
+        # duckstation_running() shells out to tasklist, which is slow enough (100-500ms+) that
+        # calling it synchronously here every 2s froze the whole UI on Tkinter's single thread -
+        # that's the "slow and unresponsive all the time" symptom. Run the check off-thread and
+        # only touch the StringVar (cheap) back on the main thread.
+        def check():
+            running = s.duckstation_running()
+            self.root.after(0, lambda: self.ds_state.set(
+                "DuckStation is running - live cards will be saved when it closes" if running else ""))
+        threading.Thread(target=check, daemon=True).start()
         self.root.after(2000, self.poll)
 
     def live_path(self, n):
