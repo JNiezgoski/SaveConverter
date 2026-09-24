@@ -17,8 +17,8 @@ screens.
 | SP (skill points) — every internal form, all 12 characters | ✅ Verified |
 | Talents (all 10) | ✅ Verified |
 | Item ID table, inventory counts (max 20) | ✅ Verified |
-| Equipment — full 7-slot characters | ✅ Verified |
-| Equipment — compressed 6-slot (missing one accessory) | ✅ Verified for 4 of 5 cases |
+| Equipment — full 7-slot characters (incl. Noel) | ✅ Verified |
+| Equipment — compressed 6-slot (missing one accessory) | ✅ Verified |
 | Equipment — Chisato (missing armor, not an accessory) | ⚠️ Open |
 | Story/event flags, map location, Private Actions, recipes | ⚠️ Open |
 

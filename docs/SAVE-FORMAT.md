@@ -166,14 +166,8 @@ detection is now `d[sp0-3:sp0-1] == 00 00` regardless of the third byte.
 
 | Status | Detail |
 |---|---|
-| VERIFIED | Full 7-slot layout; the 6-slot missing-accessory-2 layout above |
-| OPEN | Chisato's equipment: she's missing **armor**, not an accessory — the 6-slot recipe above does not generalize to this case, order not solved |
-| OPEN | Noel: in one save he's missing accessory 2 (decodes correctly); in another his weapon doesn't decode to a real Knuckles item under the same recipe, meaning he's very likely missing a *different* slot there too — same open problem as Chisato, not a detection bug (that part's fixed) |
-
-Both open cases need the character's real, currently-equipped Shield/Helmet/Greaves/Acc1/Acc2 (not a
-compatibility list) from their Equipment overview screen to anchor a search — blind item-ID pattern
-matching in the raw bytes has repeatedly produced false-positive noise and is not reliable evidence on
-its own.
+| VERIFIED | Full 7-slot layout; the 6-slot missing-accessory-2 layout above; Noel in both saves (full 7 slots in the current Game 2 save — confirmed against the user's real equip screen: Serpent's Tooth / Valiant Mail / Rare Gauntlets / Banded Helm / Bunny Shoe / Tri-emblem ×2, exact match) |
+| OPEN | Chisato's equipment: she's missing **armor**, not an accessory — the 6-slot recipe above does not generalize to this case, order not solved. Needs her real equipped Shield/Helmet/Greaves/Acc1/Acc2 (not a compatibility list) from her Equipment overview screen — blind item-ID pattern matching in the raw bytes has repeatedly produced false-positive noise and is not reliable evidence on its own |
 
 Tool: `so2_equip.py`. Item ID table: `item_ids.txt` (save ID = published CodeBreaker code − `0x5000`).
 
