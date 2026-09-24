@@ -46,15 +46,19 @@ def sp_block_start(d, p):
 def equip_slots(d, name):
     """Returns (offset, slot_names) for one character. Full entries store 7 slots ending right at the SP block:
     [weapon, armor, shield, helmet, greaves, acc1, acc2]. Entries missing accessory 2 store only 6 slots, ordered
-    [acc1, weapon, armor, shield, helmet, greaves], with a 3-byte marker "00 00 <code>" between them and the SP block
-    (code 0x02 confirmed for Celine/Leon/Noel/Precis; Chisato's is 0x0A and not yet solved - skipped)."""
+    [acc1, weapon, armor, shield, helmet, greaves], immediately followed by the SP block's own leading "00 00 <prefix>".
+    That "00 00 <byte>" is NOT a special equipment marker - it's just the start of the SP block itself (see
+    so2_refill_sp.py's format), so the byte is whatever that character's personal SP prefix happens to be (0x02 for
+    most, but 0x05 for Noel in some saves, 0x0A for Chisato, etc). The old code only recognised literal 0x02, which
+    silently misclassified any character whose prefix differs as a full 7-slot entry - the actual cause of Noel
+    reading correctly in one save and not another (his prefix isn't 0x02 everywhere)."""
     p = r.find(d, name)
     if p is None:
         return None, None
     sp0 = sp_block_start(d, p)
     if sp0 is None:
         return None, None
-    if d[sp0 - 3:sp0 - 1] == b"\0\0" and d[sp0 - 1] == 0x02:
+    if d[sp0 - 3:sp0 - 1] == b"\0\0":
         return sp0 - 15, ["acc1", "weapon", "armor", "shield", "helmet", "greaves"]
     return sp0 - 14, ["weapon", "armor", "shield", "helmet", "greaves", "acc1", "acc2"]
 

@@ -152,16 +152,28 @@ Two known layouts, both immediately before the SP block:
 
 **Compressed (6 slots, missing one item) — one accessory slot absent:**
 ```
-[acc1][weapon][armor][shield][helmet][greaves]  00 00 <marker=0x02>   <- then the SP block
+[acc1][weapon][armor][shield][helmet][greaves]  00 00 <prefix>   <- then the SP block
 ```
-Confirmed for Celine, Leon, Noel, Precis. Reordering (accessory1 moves to the front) plus a 3-byte
-marker, not just a shorter version of the 7-slot block.
+Confirmed for Celine, Leon, Noel (in the save where he's missing accessory 2), Precis. Reordering
+(accessory1 moves to the front) plus 2 bytes, not just a shorter version of the 7-slot block.
+
+The trailing `00 00 <prefix>` is **not a special equipment marker** — it's just the SP block's own
+leading bytes (see the SP section above), sitting with no separator right after the item list. The
+byte is whatever that character's personal SP prefix happens to be (`0x02` for most, but `0x05` for
+Noel in some saves, `0x0A` for Chisato). An earlier version of this code only recognized literal
+`0x02`, which silently misread any character with a different prefix as a full 7-slot entry — fixed,
+detection is now `d[sp0-3:sp0-1] == 00 00` regardless of the third byte.
 
 | Status | Detail |
 |---|---|
-| VERIFIED | Full 7-slot layout; the 6-slot `0x02`-marker layout above |
-| OPEN | Chisato's equipment: her marker is `0x0A` (missing **armor**, not an accessory) — the 6-slot recipe above does not generalize to this case, layout not solved |
-| OPEN | Noel: works in one save, reads garbage in another — his SP form differs between saves and the slot-count detection doesn't yet account for that |
+| VERIFIED | Full 7-slot layout; the 6-slot missing-accessory-2 layout above |
+| OPEN | Chisato's equipment: she's missing **armor**, not an accessory — the 6-slot recipe above does not generalize to this case, order not solved |
+| OPEN | Noel: in one save he's missing accessory 2 (decodes correctly); in another his weapon doesn't decode to a real Knuckles item under the same recipe, meaning he's very likely missing a *different* slot there too — same open problem as Chisato, not a detection bug (that part's fixed) |
+
+Both open cases need the character's real, currently-equipped Shield/Helmet/Greaves/Acc1/Acc2 (not a
+compatibility list) from their Equipment overview screen to anchor a search — blind item-ID pattern
+matching in the raw bytes has repeatedly produced false-positive noise and is not reliable evidence on
+its own.
 
 Tool: `so2_equip.py`. Item ID table: `item_ids.txt` (save ID = published CodeBreaker code − `0x5000`).
 
