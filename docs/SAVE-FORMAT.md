@@ -82,6 +82,12 @@ was tried once as part of a larger batched edit that corrupted the save, so the 
 — don't assume 9999 is safe on its own. ATK/AC/HIT/AVD/MAG are computed by the game, not stored.
 Precis's record is one byte shorter after HP (every later offset shifts by −1).
 
+**A second, previously-undocumented copy of all 12 character names in exact ID order** (Claude, Rena,
+Celine, Bowman, Dias, Precis, Ashton, Leon, Opera, Ernest, Noel, Chisato) was spotted inside the party
+records region during a chest-item test - plain ASCII, one after another, no other structure identified
+around it yet. This is separate from the known default name table near `0x0EEC`. Purpose/exact offset
+relative to `q` not investigated further - noted here so it isn't rediscovered from scratch. OPEN.
+
 **GUTS base/effective, controlled test (Chisato, q=0x745):** base pair was 75/75 with Atlas Ring
 equipped (effective 95, exact match to her Status screen); with Atlas Ring unequipped and nothing else
 changed, base pair stayed 75/75 and effective dropped to exactly 75 — proves the base value is
@@ -233,6 +239,17 @@ entry = (count << 10) | item_id      # count in the top 6 bits, item ID in the l
 - Max stack is **20** for every item, weapon, armor and accessory.
 - Editing the count of an item you already own is a safe in-place u16 write, no length shift.
 - Removing an item (count → 0) deletes its 2-byte entry and leaves a 3-byte tombstone (`00 00 <xx>`).
+- **VERIFIED**: gaining your very first item ever (an empty inventory, not just adding to an existing
+  list) uses the exact same `(count << 10) | item_id` encoding - confirmed on a fresh early save picking
+  up a Heavy Ring (id 94) from a chest: `(1 << 10) | 94 = 0x045E` appeared exactly once, newly, at the
+  point the item was gained, nowhere in the "before" save. So the entry format itself isn't the problem
+  for hand-insertion (see OPEN item below) - it's something else the game does alongside it.
+- **Region offsets scale with actual party size - they are not fixed addresses.** The `0x0C00` inventory
+  start (and every other offset given elsewhere as if fixed) is only accurate for a full 8-member,
+  late-game party. A 1-2 member early-game save has a much shorter party-records section, so inventory
+  (and everything after it) starts correspondingly earlier - confirmed directly: the same Heavy Ring
+  entry above landed at `0x0616`, deep inside where the "typical" byte map would call it a party record.
+  Always locate a region by its content/pattern, never assume a fixed offset holds for every save.
 - **OPEN**: hand-inserting a brand-new item type (one you don't already own) is not solved — two attempts
   both corrupted the save. The reliable path is to obtain the item through real play once, then use the
   count-edit tool. The save format appears to do real sorting/compaction on save rather than a raw
