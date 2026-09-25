@@ -15,6 +15,15 @@ no published spec exists for this format. Every field is tagged with how confide
 
 ## Layout at a glance
 
+**2026-09-25 compression correction:** The body at `0x382` is a zero-run
+compressed stream, prefixed by its u16 compressed length at `0x380`.
+`00 00 N` means `N+2` zeros. Many apparent record tags and variable field
+widths in the historical observations below are compression artifacts.
+Fixed encoded offsets must not be used as general editing rules.
+Fol is a u32 at **decoded-state offset `0x18`**, as established from the
+loader, menu, and shop code. See [the Fol investigation](SO2-FOL-INVESTIGATION.md)
+and use `so2_fol.py` to decode, edit, re-encode, and sign.
+
 One memory card block is **8,192 bytes**. `q` below means "the start of a given character's HP block
 inside the party records"; `name` means "the start of that character's name string inside the character
 entries." Both vary per save — they're found by scanning, not fixed offsets.
@@ -23,7 +32,7 @@ entries." Both vary per save — they're found by scanning, not fixed offsets.
 |---|---|
 | `0x0000–0x01FF` | PS1 save header, title, 3 icon animation frames (not game data) |
 | `0x0200` | Game data starts — ASCII signature `STAR OCEAN 03/01` |
-| `0x0210` u16 | Checksum A |
+| `0x0210` u32 | Checksum A |
 | `0x0214` u32 | Checksum B |
 | `0x021A` u16 | `C` — end-of-data offset |
 | `0x0234–0x0253` | Party list: 8 × (u16 character ID, u16 level) — **this drives the load-screen portrait**, independent of the party record itself |
@@ -36,11 +45,14 @@ entries." Both vary per save — they're found by scanning, not fixed offsets.
 ### Checksums (recompute after any edit)
 
 ```
-zero A and B
-B = sum of bytes [4, C) as u32
-A = sum of bytes [0x206, 0x281) as u16   (this range includes B's own bytes — B must be computed first)
+zero A (4 bytes), B (4 bytes), and marker at 0x218 (2 bytes)
+B = sum of bytes [0, C) as u32
+A = sum of bytes [0x200, 0x280) as u32   (includes B; compute B first)
+restore marker (0x5555)
 ```
-Implemented as `so2_sign()` in `saveconv.py`.
+Implemented as `so2_sign()` in `saveconv.py`. Confirmed from the game's MIPS checksum
+writer and validators on 2026-09-25; see [investigation and evidence](SO2-CHECKSUM-INVESTIGATION.md).
+The older `[0x206, 0x281)` rule was an accidental match when byte `0x280` was `0xFF`.
 
 ## The 12 character IDs
 
@@ -263,7 +275,7 @@ entry = (count << 10) | item_id      # count in the top 6 bits, item ID in the l
 | `0x021C` / `0x0392` | u16 playtime in minutes (two copies) | VERIFIED |
 | `0x0220` | u8, save counter (increments every save) | VERIFIED |
 | `0x0254` | u8, a second independent save counter | VERIFIED |
-| `0x039C` | 3 bytes, Fol (money), little-endian | VERIFIED |
+| Decoded state `0x18` | u32 LE Fol; encoded location and length vary with zero-run compression | GAME-CODE VERIFIED; see [evidence](SO2-FOL-INVESTIGATION.md) |
 | `0x04EC` | u16(?), counts down — likely steps-until-next-random-encounter | LIKELY |
 | `0x0280`–`0x0290` | Grows in small bursts per save — likely tied to the "discovered areas" list | LIKELY |
 | `0x0380` | Changes unpredictably — likely an RNG seed | LIKELY |
@@ -302,17 +314,58 @@ saves (only that one setting changed each time):
   When that test is finally run, expect a real chance of an unrelated large cascade showing up somewhere
   else in the diff. Treat only actual changes inside the documented `0x02B4`–`0x02E3` range as evidence
   of story flags; do not assume every difference found elsewhere in that diff is meaningful.
+- **2026-09-25 update — likely root cause found:** the zero-run compression discovered during the Fol
+  investigation (see the note at the top of this doc) is almost certainly *why* every raw-byte diff
+  test all session showed a large, unexplained cascade regardless of how tightly controlled the
+  before/after pair was. Any edit that changes a zero-run's length re-tokenizes every byte after it in
+  the compressed stream, without any real semantic change. A repeat of the specialty-purchase diff,
+  done against the *decoded* state instead of raw bytes, dropped from 100–200+ changed bytes down to 8
+  — confirming this. **Every future diff test on this format should decode first (see `so2_fol.py`'s
+  `decode()`) and diff the decoded bytes, not the raw compressed bytes.** This likely obsoletes the
+  "many more controlled trials" advice above — the real fix is decoding, not more samples.
+
+## Specialty unlock flag (decoded-state offset `0x1A3F`)
+
+**2026-09-25, decoded-diff test (real "Technique 1" specialty purchase, 400 Fol):** diffing the
+*decoded* state (see the compression note above — raw byte diffs are unreliable here) between a save
+immediately before and after the purchase showed only 8 changed bytes total, a dramatic improvement
+over every raw-byte diff attempted earlier this session (100–200+ changed bytes each, dominated by
+compression re-tokenization noise, not real signal).
+
+Of those 8 bytes: Fol dropped by exactly 400 (confirms the transaction), a byte at `0x24` incremented
+by 1 (likely a specialties-purchased counter), a handful of bytes near Claude's character entry shifted
+by small amounts (likely a computed/derived stat recalculating, not the flag itself), and — the real
+find — **the byte at decoded offset `0x1A3F` changed `0x30` → `0x70`: exactly one bit set (bit 6,
+`0x40`), in an otherwise all-zero region.** That's the classic shape of a bitmask flag.
+
+Confirmed against real gameplay behavior: buying a specialty makes it available to **every** character
+at once (not per-character) — each character's actual progress in it is still tracked separately via
+the already-VERIFIED per-character SP/skill-level system. A single global bit flip, rather than eight
+separate per-character copies, is exactly consistent with that — buying the specialty flips one
+party-wide "can now invest SP in this" flag; how far each character has leveled it stays governed by
+the existing SP mechanism.
+
+**LIKELY, not yet fully VERIFIED**: bit 6 = "Technique" specifically needs one more data point (a
+different specialty purchase producing a different bit) to confirm the full bit-to-specialty mapping.
+This is very plausibly the answer to the old "33-byte flag run, purpose unknown" open item below,
+once re-expressed in decoded-state offsets rather than the old (compression-confused) raw addressing.
 
 ## Known open items (not mapped)
 
 - **Story/event flags** — the strongest untouched lead: a ~48-byte block at `0x02B4`–`0x02E3`, all-zero
   early game, densely set late game. Needs a save immediately before/after one discrete story beat to
-  isolate the first bits that flip.
+  isolate the first bits that flip. **Redo this as a decoded-state diff (see the compression note and
+  `so2_fol.py`'s `decode()`), not a raw-byte diff — raw diffs on this format are unreliable.**
 - **Map/location** — no live coordinate found. Entering genuinely new territory grows a variable-length
   "discovered areas" list; plain movement across already-explored ground shows no signal.
-- **The 33-byte flag run** inside each character entry, just before the skill levels.
+- **The 33-byte flag run** inside each character entry, just before the skill levels — likely related to
+  the specialty-unlock bitmask found at decoded offset `0x1A3F` above; not yet cross-referenced.
+- **Specialties** (the shop-purchasable system that unlocks per-character skill leveling) — in progress,
+  not complete. Two bitmasks found and partially mapped (unlock bits and level-2+ bits), but the
+  Knowledge-vs-Sensibility bit assignment and several smaller fields are still open. See
+  [docs/SO2-SPECIALTY-INVESTIGATION.md](SO2-SPECIALTY-INVESTIGATION.md).
 - **Message speed and audio mode** — see the note above the options table. Audio has a partial lead
   (`0x03CB`); message speed has none. Both need many more controlled trials, not another 2-3-save diff.
 - **Private Actions / emotion levels, item-creation recipes** — not located.
 - A separate 9-slot "Special Attack/Magic" list, distinct from the 46 proficiency skills — not mapped to the save file.
-- A checksum-A discrepancy on saves from before the second protagonist joins the party (low priority — no reason to edit saves that early).
+- The early-save checksum-A discrepancy is resolved; see the checksum investigation linked above.

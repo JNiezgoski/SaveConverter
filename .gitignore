@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Extracted/disassembled game executable code (copyrighted, not ours to distribute) and
+# other scratch investigation output - regenerate with tools/so2_disc_code.py etc. if needed.
+artifacts/

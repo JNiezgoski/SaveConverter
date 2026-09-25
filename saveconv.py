@@ -238,13 +238,16 @@ def read_saves(path):
 
 def so2_sign(d):
     """Recompute Star Ocean 2's two header checksums in a save block (bytearray, edited in place).
-    B (u32 @0x214) = sum(d[4:C]) with A and B zeroed, C = u16 @0x21A (end of data).
-    A (u16 @0x210) = sum(d[0x206:0x281]) with A zeroed - its range includes B's bytes, so A is computed last."""
+    Zero A (u32 @0x210), B (u32 @0x214), and the marker (u16 @0x218).
+    B = sum(d[:C]), C = u16 @0x21A (end of data).
+    A = sum(d[0x200:0x280]) including the newly computed B.
+    Restore the marker afterward. See docs/SO2-CHECKSUM-INVESTIGATION.md."""
     c = struct.unpack_from("<H", d, 0x21A)[0]
-    d[0x210:0x212] = b"\0\0"
-    d[0x214:0x218] = b"\0" * 4
-    struct.pack_into("<I", d, 0x214, sum(d[4:c]))
-    struct.pack_into("<H", d, 0x210, sum(d[0x206:0x281]) & 0xFFFF)
+    marker = d[0x218:0x21A]
+    d[0x210:0x21A] = b"\0" * 10
+    struct.pack_into("<I", d, 0x214, sum(d[:c]))
+    struct.pack_into("<I", d, 0x210, sum(d[0x200:0x280]))
+    d[0x218:0x21A] = marker
     return d
 
 
@@ -523,4 +526,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
