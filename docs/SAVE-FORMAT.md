@@ -3,7 +3,9 @@
 Everything below was reverse-engineered directly from real save files and the game's own screens —
 no published spec exists for this format. Every field is tagged with how confident we are in it.
 
-![Save block anatomy](save-anatomy.png)
+*(The anatomy diagram that used to live here was removed 2026-09-25 — it depicted the old raw-offset
+byte map, which the compression discovery below made misleading. Redo it once the compressed region
+is more fully mapped.)*
 
 ## Status tags
 

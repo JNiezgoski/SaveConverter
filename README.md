@@ -7,8 +7,6 @@ screens.
 
 ## What's solved
 
-![Save block anatomy](docs/save-anatomy.png)
-
 | Area | Status |
 |---|---|
 | Checksums, party list, character ID swaps | ✅ Verified |
