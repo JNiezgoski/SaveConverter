@@ -271,6 +271,20 @@ saves (only that one setting changed each time):
   signal is a small flag buried among a lot of coincidental noise (as with the audio 0x03CB candidate,
   which took an exact-value table across 3 saves to even notice), or it needs many repeated trials to
   separate real signal from this drift statistically, rather than 2-3 saves and a byte-by-byte diff.
+- **Third confirmation, different region again:** a third attempt (message speed, Level 4 saves this
+  time to reduce complexity) hit the exact same wall - 72 differing bytes, no exact 8/1 match anywhere,
+  and the cascade landed a *third* place: inside the party records region (`0x06D5`+) this time, not
+  the two previous locations. Three tight, controlled, single-variable save pairs, three completely
+  different cascade locations. This is no longer "probably noise" - it's a confirmed, general property
+  of this save format: **a large, unrelated variable-width shift (almost certainly the same mechanism
+  as SP-form changes, equipment slot markers, and inventory tombstones - see those sections) can be
+  triggered by something incidental between nearly any two saves**, landing wherever that particular
+  structure happens to sit in the file that time. It is not localized to one region and cannot be
+  assumed absent just because a test was tightly controlled.
+- **This affects every future before/after diff on this project, including the story/event-flags test.**
+  When that test is finally run, expect a real chance of an unrelated large cascade showing up somewhere
+  else in the diff. Treat only actual changes inside the documented `0x02B4`–`0x02E3` range as evidence
+  of story flags; do not assume every difference found elsewhere in that diff is meaningful.
 
 ## Known open items (not mapped)
 
