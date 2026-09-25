@@ -251,6 +251,27 @@ entry = (count << 10) | item_id      # count in the top 6 bits, item ID in the l
 | `0x0280`–`0x0290` | Grows in small bursts per save — likely tied to the "discovered areas" list | LIKELY |
 | `0x0380` | Changes unpredictably — likely an RNG seed | LIKELY |
 
+**Message speed and audio mode (Mono/Stereo/Surround) — attempted, not solved, and the attempt itself
+revealed something important.** Both were tested with tight, controlled, single-variable before/after
+saves (only that one setting changed each time):
+
+- **Audio mode** gave a real, reproducible partial signal: `0x03CB` read `1` for Stereo, `2` for
+  Surround, and `1` again for Mono — consistent with a "Surround enabled" flag rather than a 3-way
+  channel value (Stereo and Mono share the same reading; only Surround differs). Not confirmed further.
+- **Message speed** gave nothing at all in this region — comparing saves at speed 2, 8, and 1, no byte
+  in `0x0380`–`0x04FF` held those values in any form (exact match or otherwise).
+- Both tests turned up a much bigger, unexplained finding: a large cascade of scattered byte changes
+  elsewhere in the file on *every* save tested, even when only one setting was deliberately changed -
+  once inside `0x0380`+ near the audio test, and once deep in the inventory/name-table region
+  (`0x0FC9`–`0x113B`) during the message-speed test. This isn't noise localized to one known counter
+  (RNG seed, step counter, etc.) - it's a broader background drift that can reach far into the file on
+  a normal save, independent of user action, and it swamps simple before/after diffing for anything
+  that doesn't produce a large, obvious signal like inventory counts or equipment IDs did.
+- **Takeaway for next time:** don't expect a clean single-byte diff for a setting like this. Either the
+  signal is a small flag buried among a lot of coincidental noise (as with the audio 0x03CB candidate,
+  which took an exact-value table across 3 saves to even notice), or it needs many repeated trials to
+  separate real signal from this drift statistically, rather than 2-3 saves and a byte-by-byte diff.
+
 ## Known open items (not mapped)
 
 - **Story/event flags** — the strongest untouched lead: a ~48-byte block at `0x02B4`–`0x02E3`, all-zero
@@ -259,6 +280,8 @@ entry = (count << 10) | item_id      # count in the top 6 bits, item ID in the l
 - **Map/location** — no live coordinate found. Entering genuinely new territory grows a variable-length
   "discovered areas" list; plain movement across already-explored ground shows no signal.
 - **The 33-byte flag run** inside each character entry, just before the skill levels.
+- **Message speed and audio mode** — see the note above the options table. Audio has a partial lead
+  (`0x03CB`); message speed has none. Both need many more controlled trials, not another 2-3-save diff.
 - **Private Actions / emotion levels, item-creation recipes** — not located.
 - A separate 9-slot "Special Attack/Magic" list, distinct from the 46 proficiency skills — not mapped to the save file.
 - A checksum-A discrepancy on saves from before the second protagonist joins the party (low priority — no reason to edit saves that early).
