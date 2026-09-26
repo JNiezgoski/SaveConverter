@@ -1,7 +1,8 @@
-# SO2 Specialties: in progress
+# SO2 Specialties
 
-Investigation started 2026-09-25, same session as the Fol/checksum work. Not yet complete —
-this documents current findings and open questions so the next session doesn't restart from zero.
+Investigation started 2026-09-25, same session as the Fol/checksum work. Core mapping now resolved
+via Codex tracing the actual purchase/shop code (same rigor as the Fol and checksum investigations,
+run across two sessions after hitting usage limits mid-run each time — nothing lost, just slow).
 
 ## Method
 
@@ -12,62 +13,81 @@ usable signal. Decoding both saves first with `so2_fol.py`'s `state()`/`decode()
 *decoded* bytes instead dropped that to single digits. **All future before/after tests on this
 save format should decode first.**
 
-## Confirmed findings
+## VERIFIED: the specialty system
 
-- **Decoded offset `0x24`**: increments by 1 on every specialty-related purchase seen so far —
-  both new unlocks and level-ups. Likely a general "specialty purchases made" counter.
-- **Decoded offset `0x1A3F`**: a per-specialty **unlock bitmask**. Confirmed by two clean,
-  isolated single-bit-flip observations:
-  - Buying "Technique 1" (a new unlock): `0x30` → `0x70` (bit 6 newly set).
-  - Buying "Combat 1" (a new unlock): `0x70` → `0xF0` (bit 7 newly set).
-  - Bits 4 and 5 (`0x10`, `0x20`) were already set before either test began — from two earlier
-    purchases (Knowledge 1 and Sensibility 1, bought before this investigation started and no
-    longer re-testable, since they're already owned). **Which of bit 4 / bit 5 is Knowledge vs.
-    Sensibility is not yet known** — see Open questions.
-- **Decoded offset `0x1A40`**: a second bitmask, parallel to `0x1A3F` but for "has this specialty
-  reached level 2+". Confirmed by:
-  - Buying "Knowledge lvl 2" (a level-up): `0x00` → `0x01` (bit 0 newly set).
-  - Buying "Sensibility lvl 2" (a level-up, different specialty): `0x01` → `0x03` (bit 1 newly
-    set, bit 0 stayed set from the earlier Knowledge level-up).
-  - This bitmask's bit order does **not** obviously match `0x1A3F`'s (bits 0/1 here vs. bits 4/5
-    there for the same two specialties) — the two bitmasks likely use independent bit assignments,
-    not a shared per-specialty ID. Not confirmed why.
+There are exactly **4 specialties**, each purchasable at **3 levels**, for **12 fixed flags total**
+— confirmed by Codex tracing the actual purchase script in the game's MIPS code. The flags use
+fixed IDs assigned by the game, not acquisition order (an early theory, now disproved by the code).
 
-## Open questions (Codex investigation in progress, paused on usage limit)
+- **Decoded offset `0x1A3F`, bits 4-7**: "has reached level 1" (i.e. unlocked) for the 4
+  specialties. Bits 0-3 unused (always 0 in every sample seen).
+- **Decoded offset `0x1A40`, bits 0-3**: "has reached level 2" for the same 4 specialties, in the
+  **same order** as `0x1A3F`'s bits 4-7 (just shifted down by 4 bit positions).
+- **Decoded offset `0x1A40`, bits 4-7**: "has reached level 3" for the same 4 specialties, same
+  order again.
 
-A Codex background investigation was launched to trace the actual shop/specialty code and get a
-verified name-to-bit mapping (the same rigor as the Fol and checksum investigations) rather than
-inferring it from purchase order, which no longer works since Knowledge 1 and Sensibility 1 are
-already bought. It hit a usage-limit error mid-run (available again ~6:08 AM) before reaching a
-conclusion. Still open when it resumes:
+Combining that structural rule (from the code) with four real purchase tests (from direct
+before/after observation — see the table below) gives the complete name-to-bit mapping:
 
-1. **Full specialty name list and its real bit/index order** in the game's own code — needed to
-   resolve bit 4 vs. bit 5 (Knowledge vs. Sensibility) in `0x1A3F`, and to map `0x1A40`'s bits.
-2. **Decoded offset `0x10`**: went `0x00` → `0x01` on the Knowledge-lvl-2 test, but did *not*
-   change on the Technique-1 (new unlock) test. Possibly a level-up-specific counter, separate
-   from `0x24`'s general purchase counter — not confirmed with enough samples.
-3. **Decoded offsets `0x198` and `0x1880`**: a small paired change (`0x198` decreasing by 1,
-   `0x1880` increasing by 1) appeared starting with the third test onward (Sensibility lvl 2,
-   Combat 1) but not the first two. Didn't correlate with which specialty or unlock-vs-levelup —
-   likely incidental/unrelated background counters, not specialty state, but not confirmed.
-4. **Decoded offsets `0x1B58`-`0x1B82`** (~30 bytes): went from assorted nonzero values to all
-   zero on the Knowledge-lvl-2 test only. Sits near the very end of the `0x1B88`-byte decoded
-   state — likely uninitialized/leftover trailing data (consistent with the old raw-offset docs
-   already flagging that region as "not real data"), but not confirmed.
-5. Several bytes near Claude's character entry (`0x1750`, `0x1758`, `0x1760`, `0x1761`, `0x1769`,
-   `0x1769`, and occasionally `0x1340`/`0x1341`) shift by small amounts on every specialty
-   purchase test so far. Presumed to be recalculated derived stats (something like an ATK/effect
-   total that changes once a character has access to a new specialty), not the unlock flag itself
-   — not confirmed which stat.
+| Bit (in `0x1A3F`'s upper nibble / `0x1A40`'s corresponding nibble) | Specialty |
+|---|---|
+| 4 | Knowledge |
+| 5 | Sensibility |
+| 6 | Technique |
+| 7 | Combat |
 
-## Raw test data (for whoever resumes this)
+To check whether character X has specialty Y at level Z: level 1 → bit `(4+index)` of `0x1A3F` is
+set; level 2 → bit `index` of `0x1A40` is set; level 3 → bit `(4+index)` of `0x1A40` is set, where
+`index` is 0=Knowledge, 1=Sensibility, 2=Technique, 3=Combat. This is a **party-wide** unlock, not
+per-character — matches real gameplay (buying a specialty makes it available to every character at
+once; how far each character has individually leveled *within* it is tracked separately by the
+existing, already-VERIFIED per-character SP/skill-level system).
 
-| Test | Before → After box | Fol Δ | `0x24` | `0x1A3F` | `0x1A40` | Notes |
-|---|---|---:|---|---|---|---|
-| Technique 1 (new) | S15 → S14 | −400 | +1 | `0x30`→`0x70` (bit 6) | — | |
-| Knowledge lvl 2 | S14 → S13 | (paid) | +1 | — | `0x00`→`0x01` (bit 0) | `0x10` also 0→1; `0x1B58-0x1B82` zeroed |
-| Sensibility lvl 2 | S13 → S12 | (paid) | +1 | — | `0x01`→`0x03` (bit 1) | `0x198`/`0x1880` first appear |
-| Combat 1 (new) | S12 → S11 | (paid) | +1 | `0x70`→`0xF0` (bit 7) | — | `0x198`/`0x1880` continue |
+## Corrected: earlier wrong guesses
 
-All four are live on the current card as of this writing (boxes 11-15 in some order — check
-`saveconv.py list` for current state, box contents get reorganized often during play).
+Two fields we guessed were specialty-related turned out not to be, once Codex traced the actual code:
+
+- **Decoded offset `0x24`** is a general **save counter** (increments every time the game saves),
+  not a specialty-purchase counter. It only *looked* correlated because we happened to save once
+  per purchase in testing.
+- **Decoded offset `0x10`** is used to **display playtime**, unrelated to specialties.
+- **Decoded offset `0x198`** is the game's remembered **cursor position for which save box was last
+  selected** in the load/save menu (UI state, not game data) — it tracked our own box navigation
+  during testing (S14→S11), nothing to do with any purchase.
+
+## LIKELY (strong evidence, not fully closed out)
+
+- **Decoded offsets `0x1B58`-`0x1B82`** (~48 bytes near the very end of the `0x1B88`-byte decoded
+  state): Codex traced the save serializer and confirmed this range is **saved beyond the portion
+  the snapshot routine actually populates** — i.e. it's very likely genuinely unused/uninitialized
+  trailing data, consistent with what the old raw-offset docs already flagged for this same region.
+  Codex was still checking allocation/load behavior to fully close this out when it ran out of
+  usage credits a second time; treat as LIKELY rather than fully VERIFIED.
+- **Decoded offset `0x1880`**: appeared alongside `0x198` starting with the third test onward.
+  Not yet traced in code — plausibly another UI/navigation counter given its correlation with
+  `0x198`, but unconfirmed.
+- Several bytes near Claude's character entry (`0x1750`, `0x1758`, `0x1760`, `0x1761`, `0x1769`,
+  occasionally `0x1340`/`0x1341`) shift by small amounts on every specialty purchase test so far —
+  presumed to be a recalculated derived stat (something like an effect total that changes once a
+  character has access to a new specialty), not the unlock flag itself. Not traced in code.
+
+## Bonus lead for future work
+
+Codex located the game's general flag storage while tracing this: **global flags start at decoded
+offset `0x19E8`**, and these specialty purchases correspond to global flag IDs starting at `0x2BC`.
+This is very likely the same flag system the still-open **story/event flags** investigation
+(see [SAVE-FORMAT.md](SAVE-FORMAT.md)'s open items) has been looking for — worth pointing a future
+Codex investigation at `0x19E8`+ directly instead of diffing raw save-file regions.
+
+## Raw test data
+
+| Test | Before → After box | Fol Δ | `0x1A3F` | `0x1A40` |
+|---|---|---:|---|---|
+| Technique 1 (new) | S15 → S14 | −400 | `0x30`→`0x70` (bit 6) | — |
+| Knowledge lvl 2 | S14 → S13 | (paid) | — | `0x00`→`0x01` (bit 0) |
+| Sensibility lvl 2 | S13 → S12 | (paid) | — | `0x01`→`0x03` (bit 1) |
+| Combat 1 (new) | S12 → S11 | (paid) | `0x70`→`0xF0` (bit 7) | — |
+
+All four purchases were made on the same card during this session; box contents get reorganized
+often during play, so check `saveconv.py list` for current state rather than assuming these box
+numbers still hold this data.

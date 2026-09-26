@@ -18,7 +18,7 @@ screens.
 | Equipment — full 7-slot characters (incl. Noel, Chisato) | ✅ Verified |
 | Equipment — compressed 6-slot (missing one accessory) | ✅ Verified |
 | Fol (money) | ✅ Verified in-game (via `so2_fol.py` — see below) |
-| Specialties (shop-purchasable, unlocks per-character skill leveling) | 🔶 In progress — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
+| Specialties (shop-purchasable, unlocks per-character skill leveling) | ✅ Verified — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
 | Story/event flags, map location, Private Actions, recipes | ⚠️ Open |
 
 Full byte-level reference, including every offset and the exact SP/equipment encoding rules:

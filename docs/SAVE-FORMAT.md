@@ -362,10 +362,14 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
   "discovered areas" list; plain movement across already-explored ground shows no signal.
 - **The 33-byte flag run** inside each character entry, just before the skill levels — likely related to
   the specialty-unlock bitmask found at decoded offset `0x1A3F` above; not yet cross-referenced.
-- **Specialties** (the shop-purchasable system that unlocks per-character skill leveling) — in progress,
-  not complete. Two bitmasks found and partially mapped (unlock bits and level-2+ bits), but the
-  Knowledge-vs-Sensibility bit assignment and several smaller fields are still open. See
+- **Specialties** (the shop-purchasable system that unlocks per-character skill leveling) — VERIFIED.
+  4 specialties (Knowledge, Sensibility, Technique, Combat) × 3 levels each = 12 fixed flags across
+  decoded offsets `0x1A3F`/`0x1A40`, confirmed via the game's own purchase code. A handful of small
+  incidental fields nearby are still unconfirmed. See
   [docs/SO2-SPECIALTY-INVESTIGATION.md](SO2-SPECIALTY-INVESTIGATION.md).
+- **Global flags** — located but not explored: they start at decoded offset `0x19E8` (found while
+  investigating specialties). This is very likely the same system the story/event flags below live
+  in — worth pointing a future investigation here directly instead of diffing raw save regions.
 - **Message speed and audio mode** — see the note above the options table. Audio has a partial lead
   (`0x03CB`); message speed has none. Both need many more controlled trials, not another 2-3-save diff.
 - **Private Actions / emotion levels, item-creation recipes** — not located.
