@@ -105,6 +105,18 @@ isolated single-bit-flip (so far only Technique-unlock and Combat-unlock were cl
 in `0x1A3F`; Knowledge and Sensibility's *unlock* bits were both already-set before testing began
 and were only ever inferred, never directly observed flipping in `0x1A3F` itself).
 
+**2026-09-25, later update — mapping further strengthened, contradiction still unresolved:** two
+more clean tests, both landing exactly where predicted with zero contradiction:
+- "Knowledge 3" (S15→S14): `0x1A40` `0x0F`→`0x1F`, bit 4 newly set — level-3 nibble position 0 =
+  Knowledge. Matches.
+- "Technique 3" (S14→S13): `0x1A40` `0x1F`→`0x5F`, bit 6 newly set — level-3 nibble position 2 =
+  Technique. Matches.
+
+Both confirm the level-3 nibble (bits 4-7) repeats the same specialty order as the level-2 nibble,
+exactly as the code trace predicted. This makes the earlier "Sensibility 2" mismatch look more like
+an isolated anomaly for that one purchase than a flaw in the overall mapping — but it's still an
+open, unexplained data point, not retroactively dismissed.
+
 ## Bonus lead for future work
 
 Codex located the game's general flag storage while tracing this: **global flags start at decoded
@@ -123,6 +135,8 @@ Codex investigation at `0x19E8`+ directly instead of diffing raw save-file regio
 | Combat 1 (new) | S12 → S11 | (paid) | `0x70`→`0xF0` (bit 7) | — |
 | "Sensibility 2" (player-labeled) | S10 → S09 | (paid) | — | `0x03`→`0x07` (bit 2 — see contradiction above) |
 | Combat lvl 2 | S09 → S08 | (paid) | — | `0x07`→`0x0F` (bit 3, matches) |
+| Knowledge 3 | (new session) S15 → S14 | (paid) | — | `0x0F`→`0x1F` (bit 4, matches) |
+| Technique 3 | S14 → S13 | (paid) | — | `0x1F`→`0x5F` (bit 6, matches) |
 
 All six purchases were made on the same card during this session; box contents get reorganized
 often during play, so check `saveconv.py list` for current state rather than assuming these box
