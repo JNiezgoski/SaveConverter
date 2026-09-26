@@ -1,8 +1,16 @@
 # SO2 Specialties
 
-Investigation started 2026-09-25, same session as the Fol/checksum work. Core mapping now resolved
-via Codex tracing the actual purchase/shop code (same rigor as the Fol and checksum investigations,
-run across two sessions after hitting usage limits mid-run each time — nothing lost, just slow).
+Investigation started 2026-09-25, same session as the Fol/checksum work. Core mapping resolved via
+Codex tracing the actual purchase/shop code (same rigor as the Fol and checksum investigations, run
+across two sessions after hitting usage limits mid-run each time — nothing lost, just slow), **and
+fully explained mechanically** by RPGClassics' "Skills" shrine (see below) — what this document
+calls "Knowledge/Sensibility/Technique/Combat, 3 levels each" are literally that source's **Skill
+Shops**: 12 named tiers (Knowledge 1/2/3, Sensibility 1/2/3, Technique 1/2/3, Combat 1/2/3), each
+unlocking a specific group of 3-4 of this project's already-VERIFIED 46 Skills for SP purchase by
+any party member. This is exactly what the player described from the start — "unlocks the ability
+to level up skills" — now confirmed at the mechanism level, not just the bitmask level. Full skill
+data (SP costs per level, stat benefits, which shop unlocks which) is in
+[SO2-SKILLS-FULL.md](SO2-SKILLS-FULL.md).
 
 ## Method
 

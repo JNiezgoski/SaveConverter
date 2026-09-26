@@ -129,6 +129,38 @@ Slippers, Original Boots, Valkyrie Boots. Specific: High Heels (Ce/Ch/Op), Neuma
 only, Machinery Specialty), Pin Heels (Ce/Ch/Op), Plate Greaves (Fighters), Star Greaves
 (As/Bo/Ch/Cl/Di/Er/Op/Pr), Sylvan Boots (Ch/Op/Pr).
 
+## Accessories (equip group)
+
+**Important gotcha**: for accessories, **Noel counts as a Magician**, not a Fighter — the opposite
+of his armor classification (Fighter for armor, per the earlier section). This is confirmed in the
+source's own text for both pages, not a transcription error — don't assume the Fighter/Magician
+groups mean the same character set across every equipment category.
+
+- **Fighters** (accessories): Ashton, Bowman, Chisato, Claude, Dias, Ernest, Opera, Precis
+- **Magicians** (accessories): Celine, Leon, **Noel**, Rena
+
+All: Angel Armband, Anklet, Aqua Ring, Atlas Ring, Bandit's Gloves, Berserk Ring, Crystal, Damascus,
+Demonslayer Ring, Diamond, Dream Bracelet, Fairy Ring, Fairy Tear, Feet Symbol, Flare Ring, Fortune,
+Gold, Golden Bracelet, Golden Cross, Golden Idol, Gold Ring, Green Beryl, Hard Ring, Healing Ring,
+Heavy Ring, Holy Ring, Infinity Ring, Insanity Ring, Iron, Link Combo (Fighters only, see below),
+Lot Bracelet, Luna Tablet, Luna Talisman, Magic Cross, Magician's Hand, Magic Mist, Mental Ring,
+Meteor Ring, Meteorite, Might Chain, Mind Ring, Mischief, Mithril, Moonite, Moonlight, Necklace,
+Orichalcum, Paralysis Check, Peep Half, Peep Non, Poison Check, Pretty Idol, Prism Ring, Promised
+Ring, Protection Ring, Purple Mist, Rainbow Diamond, Recoil Bracelet, Reflection Ring, Regeneration
+Ring, Resistance Ring, Reverse Doll, Right Cross, Ruby, Ruby Pendant, Rune Metal, Sage's Stone,
+Santa's Boots, Sapphire, Shield Ring, Silver, Silver Idol, Silver Pendant, Silver Ring, Slayer's
+Ring, Stardust Ring, Star Ruby, Stone Check, Sturm Ring, Surrender Pendant, Talisman, Trickster,
+Tri-emblem, Tri-emplem, Useless Decoration, Weighty Ring, Weird Doll, Wisdom Ring. Females: Angel
+Hair, Moon Earring, Silver Barrette, Silver Earring. Magicians: Fire Ring, Princess Ring, Star
+Necklace, Thunder Ring, Water Ring. Specific: Attack Earring (Ce), Black Earring/Blood
+Earring/First Earring/Shield Earring/Shiny Earring/Zephyr Earring (Ce/Ch/Op, First Earring adds Re),
+Emerald Earring/Silver Charm/Star Earring (Ce, Silver Charm adds Le/No/Re), Emerald Ring (all
+except the Fighters-vs-Magicians split doesn't apply — check source if needed), Gale Earring (Ce/Ch),
+Gaudy Earring/Hard Earring/Golden Earring/Lunatic Earring (Ce/Ch/Op), General's Ring (Claude's route
+only, Celine not in party), Israfil's Tear (Ce/Re), Leaf Pendant (Magicians, Claude's route only),
+Left Cross (all), Link Combo (Fighters), Ring of Happiness (Rena only), Sacknoth's Helmet/Salamander
+Helmet (Ashton only).
+
 ## Notable non-weapon, non-armor item
 
 - **Israfil's Tear** (accessory) — unique story-quest item, not a general shop/drop item

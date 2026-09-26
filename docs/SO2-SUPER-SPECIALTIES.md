@@ -5,18 +5,26 @@ Descriptions paraphrased and mechanics reorganized for this project's reference;
 copyrighted to its authors and is not reproduced. Detailed usage strategies (which items to combine,
 optimal play patterns) are summarized, not transcribed.
 
-## IMPORTANT: likely terminology collision with this project's own findings
+## RESOLVED: terminology collision confirmed and explained
 
-This source's "Specialty" (Cooking, Metalwork, Musical Talent, Familiar, Writing, Pickpocket,
-Customize, Alchemy, Identify, Machinery, Compounding, Copying, Authoring, Scout, Art, Practice,
-Survival) does **not** match the 4 specialties this project found and verified in the save file
-tonight (Knowledge, Sensibility, Technique, Combat — see
-[SO2-SPECIALTY-INVESTIGATION.md](SO2-SPECIALTY-INVESTIGATION.md)). These are very likely **two
-different game systems that happen to share the English word "specialty"** — this source's list
-looks much closer to this project's already-VERIFIED 46-item **Skill** list in `SAVE-FORMAT.md`
-(Sketching, Musical Notation, Craft, Metal Casting, Kitchen Knife, Recipe, etc.) than to the
-shop-purchased 4-item system. **Not reconciled yet — treat as an open question, not an assumption,
-before using this data to interpret save bytes.**
+This is now confirmed rather than an open question, using RPGClassics' own "Specialties" page (see
+[SO2-SKILL-SPECIALTIES.md](SO2-SKILL-SPECIALTIES.md)): every "Needed Skill" listed for each
+wiki-Specialty matches a name in this project's already-VERIFIED 46-item **Skill** list exactly
+(Mineralogy, Esthetic Sense, Herbal Medicine, Recipe, Craft, Metal Casting, etc.). So there are
+genuinely **three distinct things that share overlapping "specialty" terminology**:
+
+1. This project's VERIFIED **Skill** list (46 items, 0-10 per character) — the real save data.
+2. The wiki's **Specialty** (17 items: Alchemy, Art, Authoring, Compounding, Cooking, Customize,
+   Familiar, Identify, Machinery, Metalwork, Musical Talent, Oracle, Pickpocket, Practice,
+   Reproduction, Scout, Survival) — each one's level is just the **average of 1-3 related Skills**,
+   rounded down, capped at 10. A **computed value**, like ATK/HIT — not separately stored.
+3. **Super Specialty** (this page's 8 items) — combines multiple party members' Specialty-related
+   Skill levels further. Also computed, not stored.
+
+The shop-bought system this project verified tonight (Knowledge, Sensibility, Technique, Combat —
+see [SO2-SPECIALTY-INVESTIGATION.md](SO2-SPECIALTY-INVESTIGATION.md)) is a genuinely **separate,
+fourth system** that happens to share the English word "specialty" in the game's own UI — a real
+naming collision in the source material, not a project misunderstanding.
 
 ## The mechanic
 

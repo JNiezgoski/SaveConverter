@@ -18,11 +18,20 @@ screens.
 | Equipment — full 7-slot characters (incl. Noel, Chisato) | ✅ Verified |
 | Equipment — compressed 6-slot (missing one accessory) | ✅ Verified |
 | Fol (money) | ✅ Verified in-game (via `so2_fol.py` — see below) |
-| Specialties (shop-purchasable, unlocks per-character skill leveling) | 🔶 Structure verified, one bit mapping contradicted by later data — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
-| Story/event flags, map location, Private Actions, recipes | ⚠️ Open |
+| Specialties (shop-bought Skill Shop tiers: Knowledge/Sensibility/Technique/Combat ×3 levels) | ✅ Verified — mechanism fully explained, mapping mostly confirmed — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
+| Story/event flags, map location, recipes | ⚠️ Open — [Private Actions](docs/SO2-PRIVATE-ACTIONS.md) documented as a lead, not yet tested against a save |
 
 Full byte-level reference, including every offset and the exact SP/equipment encoding rules:
 **[docs/SAVE-FORMAT.md](docs/SAVE-FORMAT.md)**
+
+**Game-mechanic reference docs** (fan-sourced, cross-validated against real saves/equip attempts
+where noted — see each doc's own Status section): item restrictions
+([weapons/armor/accessories](docs/SO2-ITEM-RESTRICTIONS.md)), [Skills](docs/SO2-SKILLS-FULL.md) and
+their derived [Specialties](docs/SO2-SKILL-SPECIALTIES.md)/[Super Specialties](docs/SO2-SUPER-SPECIALTIES.md),
+[Talents](docs/SO2-TALENTS.md), [Private Actions](docs/SO2-PRIVATE-ACTIONS.md),
+[Emotional Levels](docs/SO2-EMOTIONAL-LEVELS.md), [story/precious items](docs/SO2-STORY-ITEMS.md),
+[status ailment sources](docs/SO2-STATUS-AILMENT-SOURCES.md), [spells](docs/SO2-SPELLS.md), and
+[Fun City](docs/SO2-FUN-CITY.md).
 
 **2026-09-25 — important structural correction:** part of every save block (starting at `0x0380`) is
 **zero-run compressed**, not raw bytes — `00 00 N` means "N+2 zero bytes." Earlier notes in this repo
