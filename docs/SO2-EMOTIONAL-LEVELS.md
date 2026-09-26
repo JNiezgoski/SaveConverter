@@ -34,6 +34,10 @@ data structures, not just a convention this wiki happens to use.
 - Character endings pair up whoever has the highest **primary** value above 10 for another
   character; ties break via the preordered list above. No primary value above 10 → that character
   ends the game alone.
+- For a given pair, which of the two characters' scenes plays (they can differ) is determined by
+  which one has the *lower* primary value toward the other; secondary values pick between multiple
+  variants of that same scene. (Not reproducing the actual ending scripts here — that's substantial
+  narrative content, unlike the factual restriction/mechanic data elsewhere in this doc.)
 - Values also affect AI behavior in battle (healing/protecting favored characters first, calling
   out their name and having a higher berserk chance if they're KO'd).
 - Three ways to change values: certain crafted books (set one relationship's FP or RP to a fixed
