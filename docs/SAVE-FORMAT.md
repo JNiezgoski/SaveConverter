@@ -362,10 +362,11 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
   "discovered areas" list; plain movement across already-explored ground shows no signal.
 - **The 33-byte flag run** inside each character entry, just before the skill levels — likely related to
   the specialty-unlock bitmask found at decoded offset `0x1A3F` above; not yet cross-referenced.
-- **Specialties** (the shop-purchasable system that unlocks per-character skill leveling) — VERIFIED.
-  4 specialties (Knowledge, Sensibility, Technique, Combat) × 3 levels each = 12 fixed flags across
-  decoded offsets `0x1A3F`/`0x1A40`, confirmed via the game's own purchase code. A handful of small
-  incidental fields nearby are still unconfirmed. See
+- **Specialties** (the shop-purchasable system that unlocks per-character skill leveling) — the
+  overall structure is VERIFIED (4 specialties × 3 levels each = 12 fixed flags across decoded
+  offsets `0x1A3F`/`0x1A40`, confirmed via the game's own purchase code), but the exact
+  Knowledge-vs-Sensibility bit assignment hit a real, unresolved contradiction from a later test —
+  do not trust that specific bit mapping yet. See
   [docs/SO2-SPECIALTY-INVESTIGATION.md](SO2-SPECIALTY-INVESTIGATION.md).
 - **Global flags** — located but not explored: they start at decoded offset `0x19E8` (found while
   investigating specialties). This is very likely the same system the story/event flags below live

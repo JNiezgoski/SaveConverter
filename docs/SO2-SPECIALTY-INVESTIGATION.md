@@ -71,6 +71,40 @@ Two fields we guessed were specialty-related turned out not to be, once Codex tr
   presumed to be a recalculated derived stat (something like an effect total that changes once a
   character has access to a new specialty), not the unlock flag itself. Not traced in code.
 
+## UNRESOLVED CONTRADICTION (2026-09-25, later same session)
+
+Two more real purchase tests, both reported by the player as accurate labels (not assumed or
+inferred by us):
+
+| Test | Before → After box | `0x1A40` | Bit that flipped | Expected (per mapping above) |
+|---|---|---|---|---|
+| "Sensibility 2" | S10 → S09 | `0x03`→`0x07` | bit 2 | bit 1 (Sensibility's level-2 bit was already set from the earlier confirmed Sensibility-lvl-2 test) |
+| "Combat lvl 2" | S09 → S08 | `0x07`→`0x0F` | bit 3 | bit 3 (Combat) — **matches, no contradiction** |
+
+The Combat test lines up perfectly with the mapping. The "Sensibility 2" test does not: bit 2 is
+Technique's slot per the mapping above (built from Codex's code-level finding that the flag order
+is fixed, not acquisition-dependent, combined with two earlier clean single-bit tests that
+established bit 0 = Knowledge and bit 1 = Sensibility). The player maintains the box labels are
+accurate to what was actually purchased in-game — this was not a testing/labeling mistake on the
+data-collection side.
+
+**This is a real, unresolved conflict, not resolved by assuming either side is wrong:**
+- If the bit mapping (bit 1 = Sensibility) is correct, then the "Sensibility 2" purchase should
+  have produced no change at all in `0x1A40` (already set from the earlier test) — it didn't; bit 2
+  changed instead.
+- If the purchase label is correct, then either Sensibility's flag isn't bit 1 after all (which
+  would also mean the earlier "Sensibility lvl 2" test's bit-1 flip was coincidental or mislabeled),
+  or the fixed-ID theory from the code trace is incomplete somehow (e.g. an index that isn't
+  purely static, or a level-2-vs-level-3 mixup — bit 2 in the *level-3* nibble, i.e. `0x1A40` bit 6,
+  is not what changed here, so it's not simply a level-2/level-3 confusion).
+
+**What's needed to resolve this:** re-open the code trace specifically on the purchase script's
+flag-ID assignment for Sensibility, rather than trusting the two-earlier-tests inference. Ideally
+also get one more real purchase test of a specialty whose bit is *not yet* directly confirmed by an
+isolated single-bit-flip (so far only Technique-unlock and Combat-unlock were clean isolated flips
+in `0x1A3F`; Knowledge and Sensibility's *unlock* bits were both already-set before testing began
+and were only ever inferred, never directly observed flipping in `0x1A3F` itself).
+
 ## Bonus lead for future work
 
 Codex located the game's general flag storage while tracing this: **global flags start at decoded
@@ -87,7 +121,9 @@ Codex investigation at `0x19E8`+ directly instead of diffing raw save-file regio
 | Knowledge lvl 2 | S14 → S13 | (paid) | — | `0x00`→`0x01` (bit 0) |
 | Sensibility lvl 2 | S13 → S12 | (paid) | — | `0x01`→`0x03` (bit 1) |
 | Combat 1 (new) | S12 → S11 | (paid) | `0x70`→`0xF0` (bit 7) | — |
+| "Sensibility 2" (player-labeled) | S10 → S09 | (paid) | — | `0x03`→`0x07` (bit 2 — see contradiction above) |
+| Combat lvl 2 | S09 → S08 | (paid) | — | `0x07`→`0x0F` (bit 3, matches) |
 
-All four purchases were made on the same card during this session; box contents get reorganized
+All six purchases were made on the same card during this session; box contents get reorganized
 often during play, so check `saveconv.py list` for current state rather than assuming these box
 numbers still hold this data.
