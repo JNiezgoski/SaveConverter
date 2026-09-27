@@ -1,0 +1,67 @@
+{
+  "0": {
+    "name": "Overview Map (overworld/field)",
+    "sightings": {
+      "0": {
+        "facing": 1718,
+        "first_seen_save": "BASCUS-94421S02-S01",
+        "first_seen_title": "SO2 01 31:16 Crawd LV255",
+        "recorded": "2026-09-27 04:41:20",
+        "x": 19.82,
+        "y": -0.06,
+        "z": 5.84
+      },
+      "1": {
+        "facing": 1084,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:14 Rena LV255",
+        "recorded": "2026-09-27 04:41:20",
+        "x": 2.21,
+        "y": -0.04,
+        "z": 3.18
+      }
+    }
+  },
+  "118": {
+    "name": "Cave of Trials (Heraldic Ruins?)",
+    "sightings": {
+      "1": {
+        "facing": 2048,
+        "first_seen_save": "BASCUS-94421S02-S12",
+        "first_seen_title": "SO2 12 36:17 Rena LV255",
+        "recorded": "2026-09-27 05:29:54",
+        "x": 0.03,
+        "y": 0.0,
+        "z": 0.01
+      }
+    }
+  },
+  "128": {
+    "name": "Linga",
+    "sightings": {
+      "1": {
+        "facing": -1016,
+        "first_seen_save": "BASCUS-94421S02-S15",
+        "first_seen_title": "SO2 15 33:33 Rena LV97",
+        "recorded": "2026-09-27 04:41:20",
+        "x": -0.0,
+        "y": 0.0,
+        "z": 0.01
+      }
+    }
+  },
+  "148": {
+    "name": "Love Alley - Cave of Trials L2",
+    "sightings": {
+      "1": {
+        "facing": 1024,
+        "first_seen_save": "BASCUS-94421S02-S13",
+        "first_seen_title": "SO2 13 36:20 Rena LV255",
+        "recorded": "2026-09-27 05:31:09",
+        "x": 0.17,
+        "y": 0.0,
+        "z": -0.01
+      }
+    }
+  }
+}

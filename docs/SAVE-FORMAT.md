@@ -374,7 +374,52 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
   See [the detailed map](SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27).
 
 - **Story/event flags** - raw `0x02B4`-`0x02E3`: checked, inconclusive as story flags; save/load copies this range to/from live state `+0x1D4..+0x203` ([code evidence](SO2-STORY-FLAGS-HEADER-CHECK.md)); no story-specific writer established.
-- **Map/location** - bounded save-writer trace remains inconclusive: copy sources established, but no map/room ID or live-coordinate field identified; old raw-byte no-signal result is weak after compression discovery ([code evidence](SO2-MAP-LOCATION-CHECK.md)).
+- **Map/location — real coordinates found 2026-09-27, but likely coarse, not free-roam.** Decoded
+  `0x1750/0x1754/0x1758` (chunk-5 relative `+8/+0xC/+0x10`) hold three signed 32-bit words that read
+  as real X/Y/Z position data — confirmed against S01/S02/S15: values differ meaningfully between
+  saves (tens of thousands for an outdoor-scale area in S01/S02, single digits near origin for S15,
+  consistent with a small interior room), plus a facing/orientation halfword at `+0x18` (decoded
+  `0x1760`) and an area-sub-index byte at `+0x21` (`0x1769`) and area ID byte at `+0x24` (`0x176C`).
+  Multiple resident write sites confirmed (not just the one warp handler that led here) — all are
+  gated behind story-script state checks or an area-ID table lookup (20.12 fixed-point source values
+  right-shifted by 12 before storing), consistent with **scripted area-entry/transition placement**,
+  not a per-frame movement update. No per-frame, controller-input-driven writer to this structure was
+  found in resident entry 2576; if ordinary walking also updates it, that code likely lives in an
+  unextracted field-movement overlay (same boundary the field-leader investigation hit). Practical
+  upshot: the save very likely records *where you last warped/entered from*, not your exact live
+  position after walking around — a teleport edit would probably work for entrance-to-entrance jumps,
+  not for placing you at an arbitrary point mid-room. **2026-09-27 follow-up:** the area-ID table at
+  `0x80075360` is confirmed as a 194-entry pointer array (bounds-checked `sltiu v0,a0,0xc2` at a third,
+  independent write site), so valid area IDs are `0..193` with a known per-entry struct layout — but no
+  area/zone **name** strings were found anywhere in the three most relevant already-extracted files.
+  **2026-09-27 follow-up:** targeted a 3-entry sample of the full 4,155-entry disc archive, chosen from
+  direct evidence (the exact resource ID the area-entry handler loads) rather than heuristics — all
+  three decoded to pure graphics/tile data, no text at all. **2026-09-27 correction:** that "no text"
+  result is now known to be uninformative — the function assumed to be "the resource loader consuming
+  that ID" (`0x80011b98`) is actually a generic UI/object dispatch function, not an archive-index
+  loader, so the resource ID traced here was never shown to relate to the disc archive at all. No
+  second resource-load call exists in either known area-entry handler. Disassembly-based name hunting
+  via this thread is exhausted; **live-testing (visit a known location, read decoded `0x176C`) is the
+  clearly most efficient remaining path**, not a fallback. See [code evidence](SO2-MAP-LOCATION-CHECK.md).
+  **2026-09-27 live-test results:** built `so2_location.py` (reads a save's area ID/position, records
+  into `area_data.json`, lets you attach real names). Real gameplay confirmed area ID only changes on
+  crossing an actual area-entry trigger, not from walking — five saves spanning real outdoor travel
+  (Hoffman → Hilton → Lacour → Linga outskirts) all read the same area, and it changed the instant the
+  user crossed into Linga proper. **Area 128 = Linga, confirmed** (also where the user's real save 15
+  currently sits). Tested writing one save's position/area fields to exactly match another known-good
+  save: same-area repositioning (new X/Z, same area ID) **worked correctly in-game**; a full cross-area
+  edit (area 0 → area 128, all six fields copied exactly from a working save) **produced a black screen
+  with the old area's music still playing** — area ID + position alone are not sufficient for a working
+  cross-area warp; something else (likely background/tileset or active-music state, probably in the
+  still-mostly-unmapped chunk 1) must also be synced. **Also flagged, unresolved:** live data suggests
+  `0x1769`, not `0x176C`, may be the byte that actually discriminates areas — contradicts the disassembly
+  citation above; see the doc's "open discrepancy" note. Practical takeaway: a "reposition within your
+  current area" tool is safe to build today; a real cross-area teleport tool is not, yet.
+  **2026-09-27, more live-testing:** two more real areas confirmed (118 = Cave of Trials, 148 = Love
+  Alley). A real anomaly found: deeper dungeon floors saved via the save-anywhere cheat all read the
+  same stale area ID (Linga) instead of updating — checked chunk 1 for a correlated difference and
+  found none, ruling that out as the cause. Leading unconfirmed theory: the cheat may bypass normal
+  area-tracking where no real save point exists. See [code evidence](SO2-MAP-LOCATION-CHECK.md).
 - **The 33-byte flag run** inside each character entry, just before the skill levels — likely related to
   the specialty-unlock bitmask found at decoded offset `0x1A3F` above; not yet cross-referenced.
 - **Specialty shop tiers - mapping resolved 2026-09-27:** twelve fixed flags `0x2BC..0x2C7`,
@@ -396,5 +441,14 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
 - **Message speed and audio mode** — see the note above the options table. Audio has a partial lead
   (`0x03CB`); message speed has none. Both need many more controlled trials, not another 2-3-save diff.
 - **Private Actions / emotion levels, item-creation recipes** — not located.
+- **Field-leader / walking-sprite slot (decoded state `+0x41`)** — 2026-09-27: the validator that
+  reads/repairs this byte (`0x80052FF4..0x80053154`) is confirmed to run as part of a field/area-entry
+  routine (`0x80051A34`, which loads a map resource and writes fixed-point coordinates into the
+  known chunk-5 source `[0x80075710]`), itself triggered by story-script opcodes. This substantially
+  corroborates the field-leader theory but does not close the loop to the exact instruction that
+  picks the walking character's graphic/sprite-set - no second read of `+0x41` exists in the resident
+  code, so that consumer likely lives in an unextracted field-movement overlay. **Status: strongly
+  corroborated, not fully closed** — do not edit `+0x41` directly yet. See
+  [the party investigation's 2026-09-27 follow-up](SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-27-follow-up-validators-call-context-strongly-corroborates-the-theory-sprite-consumer-still-not-closed).
 - The reported 9-slot "Special Attack/Magic Max" cheat list was **checked; its save correspondence remains inconclusive**. The actual assignment UI uses four one-byte ability IDs at decoded `0x56C..0x56F + slot*0xD0` (secondary `+CC..CF`), with 32 candidate availability bytes at `+3C..5B`; extracted candidate/read/write instructions were executed on S01/S02/S15. This does not identify the historical nine cheat addresses. See [special-attack list check](SO2-SPECIAL-ATTACK-LIST-CHECK.md).
 - The early-save checksum-A discrepancy is resolved; see the checksum investigation linked above.

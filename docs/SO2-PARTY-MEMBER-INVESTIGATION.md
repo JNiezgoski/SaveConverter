@@ -589,6 +589,62 @@ This establishes that a separate selected-slot field exists and is repaired;
 strong field-leader candidate, not a claim that every field scene uses it.
 Do not assume changing secondary slot 0 alone selects the walking character.
 
+### 2026-09-27 follow-up: validator's call context strongly corroborates the theory, sprite consumer still not closed
+
+The validator (`0x80052FF4..0x80053154`, whole function disassembled) is the
+**only** code in resident entry 2576 that reads or writes decoded-state
+`[0x80075270]+0x41`. (Three unrelated `sb ...,0x41(s0)` hits inside Bowman's,
+Ashton's, and Noel's per-character initializers were checked and ruled out:
+`$s0` there is the **secondary** record pointer, and `+0x41` relative to
+*that* base is one byte of the unrelated 32-entry ability-availability array
+at secondary `+0x3C..0x5B` — see docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md. Pure
+numeric coincidence, confirmed by disassembling the surrounding stores,
+including the adjacent `sb ...,0xCC($s0)` ability-assignment write.)
+
+The validator has exactly one caller in resident code, `0x80051A48`, inside a
+function at `0x80051A34` whose body: frees a couple of cached resources,
+loads resource ID `0x851` via the same resource-dispatch pattern used
+elsewhere in this project (`jal 0x80011B98`), and then manipulates the live
+buffer at `[0x80075710]` - the confirmed source of decoded chunk 5's first
+`0x2A0` bytes (see docs/SO2-MAP-LOCATION-CHECK.md) - copying four words
+through a `sra $v0,$v0,0xC` (divide-by-4096, i.e. PS1 20.12 fixed-point)
+transform into that buffer at `+8/+0xC/+0x10` plus a halfword at `+0x18`,
+selected from a pointer table at `[0x80075360]` indexed by a byte at
+`[0x80075710]+0x24`. This is the shape of "look up area N's entry data and
+convert its fixed-point coordinates into the live field-position buffer" -
+i.e. `0x80051A34` is a strong candidate for the actual **field/area-entry**
+routine, not a menu.
+
+`0x80051A34` itself has three resident callers: `0x8004D8E0`, `0x80050D94`,
+and `0x8006BD14`. The third sits inside a jump-table-dispatched handler
+(`lw v0,0x3968(at); jr v0` - the same jump-table shape used by the
+recruit/remove script opcodes) that reads a counter at `[0x800759A0]`, rolls
+a 2-outcome RNG via `0x800104D4`, and calls `0x80051A34` with
+`a0=[0x800075284]` (an area/destination ID) and `a1=`the RNG result - i.e. a
+story-script-triggered "warp into one of two possible field entrances"
+action. This is strong, real evidence that the leader-validator runs as part
+of genuine field/map-entry processing, not an unrelated menu screen.
+
+**What this does and does not establish.** It substantially raises confidence
+that `+0x41` is the real field-leader selector - it is now tied to an actual
+area-entry code path, triggered by story-script opcodes, not just a
+similarly-shaped repair routine found in isolation. It does **not** close the
+loop to a specific instruction that reads `+0x41` to choose which character's
+graphic/sprite-set is loaded for on-screen walking control - no second read
+site of `+0x41` exists anywhere in resident entry 2576, so that final
+consumer (if it reads `+0x41` at all, rather than some copy of it) must live
+in a field-movement/rendering overlay not identified in this pass. A quick
+check of already-extracted specialty overlays (entries 2980-3022) for
+stray `+0x41` byte accesses found two files with hits, but those overlays'
+correct load addresses were not independently verified here (unlike the
+`0x8007E000` addresses established by name for specific menu/shop/save
+overlays), so disassembling them at an assumed address produced unreliable
+results and was not pursued further - a genuine scope boundary, not a
+negative finding about those files. **Status: strongly corroborated, not
+fully closed.** Editing `+0x41` directly is still not recommended without
+first locating the actual sprite/graphic-set consumer, exactly per the
+original caution above about the load-screen-preview-style cache problem.
+
 ## Why the two experiments were insufficient
 
 Unused-slot clone: secondary data does not make `primary[slot].id` positive.
