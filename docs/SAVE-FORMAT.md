@@ -38,7 +38,7 @@ entries." Both vary per save — they're found by scanning, not fixed offsets.
 | `0x0214` u32 | Checksum B |
 | `0x021A` u16 | `C` — end-of-data offset |
 | `0x0234–0x0253` | Party list: 8 × (u16 character ID, u16 level) — **this drives the load-screen portrait**, independent of the party record itself |
-| `0x0380–0x04FF` | Options and misc. state (see table below) |
+| `0x0380` / `0x0382` onward | u16 compressed length / zero-run stream; use decoded offsets for Options |
 | `0x0500–0x082F` | Party records — up to 8 members, variable length, in party order |
 | `0x0830–0x0EFF` | Character entries — one per character, variable length |
 | `0x0EEC–0x0F67` | Default name table (shared, not per-save) |
@@ -281,62 +281,48 @@ The new candidate has passed actual add/serializer instruction execution and all
 unit tests; it has not yet been loaded in-game. The exact two historical failed
 files were not analyzed, so their individual corruption causes remain unproven.
 
-## Options / misc. state (`0x0380`–`0x04FF`)
+## Options (decoded offsets; resolved 2026-09-27)
 
-| Offset | Field | Status |
+**VERIFIED — Disassembly and bounded execution; new in-game save/reload tests
+remain open.** The actual Options menu imports and writes these fields, and the
+save serializer includes them in the per-save compressed body. See
+[SO2-OPTIONS-MENU-INVESTIGATION.md](SO2-OPTIONS-MENU-INVESTIGATION.md) for instruction
+addresses, extracted labels, executed checks, and limits. These are **decoded**
+offsets, not physical offsets in the 8,192-byte card block.
+
+| Decoded offset | Field / values |
+|---|---|
+| `0x00..0x0F` | Eight u16 button masks: ENTER, CANCEL, MENU, Movement, Killer Move 1, Killer Move 2, Character Quick Change, Manual/Auto Switch. Menu remapping swaps conflicting assignments. |
+| `0x30 / 0x34 / 0x38 / 0x3C` | Window corner colors UL/UR/LL/LR, four LE words `0x00BBGGRR`; each RGB component is 0..255. |
+| `0x44` | Sound output: 0=Surround, 1=Stereo, 2=Monaural. |
+| `0x46` | Vibration: 0=OFF, 1=ON. |
+| `0x49` | Targeting: 2=Auto, 0=Semi-Auto, 1=Manual. Stored order differs from menu order. |
+| `0x4A` | Camera work: 0=Normal, 1=Leader-Centered. |
+| `0x4B` | Combat motion: 0=button-plus-direction icon choice, 1=Only direction icon choice. Exact control tokens and remaining icon/gameplay validation are documented in the investigation. |
+| `0x1860` | Message speed: u8 0..7, displayed 1..8 (fast to slow). Live address is `[80075710]+0x118`, not `[80075270]+0x1860`. |
+
+The historical raw `0x0382/384/386/388` button offsets are superseded by decoded
+`0/2/4/6`. Their familiar four masks are `0x40` Cross, `0x20` Circle, `0x10`
+Triangle, and `0x80` Square. The old raw `0x03CB` audio candidate is superseded by
+decoded `0x44`. `0x0380` is the compressed length, **not an RNG seed**.
+
+Three historical raw-save diff attempts did not establish these fields;
+compression shifts made those comparisons unreliable. No blind diff was repeated in
+this investigation: archive entry 3016's menu handlers, entry 3017's text/font,
+and the established serializer provide the new evidence. No separate global
+card record is needed for these settings. Future comparisons, if any, must use
+decoded data; the former advice to collect many more raw-diff trials is obsolete.
+
+### Other miscellaneous observations (not revalidated by the Options work)
+
+| Offset | Field | Historical status |
 |---|---|---|
-| `0x0382` / `0x0384` / `0x0386` / `0x0388` | u16 button codes: confirm / cancel / menu / move (`0x40` X, `0x20` Circle, `0x10` Triangle, `0x80` Square) | VERIFIED |
-| `0x021C` / `0x0392` | u16 playtime in minutes (two copies) | VERIFIED |
-| `0x0220` | u8, save counter (increments every save) | VERIFIED |
-| `0x0254` | u8, a second independent save counter | VERIFIED |
-| Decoded state `0x18` | u32 LE Fol; encoded location and length vary with zero-run compression | GAME-CODE VERIFIED; see [evidence](SO2-FOL-INVESTIGATION.md) |
-| `0x04EC` | u16(?), counts down — likely steps-until-next-random-encounter | LIKELY |
-| `0x0280`–`0x0290` | Grows in small bursts per save — likely tied to the "discovered areas" list | LIKELY |
-| `0x0380` | Changes unpredictably — likely an RNG seed | LIKELY |
-
-**Message speed and audio mode (Mono/Stereo/Surround) — attempted, not solved, and the attempt itself
-revealed something important.** Both were tested with tight, controlled, single-variable before/after
-saves (only that one setting changed each time):
-
-- **Audio mode** gave a real, reproducible partial signal: `0x03CB` read `1` for Stereo, `2` for
-  Surround, and `1` again for Mono — consistent with a "Surround enabled" flag rather than a 3-way
-  channel value (Stereo and Mono share the same reading; only Surround differs). Not confirmed further.
-- **Message speed** gave nothing at all in this region — comparing saves at speed 2, 8, and 1, no byte
-  in `0x0380`–`0x04FF` held those values in any form (exact match or otherwise).
-- Both tests turned up a much bigger, unexplained finding: a large cascade of scattered byte changes
-  elsewhere in the file on *every* save tested, even when only one setting was deliberately changed -
-  once inside `0x0380`+ near the audio test, and once deep in the inventory/name-table region
-  (`0x0FC9`–`0x113B`) during the message-speed test. This isn't noise localized to one known counter
-  (RNG seed, step counter, etc.) - it's a broader background drift that can reach far into the file on
-  a normal save, independent of user action, and it swamps simple before/after diffing for anything
-  that doesn't produce a large, obvious signal like inventory counts or equipment IDs did.
-- **Takeaway for next time:** don't expect a clean single-byte diff for a setting like this. Either the
-  signal is a small flag buried among a lot of coincidental noise (as with the audio 0x03CB candidate,
-  which took an exact-value table across 3 saves to even notice), or it needs many repeated trials to
-  separate real signal from this drift statistically, rather than 2-3 saves and a byte-by-byte diff.
-- **Third confirmation, different region again:** a third attempt (message speed, Level 4 saves this
-  time to reduce complexity) hit the exact same wall - 72 differing bytes, no exact 8/1 match anywhere,
-  and the cascade landed a *third* place: inside the party records region (`0x06D5`+) this time, not
-  the two previous locations. Three tight, controlled, single-variable save pairs, three completely
-  different cascade locations. This is no longer "probably noise" - it's a confirmed, general property
-  of this save format: **a large, unrelated variable-width shift (almost certainly the same mechanism
-  as SP-form changes, equipment slot markers, and inventory tombstones - see those sections) can be
-  triggered by something incidental between nearly any two saves**, landing wherever that particular
-  structure happens to sit in the file that time. It is not localized to one region and cannot be
-  assumed absent just because a test was tightly controlled.
-- **This affects every future before/after diff on this project, including the story/event-flags test.**
-  When that test is finally run, expect a real chance of an unrelated large cascade showing up somewhere
-  else in the diff. Treat only actual changes inside the documented `0x02B4`–`0x02E3` range as evidence
-  of story flags; do not assume every difference found elsewhere in that diff is meaningful.
-- **2026-09-25 update — likely root cause found:** the zero-run compression discovered during the Fol
-  investigation (see the note at the top of this doc) is almost certainly *why* every raw-byte diff
-  test all session showed a large, unexplained cascade regardless of how tightly controlled the
-  before/after pair was. Any edit that changes a zero-run's length re-tokenizes every byte after it in
-  the compressed stream, without any real semantic change. A repeat of the specialty-purchase diff,
-  done against the *decoded* state instead of raw bytes, dropped from 100–200+ changed bytes down to 8
-  — confirming this. **Every future diff test on this format should decode first (see `so2_fol.py`'s
-  `decode()`) and diff the decoded bytes, not the raw compressed bytes.** This likely obsoletes the
-  "many more controlled trials" advice above — the real fix is decoding, not more samples.
+| Raw `0x021C` / historical encoded `0x0392` | Playtime in minutes; the encoded location is not a general offset | Historical VERIFIED; compressed copy needs a decoded reference |
+| Raw `0x0220` | u8 save counter | Historical VERIFIED |
+| Raw `0x0254` | u8 second save counter | Historical VERIFIED |
+| Decoded `0x18` | u32 LE Fol | GAME-CODE VERIFIED; [evidence](SO2-FOL-INVESTIGATION.md) |
+| Historical encoded `0x04EC` | Encounter countdown candidate | Unresolved; not a reliable fixed offset |
+| Raw `0x0280..0x0290` | Previously suggested discovered-area data | LIKELY historical observation; semantics unverified |
 
 ## Specialty unlock flag (decoded-state offset `0x1A3F`)
 
@@ -456,8 +442,14 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
   compressed/decoded state; the two are architecturally separate storage, confirmed by the
   2026-09-27 story-flags check. Worth a future investigation pointed directly at this decoded
   region instead.
-- **Message speed and audio mode** — see the note above the options table. Audio has a partial lead
-  (`0x03CB`); message speed has none. Both need many more controlled trials, not another 2-3-save diff.
+- **Options — field mappings resolved 2026-09-27:** message speed, three-way sound,
+  four window RGB corners, targeting, camera work, combat motion, all eight key
+  assignments, and vibration are in the per-save decoded buffer. Verified with
+  real menu instructions, extracted labels, and bounded execution through commit,
+  staging, serializer-copy and codec paths. In-game save/reload and observable
+  effects remain untested; combat motion icon rendering has an explicit limit.
+  See [Options evidence](SO2-OPTIONS-MENU-INVESTIGATION.md). No further blind diffing
+  or separate-global-config hypothesis is needed.
 - **Private Actions / emotion levels, item-creation recipes** — not located.
 - **Field-leader / walking sprite: resident connection resolved negatively, overlay lookup still open (2026-09-27):** decoded `0x41` is a validated primary-party slot, but the traced on-foot constructor argument does not derive from its selected ID. Resident setup `800540B4..80054108` sets decoded `0x176C` (`F+24`) to `1 - ((decoded[0x19E8] >> 1) & 1)`. Field entry `80055568` and dismount `8004F234` pass that index to `80043890`, which calls an overlay constructor and stores its returned pointer at `80075360 + 4*F[24]`. Forty-eight real-instruction trials on archived S01/S02/S15, varying valid `0x41` selections, flag bit, and mode, confirm this independence through the resident wrapper. The sharper open question is whether overlay constructors `80082E5C` / `8007E540` resolve 0/1 directly to fixed graphics or perform another party lookup; their rendering instructions were not executed. `0x41`'s ultimate purpose remains unresolved; no safe leader edit is claimed. See [instruction evidence and execution limits](SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-27-controlled-object-follow-up-negative-resident-connection).
 - The reported 9-slot "Special Attack/Magic Max" cheat list was **checked; its save correspondence remains inconclusive**. The actual assignment UI uses four one-byte ability IDs at decoded `0x56C..0x56F + slot*0xD0` (secondary `+CC..CF`), with 32 candidate availability bytes at `+3C..5B`; extracted candidate/read/write instructions were executed on S01/S02/S15. This does not identify the historical nine cheat addresses. See [special-attack list check](SO2-SPECIAL-ATTACK-LIST-CHECK.md).
