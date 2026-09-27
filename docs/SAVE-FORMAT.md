@@ -366,11 +366,20 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
 
 ## Known open items (not mapped)
 
+- **Required disc — resolved 2026-09-27:** decoded byte `0x4C` is `0` for Disc 1, `1` for Disc 2; real disc-check instructions verified against both archive tables. See [disc evidence](SO2-DISC-AND-PSYNARD-CHECK.md#1-disc-1-versus-disc-2-explicit-field-found).
+- **Psynard parking — confirmed working in-game 2026-09-27:** two saved XYZ banks at `0x19B4/0x19D4/0x19B8` and `0x19BC/0x19D8/0x19C0`, selected by `0x1762`; object-13 mount swap leaves party selector `0x41` unchanged. Live-tested: editing the currently-selected bank's X/Z moves the mount to the new spot in-game (verified twice — an oversized offset sent it out of reach, a small one landed it visibly at the intended point). See [mount evidence and live test](SO2-DISC-AND-PSYNARD-CHECK.md#2026-09-27-live-test-psynard-parking-position-edit-confirmed-working-in-game).
+
 - **Party primary array — full byte map**: byte coverage is complete; semantic mapping remains partial.
   Named families cover 66/96 bytes; +4E/+50/+52 and +54/+56/+58 are two unnamed
   halfword triplets (12 bytes). +04..0F and +5A..5F remain opaque (18 bytes),
   with nonzero real-save data, so they are not established padding. INT initialization
   versus recalculation and the unnamed fields' consumers still need explanation.
+  **2026-09-27:** the generic stat accessor's selector range was found to be 1..17,
+  not 1..10 — but selectors 9..17 all resolve into the *secondary* array (revealing
+  7 previously-undocumented secondary fields), never into these primary offsets.
+  A separate whole-binary scan for any other reader/writer of the four unresolved
+  ranges also came back empty (real but non-exhaustive negative evidence). The
+  unnamed triplets and opaque ranges remain unnamed.
   See [the detailed map](SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27).
 
 - **Story/event flags** - raw `0x02B4`-`0x02E3`: checked, inconclusive as story flags; save/load copies this range to/from live state `+0x1D4..+0x203` ([code evidence](SO2-STORY-FLAGS-HEADER-CHECK.md)); no story-specific writer established.
@@ -385,7 +394,8 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
   right-shifted by 12 before storing), consistent with **scripted area-entry/transition placement**,
   not a per-frame movement update. No per-frame, controller-input-driven writer to this structure was
   found in resident entry 2576; if ordinary walking also updates it, that code likely lives in an
-  unextracted field-movement overlay (same boundary the field-leader investigation hit). Practical
+  unextracted field-movement overlay. The separate leader investigation now traces resident
+  object construction; its remaining boundary is the overlay graphics lookup. Practical
   upshot: the save very likely records *where you last warped/entered from*, not your exact live
   position after walking around — a teleport edit would probably work for entrance-to-entrance jumps,
   not for placing you at an arbitrary point mid-room. **2026-09-27 follow-up:** the area-ID table at
@@ -420,6 +430,14 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
   same stale area ID (Linga) instead of updating — checked chunk 1 for a correlated difference and
   found none, ruling that out as the cause. Leading unconfirmed theory: the cheat may bypass normal
   area-tracking where no real save point exists. See [code evidence](SO2-MAP-LOCATION-CHECK.md).
+  **2026-09-27, cross-area teleport SOLVED:** full-decoded diff of a real area transition (outside
+  Linga -> inside Linga) found the actual missing piece: a 48-byte region at `0x1B58-0x1B88`,
+  previously assumed unused padding, that fully rewrites on every real area entry. Copying that
+  region alongside the known position/area fields from a real reference save onto a different save
+  produced a **confirmed, working, in-game cross-area teleport** — loaded correctly inside Linga, no
+  black screen. Not yet a universal "any of 194 IDs" tool (requires a real reference save for the
+  target area; whether `0x1B58-0x1B88` is itself table-driven per area wasn't determined), but a real,
+  practical warp-to-a-visited-area capability now exists.
 - **The 33-byte flag run** inside each character entry, just before the skill levels — likely related to
   the specialty-unlock bitmask found at decoded offset `0x1A3F` above; not yet cross-referenced.
 - **Specialty shop tiers - mapping resolved 2026-09-27:** twelve fixed flags `0x2BC..0x2C7`,
@@ -441,14 +459,6 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
 - **Message speed and audio mode** — see the note above the options table. Audio has a partial lead
   (`0x03CB`); message speed has none. Both need many more controlled trials, not another 2-3-save diff.
 - **Private Actions / emotion levels, item-creation recipes** — not located.
-- **Field-leader / walking-sprite slot (decoded state `+0x41`)** — 2026-09-27: the validator that
-  reads/repairs this byte (`0x80052FF4..0x80053154`) is confirmed to run as part of a field/area-entry
-  routine (`0x80051A34`, which loads a map resource and writes fixed-point coordinates into the
-  known chunk-5 source `[0x80075710]`), itself triggered by story-script opcodes. This substantially
-  corroborates the field-leader theory but does not close the loop to the exact instruction that
-  picks the walking character's graphic/sprite-set - no second read of `+0x41` exists in the resident
-  code, so that consumer likely lives in an unextracted field-movement overlay. **Status: strongly
-  corroborated, not fully closed** — do not edit `+0x41` directly yet. See
-  [the party investigation's 2026-09-27 follow-up](SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-27-follow-up-validators-call-context-strongly-corroborates-the-theory-sprite-consumer-still-not-closed).
+- **Field-leader / walking sprite: resident connection resolved negatively, overlay lookup still open (2026-09-27):** decoded `0x41` is a validated primary-party slot, but the traced on-foot constructor argument does not derive from its selected ID. Resident setup `800540B4..80054108` sets decoded `0x176C` (`F+24`) to `1 - ((decoded[0x19E8] >> 1) & 1)`. Field entry `80055568` and dismount `8004F234` pass that index to `80043890`, which calls an overlay constructor and stores its returned pointer at `80075360 + 4*F[24]`. Forty-eight real-instruction trials on archived S01/S02/S15, varying valid `0x41` selections, flag bit, and mode, confirm this independence through the resident wrapper. The sharper open question is whether overlay constructors `80082E5C` / `8007E540` resolve 0/1 directly to fixed graphics or perform another party lookup; their rendering instructions were not executed. `0x41`'s ultimate purpose remains unresolved; no safe leader edit is claimed. See [instruction evidence and execution limits](SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-27-controlled-object-follow-up-negative-resident-connection).
 - The reported 9-slot "Special Attack/Magic Max" cheat list was **checked; its save correspondence remains inconclusive**. The actual assignment UI uses four one-byte ability IDs at decoded `0x56C..0x56F + slot*0xD0` (secondary `+CC..CF`), with 32 candidate availability bytes at `+3C..5B`; extracted candidate/read/write instructions were executed on S01/S02/S15. This does not identify the historical nine cheat addresses. See [special-attack list check](SO2-SPECIAL-ATTACK-LIST-CHECK.md).
 - The early-save checksum-A discrepancy is resolved; see the checksum investigation linked above.

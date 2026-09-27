@@ -1,4 +1,4 @@
-"""Star Ocean 2 location viewer/namer, backed by a small growing database.
+"""Star Ocean 2 location viewer/namer/teleporter, backed by a small growing database.
 
 Reads the confirmed area-entry fields from decoded save state (see
 docs/SO2-MAP-LOCATION-CHECK.md): X/Y/Z entrance-relative position, facing,
@@ -11,17 +11,22 @@ There is no complete area-ID -> name/coordinate table extractable from the
 disc (see the investigation doc for what was tried and ruled out) - the
 game itself only populates this data in RAM as areas are actually visited.
 So this tool builds a real database organically: every time you run `show`,
-whatever area/sub-index that save is sitting at gets recorded (first
-observed coordinates kept, not overwritten), and `name` lets you attach a
-real name once you know it. `map` dumps everything recorded so far, ready
-to plot. Data lives in area_data.json next to this file.
+whatever area/sub-index that save is sitting at gets recorded - including
+the full byte ranges confirmed necessary for a working cross-area teleport
+(see the 2026-09-27 "cross-area teleport SOLVED" section of the
+investigation doc) - and `name` lets you attach a real name once you know
+it. Once an area has a recorded reference, `teleport` can send any other
+save there, verified in-game to work correctly and to touch nothing else in
+the save. Data lives in area_data.json next to this file.
 
 Usage:
-  python so2_location.py show [box]                 print + record every save's location (default box 1)
-  python so2_location.py name <area_id> "<Name>"    record a name for an area ID
-  python so2_location.py list                       print every named area so far
-  python so2_location.py map                        dump every recorded area+sub-index, named or not
-  python so2_location.py map-html [out.html]        write a small-multiples HTML visualization
+  python so2_location.py show [box]                      print + record every save's location (default box 1)
+  python so2_location.py name <area_id> "<Name>"         record a name for an area ID
+  python so2_location.py list                             print every named area so far
+  python so2_location.py map                              dump every recorded area+sub-index, named or not
+  python so2_location.py map-html [out.html]              write a small-multiples HTML visualization
+  python so2_location.py teleport <box> <save> <area_id> --sub N --out <new card>
+                                                            warp <save> (by name suffix) to a recorded area
 """
 import argparse
 import json
@@ -39,6 +44,19 @@ FACING = 0x1760
 AREA_ID = 0x1769
 SUB_INDEX = 0x176C
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "area_data.json")
+
+# Confirmed by a full-decoded-state diff of a real area transition (outside Linga
+# -> inside Linga, 2026-09-27): copying exactly these ranges from a real save of
+# the target area onto any other save produces a working in-game teleport, with
+# zero unexpected changes anywhere else in the save. See the investigation doc's
+# "cross-area teleport SOLVED" section for the evidence.
+TELEPORT_RANGES = [
+    (0x1750, 0x1765),   # position/facing block
+    (0x1769, 0x176A),   # area id byte
+    (0x1880, 0x1881),   # small counter-like byte, changes on real area entry
+    (0x1A45, 0x1A46),   # byte next to the specialty-unlock bitmask, changes on entry
+    (0x1B58, 0x1B88),   # 48-byte region, previously assumed unused; actually active
+]
 
 
 def load_db():
@@ -65,10 +83,25 @@ def read_location(decoded):
     }
 
 
-def record_sighting(db, loc, save_name, save_title):
-    """Upsert an area entry. Keeps the FIRST observed coordinates for a given
-    sub-index (they should be constant - it's a fixed entrance point), but
-    always adds any new sub-index seen. Never touches an existing name."""
+def capture_teleport_ref(decoded):
+    """Hex-encode exactly the bytes TELEPORT_RANGES covers, in order."""
+    return "".join(decoded[a:b].hex() for a, b in TELEPORT_RANGES)
+
+
+def apply_teleport_ref(decoded, ref_hex):
+    """Write a captured reference back into a decoded buffer, in place."""
+    ref = bytes.fromhex(ref_hex)
+    pos = 0
+    for a, b in TELEPORT_RANGES:
+        n = b - a
+        decoded[a:b] = ref[pos:pos + n]
+        pos += n
+
+
+def record_sighting(db, decoded, loc, save_name, save_title):
+    """Upsert an area entry. Keeps the FIRST observed coordinates/reference for
+    a given sub-index (they should be constant - it's a fixed entrance point),
+    but always adds any new sub-index seen. Never touches an existing name."""
     area = db.setdefault(str(loc["area_id"]), {"name": None, "sightings": {}})
     key = str(loc["sub_index"])
     if key not in area["sightings"]:
@@ -77,6 +110,7 @@ def record_sighting(db, loc, save_name, save_title):
             "facing": loc["facing"],
             "first_seen_save": save_name, "first_seen_title": save_title,
             "recorded": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "teleport_ref": capture_teleport_ref(decoded),
         }
         return True
     return False
@@ -89,7 +123,7 @@ def show(box):
     for sv in s.read_saves(path):
         decoded = fol.state(sv.data)
         loc = read_location(decoded)
-        is_new = record_sighting(db, loc, sv.name, sv.title)
+        is_new = record_sighting(db, decoded, loc, sv.name, sv.title)
         changed = changed or is_new
         area = db[str(loc["area_id"])]
         name = area["name"] or "(unnamed)"
@@ -133,6 +167,44 @@ def show_map():
             sight = area["sightings"][sub_index]
             print(f"    sub {sub_index}: ({sight['x']}, {sight['y']}, {sight['z']}) facing {sight['facing']}"
                   f"  first seen: {sight['first_seen_title']}")
+
+
+def teleport(box, save_suffix, area_id, sub_index, out_path):
+    db = load_db()
+    area = db.get(str(area_id))
+    if not area or str(sub_index) not in area.get("sightings", {}):
+        raise s.SaveError(f"no recorded reference for area {area_id} sub {sub_index} - "
+                           f"'show' a save sitting there first")
+    ref_hex = area["sightings"][str(sub_index)]["teleport_ref"]
+
+    path = os.path.join(s.DEFAULT_CARD_DIR, f"{s.DEFAULT_GAME}_{box}.mcd")
+    found = [sv for sv in s.read_saves(path) if sv.name.endswith(save_suffix)]
+    if len(found) != 1:
+        raise s.SaveError("save suffix must identify exactly one save")
+    sv = found[0]
+
+    decoded = bytearray(fol.state(sv.data))
+    apply_teleport_ref(decoded, ref_hex)
+
+    compressed = fol.encode(bytes(decoded))
+    end = fol.STREAM + 2 + len(compressed)
+    if end > s.BLOCK:
+        raise s.SaveError("edited data does not fit one block")
+
+    block = bytearray(sv.data)
+    struct.pack_into("<H", block, fol.STREAM, len(compressed))
+    block[fol.STREAM + 2:end] = compressed
+    struct.pack_into("<H", block, 0x21A, end)
+    s.so2_sign(block)
+
+    if fol.state(bytes(block)) != bytes(decoded) or not s.so2_valid(bytes(block)):
+        raise s.SaveError("round-trip/checksum verification failed")
+
+    with open(out_path, "xb") as f:
+        f.write(block)
+    name = area["name"] or f"area {area_id}"
+    print(f"{sv.name}: teleported to {name} (sub {sub_index}); wrote {out_path}")
+    print("Verified round-trip + checksum. NOT loaded in-game by this run.")
 
 
 def build_map_html(out_path):
@@ -247,6 +319,12 @@ def main():
     sub.add_parser("map", help="dump every recorded area+sub-index, named or not")
     mh = sub.add_parser("map-html", help="write a small-multiples HTML visualization")
     mh.add_argument("out", nargs="?", default="area_map.html")
+    tp = sub.add_parser("teleport", help="warp a save to a recorded area (writes a NEW card file)")
+    tp.add_argument("box", type=int)
+    tp.add_argument("save", help="save name suffix, e.g. S05")
+    tp.add_argument("area_id", type=int)
+    tp.add_argument("--sub", type=int, default=1, help="sub-index/entrance (default 1)")
+    tp.add_argument("--out", required=True, help="new card file to write (never overwrites the source)")
     args = p.parse_args()
 
     if args.cmd == "show":
@@ -259,6 +337,8 @@ def main():
         show_map()
     elif args.cmd == "map-html":
         build_map_html(args.out)
+    elif args.cmd == "teleport":
+        teleport(args.box, args.save, args.area_id, args.sub, args.out)
 
 
 if __name__ == "__main__":

@@ -246,7 +246,7 @@ For six-byte stat groups, members are at the three individually listed offsets.
 | `+00..01` | i16 | Signed character ID; dispatcher sets 1..12; negative = retained absent member. |
 | `+02` | byte | Status/condition flags, explicitly zero; existing UI tests low three bits. Individual bits not mapped here. |
 | `+03` | byte | Character-specific class-like code; full 12-character values in the earlier table. Not the identity ID. |
-| `+04..0F` | 12 bytes; field boundaries unknown | Zero-fill only. Real records contain nonzero bytes; purpose unresolved, **not established padding**. |
+| `+04..0F` | 12 bytes; field boundaries unknown | Zero-fill only. Real records contain nonzero bytes; purpose unresolved, **not established padding**. No non-initializer reader/writer found — see "Unknown A/B and the opaque ranges" below. |
 | `+10..13` | word | EXP; explicit literal. |
 | `+14`, `+18`, `+1C` (`14..1F`) | 3 words | HP: base maximum, adjusted maximum, current respectively; initial values equal. Accessor/recalculation evidence below distinguishes the roles. |
 | `+20`, `+22`, `+24` (`20..25`) | 3 i16 | MP: base maximum, adjusted maximum, current; initial values equal. |
@@ -258,9 +258,9 @@ For six-byte stat groups, members are at the three individually listed offsets.
 | `+3C`, `+3E`, `+40` (`3C..41`) | 3 i16 | DEX, same structure; only +3C explicitly initialized. |
 | `+42`, `+44`, `+46` (`42..47`) | 3 i16 | INT family. **+42/+44 start zero; only +46 gets the character literal.** See the initialization/recalculation discrepancy below. |
 | `+48`, `+4A`, `+4C` (`48..4D`) | 3 i16 | GUTS: base, intermediate, equipment-adjusted final; only +48 explicitly initialized. Equipment bonuses accumulate at +4C, capped at 255 in the observed path. |
-| `+4E`, `+50`, `+52` (`4E..53`) | 3 halfwords (observed grouping) | Unknown attribute A. Only +4E explicitly initialized: 16 for Claude/Bowman/Opera, 15 for Celine. Later copies can differ (Claude 16/18/18). No supported stat name. |
-| `+54`, `+56`, `+58` (`54..59`) | 3 halfwords (observed grouping) | Unknown attribute B. Only +54 explicitly initialized: Claude 9, Celine 6, Bowman 8, Opera 7. Usually repeated in saves; not LUC/STM. No supported stat name. |
-| `+5A..5F` | 6 bytes; field boundaries unknown | Zero-fill only. Nonzero +5A and +5C seen in saves; unresolved data, not safely discardable padding. |
+| `+4E`, `+50`, `+52` (`4E..53`) | 3 halfwords (observed grouping) | Unknown attribute A. Only +4E explicitly initialized: 16 for Claude/Bowman/Opera, 15 for Celine. Later copies can differ (Claude 16/18/18). No supported stat name; the generic accessor's 17 selectors never reach this offset, and no other reader/writer was found — see "Unknown A/B and the opaque ranges" below. |
+| `+54`, `+56`, `+58` (`54..59`) | 3 halfwords (observed grouping) | Unknown attribute B. Only +54 explicitly initialized: Claude 9, Celine 6, Bowman 8, Opera 7. Usually repeated in saves; not LUC/STM. No supported stat name; same accessor/scan result as Unknown A. |
+| `+5A..5F` | 6 bytes; field boundaries unknown | Zero-fill only. Nonzero +5A and +5C seen in saves; unresolved data, not safely discardable padding. No non-initializer reader/writer found. |
 
 The named STR/CON/AGL/DEX/INT/GUTS order agrees with the historical
 `docs/SAVE-FORMAT.md` stat table recoverable at git commit `05ab081`, and with
@@ -284,6 +284,33 @@ The jump table at `800718B8`, resolved by `800333E0`, gives:
 | 2 | `20` | Primary / signed halfword read | MP |
 | 3,4,5,6,7,8 | `2A,30,36,3C,42,48` | Primary / signed halfword read | STR, CON, AGL, DEX, INT, GUTS |
 | 9,10 | `06,00` | Secondary / signed halfword read | STM, LUC |
+
+**2026-09-27 correction — the selector range is 1..17, not 1..10.** The bounds
+check at `800333E4` is `addiu a1,a1,-1` then `sltiu v0,a1,11`, i.e. `(selector-1)
+< 17`. Reading the real 17-entry jump table at `800718B8` (not assuming its
+code blocks are laid out in selector order — they are, but this was verified
+against the pointers themselves, not position) and decoding each target's
+delay-slot literal gives:
+
+| Selector | Base offset | Array / width | Field identification |
+|---:|---|---|---|
+| 11 | `0C` | Secondary / halfword | Unnamed |
+| 12 | `0E` | Secondary / halfword | Unnamed |
+| 13 | `10` | Secondary / halfword | Unnamed |
+| 14 | `12` | Secondary / halfword | Unnamed |
+| 15 | `14` | Secondary / halfword | Unnamed |
+| 16 | `16` | Secondary / halfword | Unnamed |
+| 17 | `18` | Secondary / halfword | Unnamed |
+
+**All of selectors 9..17 resolve into the secondary array (offsets `00..18`),
+none into primary beyond selectors 1..8's already-named fields (`14`, `20`,
+`2A..48`).** This closes off the accessor as a lead for primary Unknown A
+(`+4E`) and Unknown B (`+54`): the generic get/set system never reaches those
+offsets or the `+04..0F`/`+5A..5F` opaque ranges under any of its 17 valid
+selectors. It does surface seven previously undocumented secondary fields
+(`+0C,+0E,+10,+12,+14,+16,+18`, immediately following STM at secondary`+06`)
+that are out of scope here — worth a future pass, not pursued further in this
+one.
 
 Concrete addressing instructions:
 
@@ -333,6 +360,44 @@ stat or the GUTS base. That recalculation can overwrite it from the zero base.
 The trace establishes exactly what initialization does; it does not establish
 why the game seeds that member or when every caller first recalculates it.
 Do not copy the literal into +42 and call that the game's starting INT.
+
+### Unknown A/B and the opaque ranges: no reader/writer found outside init (2026-09-27)
+
+Two independent whole-binary searches, beyond the accessor above, looked for any
+non-initializer code touching primary `+4E/+50/+52` (Unknown A), `+54/+56/+58`
+(Unknown B), or the opaque `+04..0F`/`+5A..5F` ranges:
+
+1. **Pointer-provenance scan.** Every register freshly loaded from the two known
+   primary-array pointer sources (`lw reg,527C(...)` — global base — and
+   `lw reg,407C(...)` — cached selected-primary) was followed for a 40-instruction
+   window, checking for any access at the target offsets before the register is
+   reassigned. All 76 such pointer loads in the resident binary were checked; none
+   accesses any of the four target ranges outside the already-documented
+   initializer (`8007A20C..8007B1EF`), accessor (`80033218..80033500`), or
+   recalculation (`8003B1F0..8003B950`) code.
+
+2. **Raw offset scan.** Independently, every `lh`/`lhu`/`sh` instruction anywhere
+   in the resident binary with an immediate offset of `4E,50,52,54,56,58` on a
+   non-`$sp` base register was collected (22 matches outside the known ranges).
+   Tracing each one's base register back to its origin shows they all belong to a
+   single, much larger (400+ byte) runtime struct family unrelated to the 96-byte
+   save record — a battle-actor/combatant object (fields also at `+2CE, +2D8,
+   +2E0, +3A8, +3D0, +3F8`, an embedded state-machine byte at `+54` distinct from
+   the save record's own `+54`, and 3D distance/collision math reading a
+   list-element `+52`). Representative traced sites: `80032CAC` (state-machine
+   store, part of an object whose `+58` sub-object is constructed by
+   `800364E0`/`8003D95C` — the same initializer also reachable from
+   `80041B54`/`8003d95c`), `8003D85C`/`8003D938` (a `+2E0`/`+3A8`-sized combat
+   object), and `8006A4AC` (list-element read inside targeting-range math). None
+   of these structs is the party primary record; the offset overlap is
+   coincidental.
+
+Both searches are negative results, not proof of non-use — a pointer arriving as
+a function argument rather than a fresh load from `527C`/`407C`, or an access
+outside a 40-instruction lookahead, would not be caught. But combined with the
+accessor finding above, every currently-known avenue into these bytes has been
+checked and found empty. Unknown A, Unknown B, and both opaque ranges remain
+genuinely unnamed.
 
 ### Secondary LUC/STM and real-save checks
 
@@ -584,66 +649,151 @@ invalid selection, `80053100..80053124` finds a valid first-four member and
 stores its index at +41. If no first-four member exists, earlier code can
 move a reserve into slot 0 using `800531DC`.
 
-This establishes that a separate selected-slot field exists and is repaired;
-**the final walking-sprite consumer has not been traced here**, so +41 is a
-strong field-leader candidate, not a claim that every field scene uses it.
-Do not assume changing secondary slot 0 alone selects the walking character.
+### 2026-09-27 controlled-object follow-up: negative resident connection
 
-### 2026-09-27 follow-up: validator's call context strongly corroborates the theory, sprite consumer still not closed
+**The ordinary on-foot construction path does not pass `primary[S[41]].id`.
+It passes `F[24]`, initialized to 0 or 1 from `G[0]` bit 1.** Here
+`S=[80075270]`, `F=[80075710]`, `G=[80075704]`; their relevant decoded
+positions are `0041`, `176C`, and `19E8`. The previous "strongly corroborated
+field-leader" conclusion was too strong and is superseded. `0x41` is proven
+to select a primary record for validation against the first four members;
+its ultimate gameplay/UI purpose remains unresolved.
 
-The validator (`0x80052FF4..0x80053154`, whole function disassembled) is the
-**only** code in resident entry 2576 that reads or writes decoded-state
-`[0x80075270]+0x41`. (Three unrelated `sb ...,0x41(s0)` hits inside Bowman's,
-Ashton's, and Noel's per-character initializers were checked and ruled out:
-`$s0` there is the **secondary** record pointer, and `+0x41` relative to
-*that* base is one byte of the unrelated 32-entry ability-availability array
-at secondary `+0x3C..0x5B` — see docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md. Pure
-numeric coincidence, confirmed by disassembling the surrounding stores,
-including the adjacent `sb ...,0xCC($s0)` ability-assignment write.)
+The resident initialization supplies a literal 1, reads the global flag, and
+sets complementary control/alternate object indices:
 
-The validator has exactly one caller in resident code, `0x80051A48`, inside a
-function at `0x80051A34` whose body: frees a couple of cached resources,
-loads resource ID `0x851` via the same resource-dispatch pattern used
-elsewhere in this project (`jal 0x80011B98`), and then manipulates the live
-buffer at `[0x80075710]` - the confirmed source of decoded chunk 5's first
-`0x2A0` bytes (see docs/SO2-MAP-LOCATION-CHECK.md) - copying four words
-through a `sra $v0,$v0,0xC` (divide-by-4096, i.e. PS1 20.12 fixed-point)
-transform into that buffer at `+8/+0xC/+0x10` plus a halfword at `+0x18`,
-selected from a pointer table at `[0x80075360]` indexed by a byte at
-`[0x80075710]+0x24`. This is the shape of "look up area N's entry data and
-convert its fixed-point coordinates into the live field-position buffer" -
-i.e. `0x80051A34` is a strong candidate for the actual **field/area-entry**
-routine, not a menu.
+```text
+80053FDC lw    v1,570C(v1)
+80053FE0 addiu a0,zero,1       ; retained through the following slice
+8005400C lui   v1,8007
+80054010 lw    v1,5704(v1)     ; G
+...
+800540B4 lbu   v0,0(v1)
+800540BC srl   v0,v0,1
+800540C0 andi  v0,v0,1
+800540C4 beqz  v0,800540EC
+800540C8 nop
+800540CC lui   v0,8007
+800540D0 lw    v0,5710(v0)
+800540D8 sb    zero,24(v0)     ; bit set: control index 0
+800540DC lui   v0,8007
+800540E0 lw    v0,5710(v0)
+800540E4 j     8005410C
+800540E8 sb    a0,25(v0)       ; alternate index 1, delay slot
+800540EC lui   v0,8007
+800540F0 lw    v0,5710(v0)
+800540F8 sb    a0,24(v0)       ; bit clear: control index 1
+800540FC lui   v0,8007
+80054100 lw    v0,5710(v0)
+80054108 sb    zero,25(v0)     ; alternate index 0
+```
 
-`0x80051A34` itself has three resident callers: `0x8004D8E0`, `0x80050D94`,
-and `0x8006BD14`. The third sits inside a jump-table-dispatched handler
-(`lw v0,0x3968(at); jr v0` - the same jump-table shape used by the
-recruit/remove script opcodes) that reads a counter at `[0x800759A0]`, rolls
-a 2-outcome RNG via `0x800104D4`, and calls `0x80051A34` with
-`a0=[0x800075284]` (an area/destination ID) and `a1=`the RNG result - i.e. a
-story-script-triggered "warp into one of two possible field entrances"
-action. This is strong, real evidence that the leader-validator runs as part
-of genuine field/map-entry processing, not an unrelated menu screen.
+Thus `F[24] = 1 - ((G[0] >> 1) & 1)`. This is a flag-derived object index,
+not a primary-party slot lookup. The 0/1 choice is consistent with a protagonist
+choice, but this pass does **not** assign a definitive Claude/Rena graphic
+mapping or establish that editing this global flag is safe.
 
-**What this does and does not establish.** It substantially raises confidence
-that `+0x41` is the real field-leader selector - it is now tied to an actual
-area-entry code path, triggered by story-script opcodes, not just a
-similarly-shaped repair routine found in isolation. It does **not** close the
-loop to a specific instruction that reads `+0x41` to choose which character's
-graphic/sprite-set is loaded for on-screen walking control - no second read
-site of `+0x41` exists anywhere in resident entry 2576, so that final
-consumer (if it reads `+0x41` at all, rather than some copy of it) must live
-in a field-movement/rendering overlay not identified in this pass. A quick
-check of already-extracted specialty overlays (entries 2980-3022) for
-stray `+0x41` byte accesses found two files with hits, but those overlays'
-correct load addresses were not independently verified here (unlike the
-`0x8007E000` addresses established by name for specific menu/shop/save
-overlays), so disassembling them at an assumed address produced unreliable
-results and was not pursued further - a genuine scope boundary, not a
-negative finding about those files. **Status: strongly corroborated, not
-fully closed.** Editing `+0x41` directly is still not recommended without
-first locating the actual sprite/graphic-set consumer, exactly per the
-original caution above about the load-screen-preview-style cache problem.
+The field-entry construction tail reads that index. In nonzero field mode,
+it skips walking-object creation only when the riding bit is set:
+
+```text
+800554F8 lw    v0,570C(v0)
+80055500 lw    v1,5710(v1)
+80055504 lbu   v0,68(v0)       ; mode
+80055508 lbu   s0,24(v1)       ; controlled-object index
+8005550C beqz  v0,80055538
+...
+80055518 lw    v0,5704(v0)
+80055520 lbu   v0,1(v0)
+80055528 srl   v0,v0,4
+8005552C andi  v0,v0,1
+80055530 bnez  v0,80055590     ; riding: skip walking construction
+...
+80055540 move  a1,s0          ; destination pointer-table slot
+80055544 move  a2,s0          ; object construction selector, same value
+80055548 addiu a3,sp,58       ; position vector
+80055568 jal   80043890
+8005556C sw    v1,20(sp)      ; flags 0001000F, delay slot
+```
+
+`80043890` computes `s2=80075360+4*a1` at `800438EC..F8`, removes an
+existing object if present, and preserves `a2` in `s3` at `800438C0`.
+For nonzero mode it allocates `0x44C` bytes; for zero mode `0x3FC` bytes.
+The corresponding constructor calls and pointer stores are:
+
+```text
+80043938 move  a0,v0          ; allocated object
+8004393C move  a1,s3          ; original a2 = F[24]
+80043940 move  a2,s4          ; position vector
+8004395C jal   80082E5C       ; nonzero-mode overlay constructor
+80043960 sw    s7,1C(sp)
+80043964 j     800439A4
+80043968 sw    v0,0(s2)       ; returned pointer becomes table[F[24]]
+...
+80043974 move  a0,v0
+80043978 move  a1,s3          ; same selector in zero mode
+80043998 jal   8007E540       ; other overlay constructor
+8004399C sw    s7,1C(sp)
+800439A0 sw    v0,0(s2)
+```
+
+Dismount uses the same mechanism, not a fresh lookup of `0x41`:
+`8004F17C..8004F1AC` returns the mount pointer to table slot 13;
+`8004F1EC` clears the controlled slot; `8004F1F0` reads `F[24]` into `s0`;
+`8004F1FC/200` set `a1=a2=s0`; `8004F234/238` call `80043890` with
+flags `0001000F`. Its returned walking-object pointer occupies the vacated slot.
+The existing Psynard transfer therefore connects to this flag-derived selector,
+not directly to the validated party-slot byte.
+
+### Executed evidence and remaining boundary
+
+Run `python artifacts/so2-field-control/verify.py`. The
+[bounded source](../artifacts/so2-field-control/verify.py),
+[byte-bearing instruction listing](../artifacts/so2-field-control/evidence.asm),
+and [results with source hashes](../artifacts/so2-field-control/results.json)
+use only the existing resident entry 2576 (LBA 30736, load `8002F810`) and
+save codec entry 2998. No new extraction or source-save write was performed.
+
+The source is the existing workspace card
+`artifacts/so2-inventory/source-live-card-20260926.mcd`. S01/S02/S15 are decoded
+directly from its checksum-valid blocks; these are that archived card's versions,
+not assertions about today's external live saves. Real extracted encoder and
+decoder instructions round-trip each complete state. For each save, the harness
+changes `S[41]` to every valid first-four slot, executes the **complete validator**,
+and verifies the selected byte survives and the primary array is unchanged.
+It then executes initialization `80053FD8..80054108`, field construction
+`800554F4..8005556C` through the **real resident wrapper**, and, in nonzero mode,
+dismount `8004F17C..8004F238` through that wrapper as well.
+
+| Archived save | First-four IDs used as selections | Constructor selector with G[0] bit 1 clear | With bit 1 set |
+|---|---|---:|---:|
+| S01 | 1, 9, 4, 2 | 1 for every selection | 0 for every selection |
+| S02 | 1, 7, 5, 2 | 1 for every selection | 0 for every selection |
+| S15 | 1, 5, 9, 2 | 1 for every selection | 0 for every selection |
+
+**48 trials pass** (three saves, four selections, two flag values, two modes).
+Each asserts the actual constructor argument and the pointer-table store;
+nonzero-mode trials also assert the mount-pointer transfer and replacement.
+Modified flag/selector values and allocated pointers are isolated harness inputs,
+not captured game states. Branch delay slots execute; loads use the established
+immediate-load interpreter model. The allocator returns a synthetic allocation;
+the two overlay constructors are explicit hooks that record arguments and return
+that pointer. Their graphics code is **not executed**. No unrelated calls are
+silently skipped.
+
+This closes the proposed **resident `0x41 -> selected party ID -> construction
+argument` connection negatively**. It does not prove that an overlay cannot
+subsequently consult party state: whether `80082E5C` / `8007E540` resolve selector
+0/1 directly to fixed graphics or perform a further party lookup is the precise
+remaining question. Do not describe the observed 0/1 as a proven graphic-set ID,
+or claim all scenes ignore `0x41`. No leader editor was added.
+
+The old call-context argument also requires correction: `80051A48` really calls
+the validator, but `80011B98` is the archive-size getter (for entry `851` here),
+and table `80075360` contains live objects, not area entrances. Copying their
+fixed-point positions does not establish an entrance-definition lookup. Nor does
+the RNG caller alone establish a randomized warp. Those earlier interpretations
+cannot serve as evidence for a walking-sprite role of `0x41`.
 
 ## Why the two experiments were insufficient
 

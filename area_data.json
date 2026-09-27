@@ -50,6 +50,20 @@
       }
     }
   },
+  "140": {
+    "name": null,
+    "sightings": {
+      "1": {
+        "facing": 0,
+        "first_seen_save": "BASCUS-94421S02-S01",
+        "first_seen_title": "SO2 01 36:42 Rena LV255",
+        "recorded": "2026-09-27 07:25:01",
+        "x": -0.06,
+        "y": 0.0,
+        "z": -0.2
+      }
+    }
+  },
   "148": {
     "name": "Love Alley - Cave of Trials L2",
     "sightings": {

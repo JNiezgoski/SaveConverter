@@ -2,6 +2,17 @@
 
 Investigation date: 2026-09-26. US PS1, SCUS-94421 / BASCUS-94421.
 
+**2026-09-27 correction (from [SO2-DISC-AND-PSYNARD-CHECK.md](SO2-DISC-AND-PSYNARD-CHECK.md)):**
+two claims made later in this doc are superseded by that investigation's direct disassembly:
+(1) `0x80011b98` was called a UI/object-dispatch function in the area-name search below — it is
+actually the archive-entry-size getter used for disc detection, unrelated to UI dispatch. (2) The
+"194-entry area-entrance definitions" table at `0x80075360` is more general than described here —
+it is a live-object pointer table (used for party members, the Psynard mount, etc.), not
+exclusively area-entrance data; the 194 bound is an index limit on that general table, not a count
+of areas specifically. The empirical area-transition behavior documented below (area ID changing on
+real triggers, the confirmed position fields, the working cross-area teleport) is unaffected — only
+the explanation of the underlying table's full purpose was too narrow.
+
 ## Finding
 
 **No field was positively identified as current map ID, room/area ID, or
@@ -659,3 +670,80 @@ future session.
 No source save or card under `C:/CodeTesting/StarOcean2/SaveGames` other
 than card slot 2 was modified. Ad-hoc analysis script, not preserved as a
 permanent tool.
+
+## 2026-09-27: cross-area teleport SOLVED — the missing field found and confirmed in-game
+
+Diffed the full decoded state of the one real, successful area transition
+already on hand (S05, outside Linga, area 0 -> S06, inside Linga, area 128 -
+both real saves from earlier tonight's walk, not edits) at every byte, not
+just the known position/area fields. Result: **76 total decoded bytes
+differ**, breaking down as:
+
+- `[0x000,0x1A0)` (chunk 1): 2 bytes, both already-known mundane counters.
+- Position/facing/area struct (`0x1750-0x1769`): the already-known fields,
+  changing as expected.
+- **`0x1880`: `0xFA -> 0xFC`** (+2). Previously flagged in earlier project
+  notes as an unconfirmed possible counter, seen alongside a menu-cursor
+  field - now has a real area-transition data point.
+- **`0x1A45`: `0x00 -> 0x02`**. Sits immediately after the already-known
+  specialty-unlock bitmask region (`0x1A3F`/`0x1A40`) - a real, unexplored
+  neighbor, possibly area-related, not investigated further here.
+- **`[0x1B58,0x1B88)` - all 48 bytes completely rewritten.** This is the
+  single biggest finding: earlier project notes (predating this session)
+  assumed this trailing region was "likely uninitialized/unused." That
+  assumption is now disproven by direct evidence - it is fully active data
+  that the game rewrites on every real area entry.
+- `[0x1340,0x1343)` (inside the party/inventory chunks): 3 bytes changed,
+  unexplained, possibly coincidental/unrelated (an older, separately-flagged
+  "Knowledge-specific recurring diff" mystery from earlier in the project) -
+  not incorporated into the fix below and apparently not required for it to
+  work.
+
+### Corrected edit: copy the real region, not just the known fields
+
+Built a second teleport test: took the same S05 (area 0) as the edit
+target, but this time copied `[0x1750,0x1765)`, `[0x1769,0x176A)`,
+`0x1880`, `0x1A45`, and **`[0x1B58,0x1B88)`** from S06 (the real, working
+Linga save) - i.e. copied every field the actual diff above showed changing
+during a genuine transition, not a guessed subset. Re-encoded, signed,
+verified round-trip, wrote to card slot 2 as a new save, and the user
+loaded it in DuckStation.
+
+**Result: loaded correctly, placing the character inside the town of
+Linga.** No black screen, no wrong music (none reported) - a fully working
+cross-area teleport, confirmed in-game. This is the first successful
+cross-area save-edit teleport in this project, following the first
+same-area reposition success earlier the same night.
+
+### What this means practically
+
+A real, working "warp to area N" edit is possible **when a real reference
+save for the target area already exists** - copy that save's
+`0x1750-0x1769`, `0x1880`, `0x1A45`, and `0x1B58-0x1B88` onto any other
+save. This is not yet a universal "type in any of the 194 IDs and go" tool,
+because the `0x1B58-0x1B88` region's *general* rule (is it itself driven by
+a per-area lookup table somewhere, analogous to the confirmed entrance-
+position table at `0x80075360`? or does it hold something more dynamic,
+like loaded-resource handles that only make sense copied from a real
+session?) was not determined here - only that copying a real save's exact
+bytes works. Practical workflow this enables today: visit any area once
+(even via the save-anywhere cheat), keep that save as a permanent
+"reference," and warp any other save to that same area afterward without
+needing to travel there again.
+
+**Next step, if pursued:** trace what actually computes/writes
+`0x1B58-0x1B88` during a real transition (the same write sites already
+identified for the position struct are the natural place to keep looking -
+they were not fully traced end-to-end for this specific region in this
+pass) to determine whether it is itself table-driven per area ID, which
+would upgrade this into a true universal warp tool.
+
+Test scripts: ad-hoc (`diff_real_transition.py`-style full-decoded diff,
+then a corrected teleport-edit script copying the ranges above) - not
+preserved as permanent tools since a proper `so2_teleport.py` should encode
+the *general* rule once `0x1B58-0x1B88`'s source is understood, rather than
+hardcoding "copy from save X." Backup:
+`cards/_backup/card2-before-warp-test2-*.mcd`. Source data for both S05 and
+S06 came from the untouched backup `card2-before-warp-test-20260927-051737.mcd`
+(card slot 2 had since been cleared); no file under
+`C:/CodeTesting/StarOcean2/SaveGames` other than card slot 2 was modified.
