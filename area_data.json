@@ -152,6 +152,19 @@
         "y": 0.0,
         "z": 0.08
       },
+      "1s808": {
+        "facing": 1024,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:37 Rena LV255",
+        "name": "Dragon's Nest (Cave of Trials L11)",
+        "recorded": "2026-09-27 18:52:24",
+        "scene": 808,
+        "sub_index": 1,
+        "teleport_ref": "620300000000000068ffffff314600000004280344803d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "x": 0.21,
+        "y": 0.0,
+        "z": -0.04
+      },
       "1sNone": {
         "facing": -1016,
         "first_seen_save": "BASCUS-94421S02-S15",
