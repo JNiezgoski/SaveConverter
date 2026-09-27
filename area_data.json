@@ -152,6 +152,19 @@
         "y": 0.0,
         "z": 0.08
       },
+      "1s807": {
+        "facing": -18,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:38 Rena LV255",
+        "name": "Cave of Trials - Escape Point (near L11, Dragon's Nest)",
+        "recorded": "2026-09-27 18:53:51",
+        "scene": 807,
+        "sub_index": 1,
+        "teleport_ref": "39faffff000000000b00000000800080eeff270344803e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "x": -0.36,
+        "y": 0.0,
+        "z": 0.0
+      },
       "1s808": {
         "facing": 1024,
         "first_seen_save": "BASCUS-94421S02-S02",
