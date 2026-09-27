@@ -15,7 +15,7 @@ screens.
 | SP (skill points) — every internal form, all 12 characters | ✅ Verified |
 | Talents (all 10) | ✅ Verified |
 | Item ID table, inventory counts for items already owned (max 20) | ✅ Verified |
-| Giving a character an item type they've **never** owned before | ✅ Solved via actual game-code execution (`so2_inventory.py`) — [details](docs/SO2-INVENTORY-ADD-INVESTIGATION.md) |
+| Giving a character an item type they've **never** owned before | ✅ Verified in-game (via `so2_inventory.py`) — Seraphic Garb 0→20 confirmed equipped and usable on save 15 — [details](docs/SO2-INVENTORY-ADD-INVESTIGATION.md) |
 | Equipment — full 7-slot characters (incl. Noel, Chisato) | ✅ Verified |
 | Equipment — compressed 6-slot (missing one accessory) | ✅ Verified |
 | Fol (money) | ✅ Verified in-game (via `so2_fol.py` — see below) |
@@ -57,14 +57,6 @@ never poke raw bytes there directly.
 
 "Disassembly" = disc image + disassembly + existing save files only, no emulator run required.
 "In-game testing" = the result has to actually be booted and observed in-game to confirm it.
-
-### Done, awaiting in-game testing
-
-| Task | Verified? | Validation |
-|---|---|---|
-| Dias/Opera "best gear" equip on save 15 | Unverified | In-game testing needed — not yet booted since the edit |
-| Angel Armband → 20 on save 15 | Unverified | In-game testing needed |
-| Seraphic Garb 0 → 20 on save 15 (first-ever item) | Unverified — disassembly-verified only (actual add-routine instructions executed and matched) | In-game testing needed |
 
 ### Not started
 
