@@ -10,6 +10,15 @@ will read close to (0, 0, 0).
 There is no complete area-ID -> name/coordinate table extractable from the
 disc (see the investigation doc for what was tried and ruled out) - the
 game itself only populates this data in RAM as areas are actually visited.
+
+CAVEAT (2026-09-27, docs/SO2-MAP-TERRAIN-INVESTIGATION.md pass 3): decoded
+area_id (0x1769) is NOT proven to be a unique location key - real saves show
+the same area_id value with clearly different underlying scenes. Every
+sighting now also records a "scene" value (decoded 0x1762) as extra context;
+area_id remains the database's grouping key for now since re-keying on an
+unconfirmed hypothesis would be premature, but don't treat two sightings
+under the same area_id as definitely the same place until scene is checked
+too.
 So this tool builds a real database organically: every time you run `show`,
 whatever area/sub-index that save is sitting at gets recorded - including
 the full byte ranges confirmed necessary for a working cross-area teleport
@@ -43,6 +52,13 @@ X, Y, Z = 0x1750, 0x1754, 0x1758
 FACING = 0x1760
 AREA_ID = 0x1769
 SUB_INDEX = 0x176C
+# 2026-09-27 terrain investigation, pass 3 (docs/SO2-MAP-TERRAIN-INVESTIGATION.md):
+# AREA_ID is NOT a unique location key - real saves show the same AREA_ID value
+# with clearly different underlying locations. The real scene/location selector
+# traced through the terrain-loading code lives here instead. Recorded from now
+# on as extra context on every sighting so real data can settle which field (or
+# combination) actually distinguishes places - not yet used as a database key.
+SCENE = 0x1762
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "area_data.json")
 
 # Confirmed by a full-decoded-state diff of a real area transition (outside Linga
@@ -77,9 +93,11 @@ def read_location(decoded):
     facing = struct.unpack_from("<h", decoded, FACING)[0]
     area_id = decoded[AREA_ID]
     sub_index = decoded[SUB_INDEX]
+    scene = struct.unpack_from("<h", decoded, SCENE)[0]
     return {
         "x": x / 4096, "y": y / 4096, "z": z / 4096,
         "facing": facing, "area_id": area_id, "sub_index": sub_index,
+        "scene": scene,
     }
 
 
@@ -107,7 +125,7 @@ def record_sighting(db, decoded, loc, save_name, save_title):
     if key not in area["sightings"]:
         area["sightings"][key] = {
             "x": round(loc["x"], 2), "y": round(loc["y"], 2), "z": round(loc["z"], 2),
-            "facing": loc["facing"],
+            "facing": loc["facing"], "scene": loc["scene"],
             "first_seen_save": save_name, "first_seen_title": save_title,
             "recorded": time.strftime("%Y-%m-%d %H:%M:%S"),
             "teleport_ref": capture_teleport_ref(decoded),
@@ -128,7 +146,7 @@ def show(box):
         area = db[str(loc["area_id"])]
         name = area["name"] or "(unnamed)"
         print(f"{sv.name}  {sv.title}")
-        print(f"  area {loc['area_id']} sub {loc['sub_index']}: {name}" + ("  [new sighting recorded]" if is_new else ""))
+        print(f"  area {loc['area_id']} sub {loc['sub_index']} scene {loc['scene']}: {name}" + ("  [new sighting recorded]" if is_new else ""))
         print(f"  pos ({loc['x']:.2f}, {loc['y']:.2f}, {loc['z']:.2f})  facing {loc['facing']}")
     if changed:
         save_db(db)
@@ -165,7 +183,8 @@ def show_map():
         print(f"area {area_id}: {label}")
         for sub_index in sorted(area["sightings"], key=int):
             sight = area["sightings"][sub_index]
-            print(f"    sub {sub_index}: ({sight['x']}, {sight['y']}, {sight['z']}) facing {sight['facing']}"
+            scene = sight.get("scene", "?")
+            print(f"    sub {sub_index} scene {scene}: ({sight['x']}, {sight['y']}, {sight['z']}) facing {sight['facing']}"
                   f"  first seen: {sight['first_seen_title']}")
 
 
