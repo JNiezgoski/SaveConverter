@@ -156,6 +156,19 @@
   "140": {
     "name": null,
     "sightings": {
+      "1s756": {
+        "facing": 26,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:28 Rena LV255",
+        "name": "Cave of Trials - Escape Point (near L6, Burglar's Nest)",
+        "recorded": "2026-09-27 18:44:43",
+        "scene": 756,
+        "sub_index": 1,
+        "teleport_ref": "99fbffff000000006c010000000000001a00f402448c1e002ecf7c55dc7b49020c30c5dd7a0c00cc262f5cc5bb774431cfb0cd577c91221221c5aa5daa6751c00c9a980ab10841df",
+        "x": -0.28,
+        "y": 0.0,
+        "z": 0.09
+      },
       "1sNone": {
         "facing": 0,
         "first_seen_save": "BASCUS-94421S02-S01",
