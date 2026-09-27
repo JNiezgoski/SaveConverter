@@ -134,6 +134,19 @@
   "148": {
     "name": "Love Alley - Cave of Trials L2",
     "sightings": {
+      "1s716": {
+        "facing": 1024,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:16 Rena LV255",
+        "name": null,
+        "recorded": "2026-09-27 18:35:15",
+        "scene": 716,
+        "sub_index": 1,
+        "teleport_ref": "aa02000000000000d5ffffff000000000004cc0244940200130013003303013333130000003033030033030100130000330301300100003033330000000000000000000000000000",
+        "x": 0.17,
+        "y": 0.0,
+        "z": -0.01
+      },
       "1sNone": {
         "facing": 1024,
         "first_seen_save": "BASCUS-94421S02-S13",
