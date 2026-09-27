@@ -671,6 +671,19 @@ No source save or card under `C:/CodeTesting/StarOcean2/SaveGames` other
 than card slot 2 was modified. Ad-hoc analysis script, not preserved as a
 permanent tool.
 
+**2026-09-27 later same day, direct confirmation via the scene fix:** a real
+save-anywhere save made in "Single Path Cave" (Cave of Trials L3) read back
+as area 128 (Linga) exactly as this anomaly predicts. But decoded `0x1762`
+("scene" - see [SO2-MAP-TERRAIN-INVESTIGATION.md](SO2-MAP-TERRAIN-INVESTIGATION.md)'s
+third pass, which found `0x1769` is not a unique location key) read **727**,
+distinct from real Linga's **183** and the nearby "Sanctuary of Linga" cave's
+**402**. `so2_location.py` now keys sightings by `(sub_index, scene)` rather
+than `area_id` alone specifically because of this - it correctly recorded
+Single Path Cave as its own place instead of silently merging it into Linga.
+This doesn't yet explain *why* `0x1769` gets stuck while `0x1762` keeps
+tracking correctly, but it confirms the practical impact and gives a working
+mitigation.
+
 ## 2026-09-27: cross-area teleport SOLVED — the missing field found and confirmed in-game
 
 Diffed the full decoded state of the one real, successful area transition
