@@ -210,7 +210,7 @@ def show_map():
         area = db[area_id]
         label = area["name"] or "(unnamed)"
         print(f"area {area_id}: {label}")
-        for sight in sorted(area["sightings"].values(), key=lambda sg: (sg["sub_index"], sg["scene"])):
+        for sight in sorted(area["sightings"].values(), key=lambda sg: (sg["sub_index"], sg["scene"] if sg["scene"] is not None else -1)):
             place = sight.get("name") or label
             print(f"    sub {sight['sub_index']} scene {sight['scene']}: {place}"
                   f"  ({sight['x']}, {sight['y']}, {sight['z']}) facing {sight['facing']}"
@@ -285,7 +285,7 @@ def build_map_html(out_path):
         def sx(x): return 16 + (x - x0) / (x1 - x0) * (w - 32)
         def sz(z): return 16 + (z - z0) / (z1 - z0) * (h - 32)
         dots = []
-        for p in sorted(pts.values(), key=lambda sg: (sg["sub_index"], sg["scene"])):
+        for p in sorted(pts.values(), key=lambda sg: (sg["sub_index"], sg["scene"] if sg["scene"] is not None else -1)):
             cx, cz = sx(p["x"]), sz(p["z"])
             place = p.get("name") or label
             dots.append(
