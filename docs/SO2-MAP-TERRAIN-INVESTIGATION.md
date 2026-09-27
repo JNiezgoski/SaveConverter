@@ -7,13 +7,18 @@ finding worth flagging separately"), which located and extracted the
 field/movement-engine overlay containing real terrain code. This is not in the
 save file at all — it is per-area data loaded from the disc.
 
-**Status: real progress, genuinely partial.** The terrain-triangle record
-format is now understood field-by-field from actual executed-instruction
-evidence. The resident RAM structures that hold a loaded area's terrain are
-identified. What is **not** yet found: which disc archive entry supplies this
-data for any specific area, or how area ID selects it. No numeric cross-check
-against a known real save position was possible this pass for that reason —
-see "What's still open" below.
+**Status: real progress, genuinely partial, across two passes.** The
+terrain-triangle record format is understood field-by-field from actual
+executed-instruction evidence. The resident RAM structures that hold a
+loaded area's terrain are identified, and a second pass traced one layer
+deeper: terrain is confirmed as asset type 0 of a 13-type per-area dispatch
+table, backed by a 12-slot loaded-area cache. What is **still not** found:
+which disc archive entry supplies terrain data for any specific area, or how
+area ID ultimately selects it — that link sits one level deeper still, in
+whatever populates the cache/current-area-table on an actual fresh load, not
+yet located. No numeric cross-check against a known real save position was
+possible either pass for that reason — see "What's still open" and the
+2026-09-27 second-pass section below.
 
 All source material: `artifacts/so2-field-control/field-overlay-full.asm`
 (the field-engine overlay, functions below) and
@@ -171,3 +176,101 @@ position is sub-unit precise on top of that grid.
   everything above is static tracing of real, extracted instructions, one
   level less verified than this project's usual "executed and asserted"
   standard.
+
+## 2026-09-27 second pass: traced one layer deeper into `s4`, mapping still open
+
+**Real, concrete progress; the area-ID → archive-entry link is still not
+found.** This chases exactly the "still open" item above. All addresses are
+from `artifacts/so2-options-menu/resident.asm` (always-resident code) unless
+noted; nothing new was extracted, and this is disassembly tracing only — no
+interpreter/harness execution, same caveat as the rest of this document.
+
+**Terrain is confirmed as asset type 0 of 13.** The area asset-table dispatch
+jump table lives in RAM data at `[0x80072f8c]` (read directly from the
+already-extracted `artifacts/so2-options-menu/ram-disc1.bin` at file offset
+`0x72f8c`, 13 consecutive `u32` pointers):
+
+```text
+type 0  -> 8004ad94   (terrain loader, this document's subject)
+type 1  -> 8004afdc
+type 2  -> 8004b0a8
+type 3  -> 8004b0c0
+type 4  -> 8004b278
+type 5  -> 8004b104
+type 6  -> 8004b14c
+type 7  -> 8004b194
+type 8  -> 8004b194   (shares a handler with 7, 9, 10)
+type 9  -> 8004b194
+type 10 -> 8004b194
+type 11 -> 8004b1d4
+type 12 -> 8004b21c
+```
+
+This dispatch is reached at `8004AD6C..8004AD90` in the loader function
+(`8004ACA0`): it walks a per-area asset table `s7` (element stride 8 bytes:
+`+4` = type index, checked `< 0xD`; `+8` = a byte offset added to `s7` to
+locate that type's own data blob, called `s4` in the prior pass) and jumps to
+`jump_table[type*4]` for each present entry. `s4` is therefore **not an
+archive index at all — it's a pointer into the current area's already-loaded
+asset bundle**, and the fetch calls (`80012154`/`800121a8`) that follow are
+pulling sub-chunks out of that already-resident bundle, not hitting the disc
+directly at this point. The real disc-archive selection happens earlier,
+when that bundle itself is loaded.
+
+**Traced the asset-table source one more level up: a 12-slot loaded-area
+cache.** `8004ACD8`'s call to `80056ACC(a0=area_selector, a1=&stack_temp,
+a2=0)` is a linear search (real disassembly at `80056ACC..80056B40`) over a
+fixed 12-entry table at `[80075768]`, stride `0x14` (20) bytes per entry:
+
+| Entry offset | Field | Evidence |
+|---|---|---|
+| `+0x00` (u8) | Active/loaded flag — 0 skips the slot | `80056AE4/AEC` |
+| `+0x08` (u32) | Cache key, compared equal to the search input | `80056AF4/AFC` |
+| `+0x0C` (u32) | A second stored value, returned via the caller's optional `a1` out-pointer | `80056B18/B20` |
+| `+0x10` (u32) | The cached asset-table pointer, always the function's return value on a hit | `80056B24` |
+
+If found (a matching, active slot), `8004ACA0` uses that slot's `+0x10`
+pointer as `s7` directly — this is a real "already loaded, reuse it" fast
+path for revisiting an area, consistent with adjacent-area caching. If not
+found, it falls back to `s7 = [80075738]`, a separate global that must hold
+the asset table for whichever area is *currently* being freshly loaded from
+disc.
+
+**Where the trail goes cold.** Locating the code that fills `[80075738]` (or
+a fresh slot in the `[80075768]` cache) on an actual cache miss — the point
+where a real disc archive-entry number must be chosen from the area
+ID — was not completed this pass. `[80075738]` is written and read from
+dozens of places throughout the resident code (over 40 references), and is
+evidently a generic "current context" pointer reused across multiple
+subsystems, not a narrowly-scoped variable that makes the real load site
+easy to isolate by reference count alone; distinguishing the real "fresh
+area load" writer from the rest needs tracing forward from the
+already-documented area-transition code in
+[SO2-MAP-LOCATION-CHECK.md](SO2-MAP-LOCATION-CHECK.md) (the teleport-ranges
+work), not backward from this generic pointer.
+
+**Traced the cache-search's own caller one level further, inconclusively.**
+`8004ACA0` (this whole loader) is called from exactly one site,
+`80055008` (`jal 0x8004aca0`, `a1 = s0`), where `s0` comes from
+`lh $s0, 0x2c($sp)` — a halfword loaded from that caller's own stack frame,
+strongly suggestive of an area/room identifier but **not confirmed identical
+to decoded save byte `0x1769`** in this pass; that caller function itself
+starts well before the traced region and was not walked back to its own
+entry point or its caller.
+
+**Data-quality note for the eventual cross-check.** `area_data.json`'s
+currently recorded live sightings are almost all at or extremely near local
+origin (X/Z within ~0.2, Y = 0.0) for every area except the overworld (area
+0) — likely because these were recorded right at a fresh area-entry spawn
+point rather than a distinctive mid-room position. This isn't enough
+positional variation to meaningfully distinguish one decoded triangle from
+another once real per-area terrain data can be decoded. A future pass either
+needs a live sighting recorded from a distinctive, deliberately-chosen
+position inside a specific area, or should use area 0's overworld sightings
+(which do have real non-trivial X/Z) for the first real cross-check attempt.
+
+**Net effect on next steps:** the concrete next action is still "trace the
+area-ID → archive-entry link," but it is now known to live specifically in
+whatever writes `[80075738]` or a `[80075768]` slot on a genuine fresh load —
+not in the per-area asset-table dispatch itself, which is now fully
+understood and is not the missing piece.
