@@ -27,8 +27,27 @@ screens.
 | Cross-area teleport | ✅ Verified in-game — copying position/area plus a newly-found 48-byte region (`0x1B58-0x1B88`) from a real reference save works; `so2_location.py teleport` implements it — [details](docs/SO2-MAP-LOCATION-CHECK.md) |
 | Required disc (Disc 1 vs Disc 2) | ✅ Verified — decoded byte `0x4C` (0=Disc 1, 1=Disc 2), confirmed by executing the real disc-check code against both actual disc images — [details](docs/SO2-DISC-AND-PSYNARD-CHECK.md) |
 | Psynard (flying mount) teleport | ✅ Verified in-game — editing its parking coordinates (`0x19B4-0x19D8`) moves it to the new spot, confirmed live twice — [details](docs/SO2-DISC-AND-PSYNARD-CHECK.md) |
-| Options menu — message speed, sound, window colors, targeting, camera work, combat motion, key customization, vibration | ✅ Mapped and disassembly-verified — all 8 fields located in the per-save decoded body by extracting and executing the real Options overlay code; in-game save/reload not yet tested — [details](docs/SO2-OPTIONS-MENU-INVESTIGATION.md) |
+| Options menu — all 8 settings (see table below) | ✅ Mapped and disassembly-verified — [details](docs/SO2-OPTIONS-MENU-INVESTIGATION.md) |
 | Story/event flags, recipes | ⚠️ Open — [Private Actions](docs/SO2-PRIVATE-ACTIONS.md) documented as a lead, not yet tested against a save |
+
+### Menu settings — verified
+
+Found by extracting the real Options overlay (disc archive entry 3016) and executing its actual
+menu-construction, input-callback, and save-serializer code — not by diffing saves, which is why
+three earlier attempts at this found nothing. All offsets are **decoded**, not raw card-block
+offsets. In-game save/reload has not yet been tested for any of these.
+**[Full evidence](docs/SO2-OPTIONS-MENU-INVESTIGATION.md)**
+
+| Setting | Decoded offset | Values |
+|---|---|---|
+| Message speed | `0x1860` | u8 `0..7`, displayed `1..8` (fast → slow) |
+| Sound output | `0x44` | `0` Surround, `1` Stereo, `2` Monaural |
+| Message window color | `0x30` / `0x34` / `0x38` / `0x3C` | Four `0x00BBGGRR` words: UL, UR, LL, LR corners |
+| Targeting mode | `0x49` | `2` Auto, `0` Semi-Auto, `1` Manual |
+| Camera work | `0x4A` | `0` Normal, `1` Leader-Centered |
+| Combat motion mode | `0x4B` | `0` button + direction icon, `1` direction icon only |
+| Key customization | `0x00..0x0F` | Eight u16 button masks, one per assignable action |
+| Vibration | `0x46` | `0` OFF, `1` ON |
 
 Full byte-level reference, including every offset and the exact SP/equipment encoding rules:
 **[docs/SAVE-FORMAT.md](docs/SAVE-FORMAT.md)**
