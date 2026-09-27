@@ -199,5 +199,23 @@
         "z": -0.01
       }
     }
+  },
+  "160": {
+    "name": "Burglar's Nest (Cave of Trials L6)",
+    "sightings": {
+      "1s760": {
+        "facing": 1024,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:25 Rena LV255",
+        "name": null,
+        "recorded": "2026-09-27 18:41:53",
+        "scene": 760,
+        "sub_index": 1,
+        "teleport_ref": "3603000000000000a6ffffff000000000004f80244a01a0000000000000000000000000000000000000000000000000000002104e910362e152a6e1d640821046408f325362eb125",
+        "x": 0.2,
+        "y": 0.0,
+        "z": -0.02
+      }
+    }
   }
 }
