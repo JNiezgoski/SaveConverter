@@ -178,6 +178,19 @@
         "y": 0.0,
         "z": -0.04
       },
+      "1s820": {
+        "facing": 1024,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:40 Rena LV255",
+        "name": "Holy Nest of Angels (Cave of Trials L13)",
+        "recorded": "2026-09-27 18:55:09",
+        "scene": 820,
+        "sub_index": 1,
+        "teleport_ref": "7401000000000000f9feffff430843080004340345804300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "x": 0.09,
+        "y": 0.0,
+        "z": -0.06
+      },
       "1sNone": {
         "facing": -1016,
         "first_seen_save": "BASCUS-94421S02-S15",
