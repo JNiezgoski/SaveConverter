@@ -113,6 +113,19 @@
         "y": 0.0,
         "z": -0.22
       },
+      "1s740": {
+        "facing": 1024,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:19 Rena LV255",
+        "name": "Dancing God Altar (Cave of Trials L4)",
+        "recorded": "2026-09-27 18:38:02",
+        "scene": 740,
+        "sub_index": 1,
+        "teleport_ref": "1c0400000000000048ffffffc81021000004e40244800400ffffffffffffffffffffffffae9ab9ffffffffffffffffffffffffffffffa9fbffffffffffff7f77777777ffffffffff",
+        "x": 0.26,
+        "y": 0.0,
+        "z": -0.04
+      },
       "1sNone": {
         "facing": -1016,
         "first_seen_save": "BASCUS-94421S02-S15",
