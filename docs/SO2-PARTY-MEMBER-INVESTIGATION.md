@@ -795,6 +795,85 @@ fixed-point positions does not establish an entrance-definition lookup. Nor does
 the RNG caller alone establish a randomized warp. Those earlier interpretations
 cannot serve as evidence for a walking-sprite role of `0x41`.
 
+### 2026-09-27 second follow-up: can the walking sprite be forced to a third character (e.g. Dias)?
+
+**Inconclusive — real progress, not a closed answer.** This chases the precise
+remaining question from the section above: do `80082E5C` (world-map, `0x44C`-byte
+object) and `8007E540` (town/dungeon, `0x3FC`-byte object) resolve the 0/1 selector
+directly to two fixed graphics, or could a wider value reach a third character?
+
+**The two constructors were located and disassembled for the first time.**
+Neither lives in the always-resident code (`code-2576`, which ends at `0x8007C00C`,
+short of both addresses). Both are inside a large (`0x10D70`-byte decompressed)
+overlay that is **byte-identical across at least 32 different disc archive
+entries** (3101, 3112, 3114, ... 3174, all disc 1, verified with a full diff, not
+just the located signature bytes) — this is a generic "field/movement engine"
+overlay reloaded per map, not a menu overlay. It was identified by searching the
+whole archive table for the 64-byte signature already visible at live RAM
+`0x80082E5C` in both existing DuckStation resume states (`SCUS-94421_resume.sav`,
+`SCUS-94422_resume.sav`) — that address is untouched by every smaller menu overlay
+(Options, Save) that reuses the same `0x8007E000` window, so it had survived from
+the last real on-foot session in both save states. `0x8007E540` sits inside the
+region menus *do* overwrite, so it was read from the freshly-extracted disc
+overlay, not trusted from RAM.
+
+**Finding 1 — construction does not hard-branch into two graphic sets.**
+`8007E540` (zero-mode/town constructor) calls three always-resident helpers with
+the raw selector still in `$a1`: `8003D4D8` (installs a **generic, mostly-stub**
+vtable at object `+0x3F8`, always the same fixed address `80072DD4` regardless of
+selector — its own entries are placeholder stubs pointing at `8006FE00`/`80043324`,
+not per-character draw code), `8003D63C` (fixed-constant field defaults, no
+selector use at all), and `8003D750`, which stores the raw selector unmodified at
+object **`+0x16`**: `8003D854 sh $t5, 0x16($t0)` where `$t5` was moved from `$a1`
+at function entry. No comparison against `0`/`1`/any other constant happens on
+the selector anywhere in this call chain. This is real, executed-instruction
+evidence against "hardcoded to exactly two outcomes with no live path forward" —
+that specific claim is disproven. It is **not** evidence that a third character
+is reachable; it only shows the value survives past construction as a generic
+field, the same way this base object class stores type/state for the many other
+kinds of entities it is reused for (see next finding).
+
+**Finding 2 — the actual graphics/animation consumer of that field was not
+found.** Offset `+0x16` is reused by unrelated structures throughout this
+overlay (e.g. `80083958..80083C24` reads a `+0x16` field, but on a completely
+different point/polygon record used by the field's terrain-containment check,
+not our object — confirmed by its neighboring fields at `+0x14/0x18/0x1A/0x1C`
+matching a bounding-box shape, not a character object). A byte/halfword-offset
+grep across a decompiled binary this size produces mostly false positives;
+distinguishing real consumers requires tracing register provenance, which was
+only done for the construction path above, not for whatever runs afterward
+(update/draw). The resident code independently reads `F+0x24` (the same
+controlled-object index established in the section above) in roughly a dozen
+more places beyond the three already documented (e.g. `8004B4B8`, `8004C380`,
+`8004C880`, `8004D11C`, `8004EB90`, `8004F05C`, `8004F188`, `8004F524` in
+`code-2576`) — plausible homes for camera targeting, input routing, or formation
+display, and one of them may be where a graphic/model resource is actually
+chosen, but none was confirmed to do that in this pass.
+
+**Practical answer:** we do not currently know whether the walking sprite can be
+forced to a character outside the two route protagonists. It is **not proven
+possible** (no working edit exists) and **not proven impossible** (construction
+itself is generic, not a 2-way hard branch) — closing this needs tracing
+whichever of those dozen-plus `F+0x24` reads actually selects the rendered
+model/animation set, which is a real follow-up investigation, not a quick check.
+No save-editing tool was built for this; per this project's standing practice,
+an unresolved finding does not get a half-working helper.
+
+**Side finding worth flagging separately:** the newly-extracted field-overlay
+binary (`artifacts/so2-field-control/field-overlay-entry3101.bin`) contains real
+point-in-cell/point-in-polygon geometry code and height interpolation
+(`80083628..80083820`, `80083944..80083C24`) — this looks like exactly the
+terrain/collision system that the map-terrain investigation has been blocked on
+("same unextracted overlay" — see README's Map terrain/collision row). That
+overlay is no longer unextracted; a future pass aimed at terrain/collision should
+start here instead of re-deriving it.
+
+Executed evidence: `artifacts/so2-field-control/field-overlay-full.asm` (full
+disassembly of the located overlay) and `field-overlay-entry3101.bin` (the
+decompressed overlay itself). No new interpreter/harness run was added this
+pass — this was static tracing plus the existing `Machine` harness's established
+resident-code binary; no card was read, edited, or written.
+
 ## Why the two experiments were insufficient
 
 Unused-slot clone: secondary data does not make `primary[slot].id` positive.
