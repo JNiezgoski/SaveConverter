@@ -116,16 +116,26 @@ def apply_teleport_ref(decoded, ref_hex):
         pos += n
 
 
+def sighting_key(loc):
+    """2026-09-27: area_id alone is not a unique location key (real evidence -
+    see docs/SO2-MAP-TERRAIN-INVESTIGATION.md pass 3 and the "Sanctuary of
+    Linga" cave, which shares area_id 128 with the actual town of Linga but
+    has a different scene). Key sightings by (sub_index, scene) together so
+    two genuinely different places sharing an area_id don't collide."""
+    return f"{loc['sub_index']}s{loc['scene']}"
+
+
 def record_sighting(db, decoded, loc, save_name, save_title):
     """Upsert an area entry. Keeps the FIRST observed coordinates/reference for
-    a given sub-index (they should be constant - it's a fixed entrance point),
-    but always adds any new sub-index seen. Never touches an existing name."""
+    a given (sub-index, scene) pair (should be constant - a fixed entrance
+    point), but always adds any new one seen. Never touches an existing name."""
     area = db.setdefault(str(loc["area_id"]), {"name": None, "sightings": {}})
-    key = str(loc["sub_index"])
+    key = sighting_key(loc)
     if key not in area["sightings"]:
         area["sightings"][key] = {
+            "sub_index": loc["sub_index"], "scene": loc["scene"], "name": None,
             "x": round(loc["x"], 2), "y": round(loc["y"], 2), "z": round(loc["z"], 2),
-            "facing": loc["facing"], "scene": loc["scene"],
+            "facing": loc["facing"],
             "first_seen_save": save_name, "first_seen_title": save_title,
             "recorded": time.strftime("%Y-%m-%d %H:%M:%S"),
             "teleport_ref": capture_teleport_ref(decoded),
@@ -144,7 +154,8 @@ def show(box):
         is_new = record_sighting(db, decoded, loc, sv.name, sv.title)
         changed = changed or is_new
         area = db[str(loc["area_id"])]
-        name = area["name"] or "(unnamed)"
+        sighting = area["sightings"][sighting_key(loc)]
+        name = sighting.get("name") or area["name"] or "(unnamed)"
         print(f"{sv.name}  {sv.title}")
         print(f"  area {loc['area_id']} sub {loc['sub_index']} scene {loc['scene']}: {name}" + ("  [new sighting recorded]" if is_new else ""))
         print(f"  pos ({loc['x']:.2f}, {loc['y']:.2f}, {loc['z']:.2f})  facing {loc['facing']}")
@@ -152,12 +163,26 @@ def show(box):
         save_db(db)
 
 
-def name_area(area_id, label):
+def name_area(area_id, label, scene=None):
+    """With --scene, names only the specific sighting at that scene value
+    (for when one area_id covers more than one real place - e.g. area 128
+    covers both the town of Linga and the separate "Sanctuary of Linga" cave,
+    distinguished only by scene). Without --scene, names the whole area_id
+    as before."""
     db = load_db()
     area = db.setdefault(str(area_id), {"name": None, "sightings": {}})
-    area["name"] = label
+    if scene is None:
+        area["name"] = label
+        save_db(db)
+        print(f"area {area_id} -> {label}")
+        return
+    matches = [k for k, sight in area["sightings"].items() if sight["scene"] == scene]
+    if not matches:
+        raise s.SaveError(f"no recorded sighting for area {area_id} scene {scene} - 'show' a save there first")
+    for key in matches:
+        area["sightings"][key]["name"] = label
     save_db(db)
-    print(f"area {area_id} -> {label}")
+    print(f"area {area_id} scene {scene} -> {label}")
 
 
 def list_names():
@@ -168,6 +193,10 @@ def list_names():
         return
     for area_id in sorted(named, key=int):
         print(f"{area_id}: {named[area_id]['name']}")
+    for area_id, area in sorted(db.items(), key=lambda kv: int(kv[0])):
+        for sight in area["sightings"].values():
+            if sight.get("name"):
+                print(f"{area_id} scene {sight['scene']}: {sight['name']}")
 
 
 def show_map():
@@ -181,20 +210,28 @@ def show_map():
         area = db[area_id]
         label = area["name"] or "(unnamed)"
         print(f"area {area_id}: {label}")
-        for sub_index in sorted(area["sightings"], key=int):
-            sight = area["sightings"][sub_index]
-            scene = sight.get("scene", "?")
-            print(f"    sub {sub_index} scene {scene}: ({sight['x']}, {sight['y']}, {sight['z']}) facing {sight['facing']}"
+        for sight in sorted(area["sightings"].values(), key=lambda sg: (sg["sub_index"], sg["scene"])):
+            place = sight.get("name") or label
+            print(f"    sub {sight['sub_index']} scene {sight['scene']}: {place}"
+                  f"  ({sight['x']}, {sight['y']}, {sight['z']}) facing {sight['facing']}"
                   f"  first seen: {sight['first_seen_title']}")
 
 
-def teleport(box, save_suffix, area_id, sub_index, out_path):
+def teleport(box, save_suffix, area_id, sub_index, out_path, scene=None):
     db = load_db()
     area = db.get(str(area_id))
-    if not area or str(sub_index) not in area.get("sightings", {}):
-        raise s.SaveError(f"no recorded reference for area {area_id} sub {sub_index} - "
-                           f"'show' a save sitting there first")
-    ref_hex = area["sightings"][str(sub_index)]["teleport_ref"]
+    candidates = [sg for sg in area["sightings"].values() if sg["sub_index"] == sub_index] if area else []
+    if scene is not None:
+        candidates = [sg for sg in candidates if sg["scene"] == scene]
+    if not candidates:
+        raise s.SaveError(f"no recorded reference for area {area_id} sub {sub_index}"
+                           + (f" scene {scene}" if scene is not None else "")
+                           + " - 'show' a save sitting there first")
+    if len(candidates) > 1:
+        scenes = ", ".join(str(sg["scene"]) for sg in candidates)
+        raise s.SaveError(f"area {area_id} sub {sub_index} is ambiguous (scenes: {scenes}) - pass --scene to pick one")
+    sighting = candidates[0]
+    ref_hex = sighting["teleport_ref"]
 
     path = os.path.join(s.DEFAULT_CARD_DIR, f"{s.DEFAULT_GAME}_{box}.mcd")
     found = [sv for sv in s.read_saves(path) if sv.name.endswith(save_suffix)]
@@ -221,8 +258,8 @@ def teleport(box, save_suffix, area_id, sub_index, out_path):
 
     with open(out_path, "xb") as f:
         f.write(block)
-    name = area["name"] or f"area {area_id}"
-    print(f"{sv.name}: teleported to {name} (sub {sub_index}); wrote {out_path}")
+    name = sighting.get("name") or area["name"] or f"area {area_id}"
+    print(f"{sv.name}: teleported to {name} (sub {sub_index} scene {sighting['scene']}); wrote {out_path}")
     print("Verified round-trip + checksum. NOT loaded in-game by this run.")
 
 
@@ -248,13 +285,14 @@ def build_map_html(out_path):
         def sx(x): return 16 + (x - x0) / (x1 - x0) * (w - 32)
         def sz(z): return 16 + (z - z0) / (z1 - z0) * (h - 32)
         dots = []
-        for sub_index, p in sorted(pts.items(), key=lambda kv: int(kv[0])):
+        for p in sorted(pts.values(), key=lambda sg: (sg["sub_index"], sg["scene"])):
             cx, cz = sx(p["x"]), sz(p["z"])
+            place = p.get("name") or label
             dots.append(
                 f'<circle cx="{cx:.1f}" cy="{cz:.1f}" r="7" class="dot"/>'
                 f'<circle cx="{cx:.1f}" cy="{cz:.1f}" r="7" class="dot-ring"/>'
-                f'<text x="{cx:.1f}" y="{cz - 12:.1f}" class="dot-label">sub {sub_index}</text>'
-                f'<title>sub {sub_index}: ({p["x"]}, {p["y"]}, {p["z"]}) facing {p["facing"]}\n'
+                f'<text x="{cx:.1f}" y="{cz - 12:.1f}" class="dot-label">sub {p["sub_index"]}</text>'
+                f'<title>{place} - sub {p["sub_index"]} scene {p["scene"]}: ({p["x"]}, {p["y"]}, {p["z"]}) facing {p["facing"]}\n'
                 f'first seen: {p["first_seen_title"]}</title>'
             )
         cards.append(f'''
@@ -331,9 +369,11 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
     sh = sub.add_parser("show", help="print + record every save's location")
     sh.add_argument("box", nargs="?", type=int, default=1)
-    nm = sub.add_parser("name", help="record a name for an area ID")
+    nm = sub.add_parser("name", help="record a name for an area ID (or one specific sighting with --scene)")
     nm.add_argument("area_id", type=int)
     nm.add_argument("label")
+    nm.add_argument("--scene", type=int, default=None,
+                     help="name only the sighting at this scene value, for area IDs that cover more than one real place")
     sub.add_parser("list", help="print every named area so far")
     sub.add_parser("map", help="dump every recorded area+sub-index, named or not")
     mh = sub.add_parser("map-html", help="write a small-multiples HTML visualization")
@@ -343,13 +383,14 @@ def main():
     tp.add_argument("save", help="save name suffix, e.g. S05")
     tp.add_argument("area_id", type=int)
     tp.add_argument("--sub", type=int, default=1, help="sub-index/entrance (default 1)")
+    tp.add_argument("--scene", type=int, default=None, help="disambiguate when the area/sub pair has more than one scene")
     tp.add_argument("--out", required=True, help="new card file to write (never overwrites the source)")
     args = p.parse_args()
 
     if args.cmd == "show":
         show(args.box)
     elif args.cmd == "name":
-        name_area(args.area_id, args.label)
+        name_area(args.area_id, args.label, args.scene)
     elif args.cmd == "list":
         list_names()
     elif args.cmd == "map":
@@ -357,7 +398,7 @@ def main():
     elif args.cmd == "map-html":
         build_map_html(args.out)
     elif args.cmd == "teleport":
-        teleport(args.box, args.save, args.area_id, args.sub, args.out)
+        teleport(args.box, args.save, args.area_id, args.sub, args.out, args.scene)
 
 
 if __name__ == "__main__":

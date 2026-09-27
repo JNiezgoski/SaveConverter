@@ -2,20 +2,39 @@
   "0": {
     "name": "Overview Map (overworld/field)",
     "sightings": {
-      "0": {
+      "0sNone": {
         "facing": 1718,
         "first_seen_save": "BASCUS-94421S02-S01",
         "first_seen_title": "SO2 01 31:16 Crawd LV255",
+        "name": null,
         "recorded": "2026-09-27 04:41:20",
+        "scene": null,
+        "sub_index": 0,
         "x": 19.82,
         "y": -0.06,
         "z": 5.84
       },
-      "1": {
+      "1s1": {
+        "facing": 190,
+        "first_seen_save": "BASCUS-94421S02-S02",
+        "first_seen_title": "SO2 02 36:17 Rena LV255",
+        "name": null,
+        "recorded": "2026-09-27 18:23:34",
+        "scene": 1,
+        "sub_index": 1,
+        "teleport_ref": "f92600004affffffd833000000000000be0001003a00f70001000f22fede340c054fe31d03bc31be110035ee32e121fef20fee20d03df2d0110035cc65dc1120dc14ec419f62df3e",
+        "x": 2.44,
+        "y": -0.04,
+        "z": 3.24
+      },
+      "1sNone": {
         "facing": 1084,
         "first_seen_save": "BASCUS-94421S02-S02",
         "first_seen_title": "SO2 02 36:14 Rena LV255",
+        "name": null,
         "recorded": "2026-09-27 04:41:20",
+        "scene": null,
+        "sub_index": 1,
         "x": 2.21,
         "y": -0.04,
         "z": 3.18
@@ -25,11 +44,14 @@
   "118": {
     "name": "Cave of Trials (Heraldic Ruins?)",
     "sightings": {
-      "1": {
+      "1sNone": {
         "facing": 2048,
         "first_seen_save": "BASCUS-94421S02-S12",
         "first_seen_title": "SO2 12 36:17 Rena LV255",
+        "name": null,
         "recorded": "2026-09-27 05:29:54",
+        "scene": null,
+        "sub_index": 1,
         "x": 0.03,
         "y": 0.0,
         "z": 0.01
@@ -39,11 +61,40 @@
   "128": {
     "name": "Linga",
     "sightings": {
-      "1": {
+      "1s183": {
+        "facing": 3868,
+        "first_seen_save": "BASCUS-94421S02-S01",
+        "first_seen_title": "SO2 05 13:34 Rena LV12",
+        "name": null,
+        "recorded": "2026-09-27 18:23:34",
+        "scene": 183,
+        "sub_index": 1,
+        "teleport_ref": "c0f2ffff0000000062fbffffa35bc8791c0fb7001680fc02cd020378cd1f4880b01fb800b4009c00cd020378cd1f4880b01fbc00b800a000cd020378b01f4880b002a000b8009c00",
+        "x": -0.83,
+        "y": 0.0,
+        "z": -0.29
+      },
+      "1s402": {
+        "facing": 3072,
+        "first_seen_save": "BASCUS-94421S02-S03",
+        "first_seen_title": "SO2 03 36:18 Rena LV255",
+        "name": "Sanctuary of Linga (Cave)",
+        "recorded": "2026-09-27 18:23:34",
+        "scene": 402,
+        "sub_index": 1,
+        "teleport_ref": "d2ffffff00000000fa0a000000000000000c92010c80fd02000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "x": -0.01,
+        "y": 0.0,
+        "z": 0.69
+      },
+      "1sNone": {
         "facing": -1016,
         "first_seen_save": "BASCUS-94421S02-S15",
         "first_seen_title": "SO2 15 33:33 Rena LV97",
+        "name": null,
         "recorded": "2026-09-27 04:41:20",
+        "scene": null,
+        "sub_index": 1,
         "x": -0.0,
         "y": 0.0,
         "z": 0.01
@@ -53,11 +104,14 @@
   "140": {
     "name": null,
     "sightings": {
-      "1": {
+      "1sNone": {
         "facing": 0,
         "first_seen_save": "BASCUS-94421S02-S01",
         "first_seen_title": "SO2 01 36:42 Rena LV255",
+        "name": null,
         "recorded": "2026-09-27 07:25:01",
+        "scene": null,
+        "sub_index": 1,
         "x": -0.06,
         "y": 0.0,
         "z": -0.2
@@ -67,11 +121,14 @@
   "148": {
     "name": "Love Alley - Cave of Trials L2",
     "sightings": {
-      "1": {
+      "1sNone": {
         "facing": 1024,
         "first_seen_save": "BASCUS-94421S02-S13",
         "first_seen_title": "SO2 13 36:20 Rena LV255",
+        "name": null,
         "recorded": "2026-09-27 05:31:09",
+        "scene": null,
+        "sub_index": 1,
         "x": 0.17,
         "y": 0.0,
         "z": -0.01
