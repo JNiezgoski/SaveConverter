@@ -71,44 +71,51 @@ Route exclusivity (enforced by story scripts, not the save file): Leon is Claude
 Rena-route only; Ashton excludes Opera and Ernest; Precis excludes Bowman; Chisato needs a free slot.
 The save's own string for Claude is literally `Crawd` (both in his name entry and the default name table).
 
-## Party record (per member, offsets from `q`)
+## Party record — two parallel arrays, not one
 
-Each record is preceded by a variable-length header: `<class> <ID> 00 00 00 ...`, where `<class>` is
-`01`/`03`/`05`/`09` depending on the character, and `<ID>` selects the sprite/name/portrait — **VERIFIED**,
-changing the ID byte turns the record into a different character.
+**Corrected 2026-09-26 by actual game-code execution.** Everything in this section used to describe
+a single per-member record at raw, pre-compression offsets (`q`). That was wrong in an important way,
+not just an addressing-scheme mixup: there are **two separate fixed-size arrays**, both indexed by
+the same 0..7 slot number, and identity/party-membership is carried by a **signed numeric character ID**
+in the first array — not by the ASCII name string, and not derivable from name/equipment alone. See
+[SO2-PARTY-MEMBER-INVESTIGATION.md](SO2-PARTY-MEMBER-INVESTIGATION.md) for full disassembly evidence,
+RAM pointers, and the recruitment routine; summary:
 
-| Offset | Size | Field | Status |
-|---|---|---|---|
-| `q-4` | u32 | EXP (cap 999,999,999) | VERIFIED |
-| `q+0, +5, +10` | u16 ×3 | HP (three copies), cap 9999 | VERIFIED |
-| `q+15, +17, +19` | u16 ×3 | MP (three copies), cap 999 | VERIFIED |
-| `q+21, +23` | u16 ×2 | Level (two copies), cap 255 | VERIFIED |
-| `q+25` | u16 ×3 | STR | VERIFIED |
-| `q+31` | u16 ×3 | CON | VERIFIED |
-| `q+37` | u16 ×3 | AGL | VERIFIED |
-| `q+43` | u16 ×3 | DEX | VERIFIED |
-| `q+49` | u16 ×3 | INT | VERIFIED |
-| `q+55, +57` | u16 ×2 | Base GUTS, stored twice | VERIFIED |
-| `q+59` | u16 | Effective GUTS — base + every equipment slot's GUTS bonus + skill bonuses (e.g. Poker Face), computed like ATK/AC/HIT/AVD/MAG, not stored on its own | VERIFIED |
+| Array | Decoded base | Stride | Contents |
+|---|---:|---:|---|
+| Primary | `0x1a0` | `0x60` | Signed 16-bit character **ID** at `+0` (this is the real "is this slot a party member" test: `id > 0`; `id == 0` is vacant; a **negative** ID means the character was removed but their records are retained, not deleted), plus EXP (+10), HP (+14/+18/+1C), MP (+20/+22/+24), level (+28, adjusted +26), STR/CON/AGL/DEX/INT/GUTS triplets (+2A/+30/+36/+3C/+42/+48); unknown triplets +4E/+54 |
+| Secondary | `0x4a0` | `0xd0` | LUC triplet at +00/+02/+04, STM triplet at +06/+08/+0A; 7×u16 equipment IDs at `+0xc` (absolute `0x4ac + slot*0xd0` — weapon/armor/shield/helmet/greaves/acc1/acc2, `0`=empty), a capped 0-999 value, the 10-bit talent mask at `+0x20`, an 8-byte null-padded ASCII name at `+0x24`, then skill/ability data |
 
-Stats can exceed 999 naturally (a level-255 STR of 1467 was observed). 999 is proven safe to write; 9999
-was tried once as part of a larger batched edit that corrupted the save, so the true cap is **not proven**
-— don't assume 9999 is safe on its own. ATK/AC/HIT/AVD/MAG are computed by the game, not stored.
-Precis's record is one byte shorter after HP (every later offset shifts by −1).
+Only slots 0-3 are the active battle formation; slots 4-7 are ordinary reserves (still real party
+members, just not in combat). Renaming or cloning the **secondary** record alone (what earlier,
+pre-investigation attempts in this project tried) does nothing observable in-game, because the
+primary array's numeric ID is what every identity-dependent system actually checks — equipment
+eligibility, portraits, and the party-menu presence test all read the primary ID, never the name
+string. Use `so2_party.py` to add a party member correctly: it executes the game's actual
+initializer code for both arrays together rather than hand-splicing either one.
 
-**A second, previously-undocumented copy of all 12 character names in exact ID order** (Claude, Rena,
-Celine, Bowman, Dias, Precis, Ashton, Leon, Opera, Ernest, Noel, Chisato) was spotted inside the party
-records region during a chest-item test - plain ASCII, one after another, no other structure identified
-around it yet. This is separate from the known default name table near `0x0EEC`. Purpose/exact offset
-relative to `q` not investigated further - noted here so it isn't rediscovered from scratch. OPEN.
+A separate, purely cosmetic **load-screen preview table** lives in the *uncompressed* header at raw
+offset `0x234` (8 × u16 ID, u16 level pairs, one per slot, same slot indexing as the arrays above) —
+this is what the memory-card load menu reads to show a quick party portrait without decompressing
+the save. It is a cached snapshot, **only refreshed by an actual in-game save**, so a save produced
+by external tooling will show the old party on the load screen until the game itself saves again.
+It's plain, uncompressed data (no zero-run codec involved) so it's safe to patch directly with
+`so2_sign()` afterward — just keep it in sync with whatever the primary/secondary arrays actually say.
 
-**GUTS base/effective, controlled test (Chisato, q=0x745):** base pair was 75/75 with Atlas Ring
-equipped (effective 95, exact match to her Status screen); with Atlas Ring unequipped and nothing else
-changed, base pair stayed 75/75 and effective dropped to exactly 75 — proves the base value is
-independent of equipment and the effective value is a live computed sum. Removing that one accessory
-also broke this character's equipment read for that save (decoded as garbage) — unequipping *to* an
-empty slot appears to shift bytes differently than a slot that was never equipped, a separate open
-wrinkle in the equipment encoding, not investigated further.
+**2026-09-27 primary-map extension:** [Full field map and instruction evidence](SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27)
+now covers all 96 bytes: 66 bytes assigned to named field families, 12 bytes in two
+unnamed halfword triplets, and 18 opaque bytes. Four complete initializer store
+walks (Claude/Celine/Bowman/Opera), all-twelve execution checks and current
+S01/S02/S15 decoded records support the map. This is code/record evidence, not
+new live verification of stat editing. INT is a notable exception: initialization
+writes only +46, leaving +42/+44 zero; later recalculation uses the normal triplet.
+LUC/STM have been relocated to the secondary array's first 12 bytes. The old
+encoded offsets below remain superseded.
+
+Everything below this point (per-field stat offsets, GUTS base/effective test, EXP/HP/MP field
+widths) described the *old*, pre-compression, single-record model and has not been re-verified
+against the corrected two-array layout — treat these old sub-offsets as superseded, not wrong per se,
+until someone re-locates each field inside the real primary/secondary arrays above.
 
 ## Character entry (relative to `name`, the start of the character's name string)
 
@@ -243,31 +250,36 @@ skill, `0`–`10` (10 = maxed). **VERIFIED** on all 16 tested character-slots.
 
 ## Inventory
 
-Variable-length list at roughly `0x0C00`–`0x0EB6`, sorted alphabetically by item name (ignoring spaces/
-punctuation), one u16 little-endian entry per owned item:
+**Corrected 2026-09-26 by actual game-code execution.** See
+[SO2-INVENTORY-ADD-INVESTIGATION.md](SO2-INVENTORY-ADD-INVESTIGATION.md)
+for disassembly, RAM pointers, first-time addition tool, and Seraphic Garb x20 candidate.
 
-```
-entry = (count << 10) | item_id      # count in the top 6 bits, item ID in the low 10 bits
+The decoded inventory is a **fixed 1,024-slot u16 array at `[0xB20,0x1320)`**,
+within the `0xC28`-byte allocation pointed to by RAM `[0x80075278]`.
+These decoded offsets do not vary with party size. Compressed card offsets do.
+
+```python
+item_id = word & 0x3ff
+count = (word >> 10) & 0x1f  # max normal stack 20
+flag = word >> 15            # separate flag, set by shop/script add callers
 ```
 
-- Max stack is **20** for every item, weapon, armor and accessory.
-- Editing the count of an item you already own is a safe in-place u16 write, no length shift.
-- Removing an item (count → 0) deletes its 2-byte entry and leaves a 3-byte tombstone (`00 00 <xx>`).
-- **VERIFIED**: gaining your very first item ever (an empty inventory, not just adding to an existing
-  list) uses the exact same `(count << 10) | item_id` encoding - confirmed on a fresh early save picking
-  up a Heavy Ring (id 94) from a chest: `(1 << 10) | 94 = 0x045E` appeared exactly once, newly, at the
-  point the item was gained, nowhere in the "before" save. So the entry format itself isn't the problem
-  for hand-insertion (see OPEN item below) - it's something else the game does alongside it.
-- **Region offsets scale with actual party size - they are not fixed addresses.** The `0x0C00` inventory
-  start (and every other offset given elsewhere as if fixed) is only accurate for a full 8-member,
-  late-game party. A 1-2 member early-game save has a much shorter party-records section, so inventory
-  (and everything after it) starts correspondingly earlier - confirmed directly: the same Heavy Ring
-  entry above landed at `0x0616`, deep inside where the "typical" byte map would call it a party record.
-  Always locate a region by its content/pattern, never assume a fixed offset holds for every save.
-- **OPEN**: hand-inserting a brand-new item type (one you don't already own) is not solved — two attempts
-  both corrupted the save. The reliable path is to obtain the item through real play once, then use the
-  count-edit tool. The save format appears to do real sorting/compaction on save rather than a raw
-  memory dump, so a hand-spliced entry is missing something the game recomputes at that moment.
+General add routine `0x8003C594` updates an existing occupied type or overwrites
+the first count-zero slot. It scans through holes; no sorted insertion, item-count
+counter, sentinel relocation, or decoded-byte shifting is required. Removal clears
+the fixed word when its count reaches zero. The formerly described three-byte
+"tombstone" is a zero-run compression token, not an inventory record.
+
+The routine also maintains 16 recent IDs at decoded `[0x1320,0x1340)` and runtime
+integrity bytes at `[0x1344,0x1744)`. The serializer saves those integrity bytes as
+zeros and rebuilds them on load. It does not sort/compact the inventory on save.
+
+Use `so2_inventory.py` for a new item type: decode, execute the actual add routine,
+re-encode, update compressed length and C, sign, and verify preservation. Never
+splice a word into the compressed stream or insert bytes into the decoded state.
+The new candidate has passed actual add/serializer instruction execution and all
+unit tests; it has not yet been loaded in-game. The exact two historical failed
+files were not analyzed, so their individual corruption causes remain unproven.
 
 ## Options / misc. state (`0x0380`–`0x04FF`)
 
@@ -354,25 +366,35 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
 
 ## Known open items (not mapped)
 
-- **Story/event flags** — the strongest untouched lead: a ~48-byte block at `0x02B4`–`0x02E3`, all-zero
-  early game, densely set late game. Needs a save immediately before/after one discrete story beat to
-  isolate the first bits that flip. **Redo this as a decoded-state diff (see the compression note and
-  `so2_fol.py`'s `decode()`), not a raw-byte diff — raw diffs on this format are unreliable.**
-- **Map/location** — no live coordinate found. Entering genuinely new territory grows a variable-length
-  "discovered areas" list; plain movement across already-explored ground shows no signal.
+- **Party primary array — full byte map**: byte coverage is complete; semantic mapping remains partial.
+  Named families cover 66/96 bytes; +4E/+50/+52 and +54/+56/+58 are two unnamed
+  halfword triplets (12 bytes). +04..0F and +5A..5F remain opaque (18 bytes),
+  with nonzero real-save data, so they are not established padding. INT initialization
+  versus recalculation and the unnamed fields' consumers still need explanation.
+  See [the detailed map](SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27).
+
+- **Story/event flags** - raw `0x02B4`-`0x02E3`: checked, inconclusive as story flags; save/load copies this range to/from live state `+0x1D4..+0x203` ([code evidence](SO2-STORY-FLAGS-HEADER-CHECK.md)); no story-specific writer established.
+- **Map/location** - bounded save-writer trace remains inconclusive: copy sources established, but no map/room ID or live-coordinate field identified; old raw-byte no-signal result is weak after compression discovery ([code evidence](SO2-MAP-LOCATION-CHECK.md)).
 - **The 33-byte flag run** inside each character entry, just before the skill levels — likely related to
   the specialty-unlock bitmask found at decoded offset `0x1A3F` above; not yet cross-referenced.
-- **Specialties** (the shop-purchasable system that unlocks per-character skill leveling) — the
-  overall structure is VERIFIED (4 specialties × 3 levels each = 12 fixed flags across decoded
-  offsets `0x1A3F`/`0x1A40`, confirmed via the game's own purchase code), but the exact
-  Knowledge-vs-Sensibility bit assignment hit a real, unresolved contradiction from a later test —
-  do not trust that specific bit mapping yet. See
-  [docs/SO2-SPECIALTY-INVESTIGATION.md](SO2-SPECIALTY-INVESTIGATION.md).
-- **Global flags** — located but not explored: they start at decoded offset `0x19E8` (found while
-  investigating specialties). This is very likely the same system the story/event flags below live
-  in — worth pointing a future investigation here directly instead of diffing raw save regions.
+- **Specialty shop tiers - mapping resolved 2026-09-27:** twelve fixed flags `0x2BC..0x2C7`,
+  ordered Knowledge/Sensibility/Technique/Combat within each level. Level 1 uses `0x1A3F`
+  bits 4-7; level 2 uses `0x1A40` bits 0-3; level 3 uses bits 4-7. Verified by extracted
+  purchase bytecode, skill-availability table and 38 real-MIPS commit executions. Technique 1
+  reproduces `30 -> 70` exactly. The old "Knowledge-vs-Sensibility" note misstated the conflict:
+  a later purchase labeled Sensibility 2 set Technique 2's bit 2, whereas the earlier test
+  set Sensibility 2's bit 1. Flag meanings are resolved; why that historical label disagreed
+  remains unproven. A recorded Sensibility-2 purchase at the same guild, from both bits clear,
+  is the remaining clean test. See [specialty evidence and full table](SO2-SPECIALTY-INVESTIGATION.md).
+- **Global flags** — located but not explored: they start at decoded offset `0x19E8`, inside the
+  still-mostly-unmapped fifth decoded chunk (found while investigating specialties). **Not** the
+  same system as the raw `0x2B4` story-flags candidate below — that candidate lives in the
+  uncompressed header, before the compressed body even starts, while `0x19E8` is deep inside the
+  compressed/decoded state; the two are architecturally separate storage, confirmed by the
+  2026-09-27 story-flags check. Worth a future investigation pointed directly at this decoded
+  region instead.
 - **Message speed and audio mode** — see the note above the options table. Audio has a partial lead
   (`0x03CB`); message speed has none. Both need many more controlled trials, not another 2-3-save diff.
 - **Private Actions / emotion levels, item-creation recipes** — not located.
-- A separate 9-slot "Special Attack/Magic" list, distinct from the 46 proficiency skills — not mapped to the save file.
+- The reported 9-slot "Special Attack/Magic Max" cheat list was **checked; its save correspondence remains inconclusive**. The actual assignment UI uses four one-byte ability IDs at decoded `0x56C..0x56F + slot*0xD0` (secondary `+CC..CF`), with 32 candidate availability bytes at `+3C..5B`; extracted candidate/read/write instructions were executed on S01/S02/S15. This does not identify the historical nine cheat addresses. See [special-attack list check](SO2-SPECIAL-ATTACK-LIST-CHECK.md).
 - The early-save checksum-A discrepancy is resolved; see the checksum investigation linked above.
