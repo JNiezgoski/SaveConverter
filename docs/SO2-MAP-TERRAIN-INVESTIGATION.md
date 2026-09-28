@@ -793,3 +793,183 @@ two recorded overworld sightings was executed against real decompressed disc ass
 - Detailed semantic decoding of all 8 bits in the per-polygon surface attribute byte (bit 0 = solid/walkable,
   bit 2 = water/steep slope, etc.).
 - Complete extraction of world-map entrance and town marker overlays (Tags 1, 2, 3, 6, 7).
+
+## 2026-09-28 sixth pass: structured terrain geometry extraction, universal schema, and cross-check across all 8 recorded areas
+
+**Status: COMPLETE. Tool implemented at `tools/so2_terrain_extract.py`. All 21 distinct area+scene combinations across all 8 areas in `area_data.json` successfully extracted and emitted to `artifacts/so2-terrain-map/area_<id>_scene_<scene>.json`. 36/36 unit tests passing.**
+
+This pass turns the structural findings of passes 1–5 into a reusable, standalone extraction tool (`tools/so2_terrain_extract.py`), exports clean structured geometry JSON for every recorded area and scene in the repository database, and conducts an exhaustive 2D/3D cross-check of all 24 recorded save sightings against the decoded collision geometry.
+
+### 1. Tool Architecture & Extraction Pipeline
+
+The extraction tool `tools/so2_terrain_extract.py` operates strictly read-only against the source disc binary images (`Star Ocean - The Second Story (USA) (Disc 1).bin` and `(Disc 2).bin`):
+1. **Archive Resolution**:
+   - **Overworld Scenes (1..3)**: Resolves archive index via cell formulas:
+     - Scene 1 (Disc 1 Expel): `0x1014 + cell` ($4116 + \text{cell}$), where $\text{cell} = \lfloor X / 12288 \rfloor + 9 \times \lfloor Z / 12288 \rfloor$. (Default active cell for recorded sightings: Cell 9 $\implies$ Entry 4125).
+     - Scene 2 (Disc 2 Nede): `0x109F + cell` ($4255 + \text{cell}$). (Default active cell for recorded sightings: Cell 15 $\implies$ Entry 4270).
+     - Scene 3: `0x10E0` ($4320$).
+   - **Dungeon / Field Scenes (all other scenes)**:
+     - `archive_index = scene + 0xC87` ($\text{scene} + 3207$).
+2. **Asset Decompression**:
+   - **Dungeons**: Identifies Type 0 asset in container table (`8004AD94`), extracts and decompresses the primary terrain subchunk R (`[80075330]`), locates `TB = R + *(R + 0x80)`, reads the 16-bit triangle count from `TB + 0x20`, and reads the contiguous array of 88-byte triangle records at `TB + *(TB + 0x5C)`.
+   - **Overworld**: Identifies Type 3 asset in container table, traverses the tagged stream dispatcher to Tag 5 (`80088EEC`), extracts the 9-slot streaming cache table, decompresses the target SLZ chunk, parses vertex table at `+0x68`, and traverses the 16 sub-cell polygon pools (Types 3, 4, 7, 9).
+3. **Coordinate Scaling & Normalization**:
+   - Saves in `area_data.json` store coordinates displayed as `raw / 4096.0` (rounded to 2 decimals).
+   - In raw save state at `0x1750..0x1758`, coordinates are stored as signed 32-bit integers, which the game's load/save pipeline shifts right by 12 from live 20.12 fixed-point objects (`8004C6E0..F8`).
+   - Consequently, the raw integers in the save file match the `i16` integer vertex grid units of the terrain geometry 1:1.
+   - The JSON export provides both:
+     - `vertices`: Float coordinates scaled by $1 / 4096.0$ to match `area_data.json` space.
+     - `raw_vertices`: Integer coordinates matching the PS1 collision engine's internal grid units.
+   - For overworld chunks, chunk-local coordinates are transformed into global world coordinates:
+     $W_X = \text{cell}_X \times 12288 + 6144 + x_{\text{local}}$,
+     $W_Z = \text{cell}_Z \times 12288 + 6144 + z_{\text{local}}$.
+
+### 2. Output JSON Schema
+
+Every generated file `artifacts/so2-terrain-map/area_<id>_scene_<scene>.json` follows this structured schema:
+
+```json
+{
+  "area_id": 118,
+  "scene_id": 704,
+  "archive_index": 3911,
+  "disc": 1,
+  "format_type": "dungeon_triangles",
+  "metadata": {
+    "polygon_count": 4,
+    "format": "dungeon_triangles",
+    "bounds_raw": {
+      "x_min": 267, "x_max": 517,
+      "y_min": 0, "y_max": 300,
+      "z_min": -181, "z_max": 196
+    },
+    "bounds_scaled": {
+      "x_min": 0.0652, "x_max": 0.1262,
+      "y_min": 0.0, "y_max": 0.0732,
+      "z_min": -0.0442, "z_max": 0.0479
+    },
+    "terrain_byte_length": 4308,
+    "terrain_sha256": "06ae3a987c46befd1bba1be6a15c32197e3ebae565aa2bd6f554fd542698b012",
+    "TB_offset": 776,
+    "triangle_array_offset": 3084
+  },
+  "polygons": [
+    {
+      "index": 0,
+      "type": "triangle",
+      "classification": "wall",
+      "surface_flag": 0,
+      "enabled": 1,
+      "plane_ABC": [1, 89, 92],
+      "normal": [0.0078, 0.6953, 0.7187],
+      "bounds_raw": {
+        "y_min": -32768, "y_max": 32767,
+        "x_min": 325, "z_min": -181,
+        "x_max": 517, "z_max": 108
+      },
+      "raw_vertices": [
+        [325, 0, 108],
+        [495, 0, 107],
+        [517, 300, -181]
+      ],
+      "vertices": [
+        [0.0793, 0.0, 0.0264],
+        [0.1208, 0.0, 0.0261],
+        [0.1262, 0.0732, -0.0442]
+      ]
+    }
+  ],
+  "cross_checks": [
+    {
+      "sighting_key": "1s704",
+      "first_seen_title": "SO2 02 36:14 Rena LV255",
+      "position_scaled": [0.03, 0.0, 0.01],
+      "position_raw": [124, 0, 21],
+      "contained": false,
+      "min_distance_raw": 189.65,
+      "min_distance_scaled": 0.0463,
+      "y_elevation_diff": null,
+      "status": "close-but-off",
+      "notes": "Distance: 189.65 raw grid units (0.0463 scaled units)"
+    }
+  ]
+}
+```
+
+#### Field Specifications:
+- `area_id` (integer): Area ID matching `area_data.json` (sprite drawing order / area group).
+- `scene_id` (integer): Scene selector halfword (decoded `0x1762`).
+- `archive_index` (integer): Disc container archive entry index.
+- `disc` (integer): Disc number (1 or 2).
+- `format_type` (string): `"dungeon_triangles"` or `"overworld_mesh"`.
+- `metadata.bounds_raw`: 3D AABB bounding box in integer grid units.
+- `metadata.bounds_scaled`: 3D AABB bounding box in scaled units ($1 / 4096.0$).
+- `polygons[].type` (string): `"triangle"` or `"quad"`.
+- `polygons[].classification` (string): `"floor"` ($\cos\theta > 0.999$), `"slope"` ($0.7071 < \cos\theta \le 0.999$), or `"wall"` ($\cos\theta \le 0.7071$).
+- `polygons[].surface_flag` (integer): Collision / footstep / surface byte (`object_field_22` for dungeon; attribute byte for overworld).
+- `polygons[].normal` (array of 3 floats): Normalized outward surface normal vector $[N_x, N_y, N_z]$.
+- `cross_checks[].status` (string):
+  - `"pass"`: Sighting strictly inside a polygon or within $\le 2.0$ raw grid units ($\le 0.0005$ scaled).
+  - `"close-but-off"`: Sighting within $\le 200.0$ raw grid units ($\le 0.049$ scaled, doorway / spawn threshold).
+  - `"fail"`: Sighting $> 200.0$ raw grid units away from mesh boundary.
+  - `"no_triangles"`: Disc asset contains 0 collision triangles (e.g. Linga town hubs).
+
+### 3. Sighting Scene Resolution for Early Recordings
+
+In `area_data.json`, 6 sightings had `scene: null` because they were recorded on 2026-09-27 before `scene` tracking was added to `read_location`. By inspecting the original raw saves on card backups, each `None` sighting was resolved to its concrete scene:
+- Area 0 `0sNone` (`BASCUS-94421S02-S01`) $\implies$ Scene 2 (Nede Overworld, Cell 15, Archive 4270).
+- Area 0 `1sNone` (`BASCUS-94421S02-S02`) $\implies$ Scene 1 (Expel Overworld, Cell 9, Archive 4125).
+- Area 118 `1sNone` (`BASCUS-94421S02-S12`) $\implies$ Scene 704 (Cave of Trials L1, Archive 3911).
+- Area 128 `1sNone` (`BASCUS-94421S02-S15`) $\implies$ Scene 671 (Linga interior hub, Archive 3878).
+- Area 140 `1sNone` (`BASCUS-94421S02-S01` in card2-before-clear) $\implies$ Scene 751 (Archive 3958).
+- Area 148 `1sNone` (`BASCUS-94421S02-S13`) $\implies$ Scene 716 (Love Alley L2, Archive 3923).
+
+### 4. Comprehensive Cross-Check Verification Table
+
+Across all 8 areas, 21 distinct scene files were generated covering all 24 sightings:
+
+| Area | Scene | Name / Description | Polygons | Sighting | Raw Pos $(X, Y, Z)$ | Scaled Pos | Contained | Distance (Raw / Scaled) | Elevation $\Delta Y$ | Status |
+|---:|---:|---|---:|---|---|---|:---:|---|:---:|:---:|
+| **0** | 1 | Expel Overworld | 1,405 | `1s1` | $(9977, -182, 13272)$ | $(2.44, -0.04, 3.24)$ | **Yes** | $0.0$ / $0.0000$ | $-115.33$ | **PASS** |
+| **0** | 1 | Expel Overworld | 1,405 | `1sNone` | $(9052, -164, 13025)$ | $(2.21, -0.04, 3.18)$ | **Yes** | $0.0$ / $0.0000$ | $-90.33$ | **PASS** |
+| **0** | 2 | Nede Overworld | 1,931 | `0sNone` | $(81183, -246, 23921)$ | $(19.82, -0.06, 5.84)$ | **Yes** | $0.0$ / $0.0000$ | $+12.00$ | **PASS** |
+| **118** | 704 | Cave of Trials (Heraldic Ruins L1) | 4 | `1s704` | $(124, 0, 21)$ | $(0.03, 0.00, 0.01)$ | No | $189.7$ / $0.0463$ | — | **CLOSE-BUT-OFF** |
+| **118** | 704 | Cave of Trials (Heraldic Ruins L1) | 4 | `1sNone` | $(123, 0, 41)$ | $(0.03, 0.00, 0.01)$ | No | $182.2$ / $0.0445$ | — | **CLOSE-BUT-OFF** |
+| **128** | 183 | Linga (Town Entrance) | 0 | `1s183` | $(-3392, 0, -1182)$ | $(-0.83, 0.00, -0.29)$ | No | N/A | — | **NO_TRIANGLES** |
+| **128** | 402 | Sanctuary of Linga (Cave) | 18 | `1s402` | $(-46, 0, 2810)$ | $(-0.01, 0.00, 0.69)$ | No | $1350.1$ / $0.3296$ | — | **FAIL** |
+| **128** | 671 | Linga (Interior Hub) | 0 | `1sNone` | $(-12, 0, 49)$ | $(0.00, 0.00, 0.01)$ | No | N/A | — | **NO_TRIANGLES** |
+| **128** | 727 | Single Path Cave (CoT L3) | 6 | `1s727` | $(26, 0, -891)$ | $(0.01, 0.00, -0.22)$ | No | $50.1$ / $0.0122$ | — | **CLOSE-BUT-OFF** |
+| **128** | 740 | Dancing God Altar (CoT L4) | 4 | `1s740` | $(1052, 0, -184)$ | $(0.26, 0.00, -0.04)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **128** | 744 | Lady's Revenge (CoT L5) | 4 | `1s744` | $(894, 0, 36)$ | $(0.22, 0.00, 0.01)$ | No | $9.2$ / $0.0023$ | — | **CLOSE-BUT-OFF** |
+| **128** | 788 | Sealed Coffin (CoT L9) | 4 | `1s788` | $(226, 0, 318)$ | $(0.06, 0.00, 0.08)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **128** | 807 | CoT Escape Point (near L11) | 4 | `1s807` | $(-1479, 0, 11)$ | $(-0.36, 0.00, 0.00)$ | No | $1231.8$ / $0.3007$ | — | **FAIL** |
+| **128** | 808 | Dragon's Nest (CoT L11) | 4 | `1s808` | $(866, 0, -152)$ | $(0.21, 0.00, -0.04)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **128** | 820 | Holy Nest of Angels (CoT L13) | 2 | `1s820` | $(372, 0, -263)$ | $(0.09, 0.00, -0.06)$ | No | $40.9$ / $0.0100$ | — | **CLOSE-BUT-OFF** |
+| **138** | 794 | Decision Point (CoT L10) | 4 | `1s794` | $(365, 0, -228)$ | $(0.09, 0.00, -0.06)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **140** | 751 | CoT Connector (L7/L8) | 4 | `1sNone` | $(-246, 0, -819)$ | $(-0.06, 0.00, -0.20)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **140** | 756 | CoT Escape Point (near L6) | 4 | `1s756` | $(-1127, 0, 364)$ | $(-0.28, 0.00, 0.09)$ | No | $556.5$ / $0.1359$ | — | **FAIL** |
+| **140** | 777 | Food God (CoT L8) | 6 | `1s777` | $(396, 0, 343)$ | $(0.10, 0.00, 0.08)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **148** | 716 | Love Alley (CoT L2) | 8 | `1s716` | $(682, 0, -43)$ | $(0.17, 0.00, -0.01)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **148** | 716 | Love Alley (CoT L2) | 8 | `1sNone` | $(696, 0, -41)$ | $(0.17, 0.00, -0.01)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **150** | 811 | Hall of Warriors (CoT L12) | 4 | `1s811` | $(364, 0, -262)$ | $(0.09, 0.00, -0.06)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **160** | 760 | Burglar's Nest (CoT L6) | 4 | `1s760` | $(822, 0, -90)$ | $(0.20, 0.00, -0.02)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+| **160** | 766 | Goddess's Altar (CoT L7) | 6 | `1s766` | $(686, 0, -141)$ | $(0.17, 0.00, -0.03)$ | **Yes** | $0.0$ / $0.0000$ | $0.00$ | **PASS** |
+
+### 5. Analysis of Results
+
+1. **Exact Matches (PASS: 14/24, 58.3%)**:
+   - Both overworld scenes (Scene 1 and Scene 2) demonstrate exact polygon containment in their respective 4x4 subcell meshes.
+   - For all passed dungeon floors (Scenes 740, 751, 760, 766, 777, 788, 794, 808, 811, 716), the plane equation height evaluated at $(X, Z)$ yields $\Delta Y = 0.00$, confirming exact planar collision alignment.
+2. **Doorway & Spawn Thresholds (CLOSE-BUT-OFF: 5/24, 20.8%)**:
+   - Scene 744 (Lady's Revenge): Distance is only $9.2$ raw units ($0.0023$ world units) from the triangle perimeter.
+   - Scene 820 (Holy Nest of Angels): Distance is $40.9$ raw units ($0.0100$ world units).
+   - Scene 727 (Single Path Cave): Distance is $50.1$ raw units ($0.0122$ world units).
+   - Scene 704 (Heraldic Ruins entrance): Distance is $189.7$ raw units ($0.0463$ world units).
+   - These small offsets represent entrance doorway transition thresholds where saves capture the player standing on the entrance threshold immediately adjacent to the room's main walkable floor mesh.
+3. **Multi-Room Transitions & Escape Points (FAIL: 3/24, 12.5%)**:
+   - Scene 402 (Sanctuary of Linga cave entrance): Distance is $1350.1$ raw units ($0.33$ world units).
+   - Scenes 756 and 807 (Cave of Trials emergency escape teleporter points): Distances are $556.5$ and $1231.8$ raw units.
+   - These saves sit at the teleport / escape exit pads outside the main room collision geometry chunk.
+4. **Empty Collision Arrays (NO_TRIANGLES: 2/24, 8.3%)**:
+   - Scenes 183 and 671 (Linga town entrance and interior hub): The disc Type 0 asset contains a valid header with 0 triangle records, confirming Pass 3's finding that town hub movement is handled without the standard dungeon 88-byte triangle collision array.
+
