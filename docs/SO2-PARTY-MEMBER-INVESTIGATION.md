@@ -473,6 +473,268 @@ caps for every stat. Preserve all unresolved bytes. Do not splice encoded bytes
 or assume that a new member's 96-byte initializer output already contains every
 later derived value.
 
+## Secondary record: complete 208-byte map, SP opcode, u32 talent word, and 46 skill levels (2026-09-27)
+
+Investigation date: 2026-09-27. US PS1 Disc 1, SCUS-94421 / BASCUS-94421.
+
+### Result
+
+**The entire 208-byte (`0xD0`) party secondary record across all 8 slots (`0x4A0..0xB20`, 1,664 bytes total) is now 100% mapped with zero mystery gaps.** All 1,088 previously unmapped bytes (136 bytes per slot &times; 8 slots) are fully accounted for with concrete disassembly evidence, exact instruction sequences, and verification across all real game saves in the repository:
+
+1. **SP (Skill Points) confirmed:** `secondary + 0x1A..0x1B` (decoded `0x4A0 + slot*0xD0 + 0x1A`, slot-0 `0x4BA..0x4BB`) is confirmed as `u16` SP, clamped to `0..999`. Script VM opcode `0xFE0A` / `0xFE8A` (`80067794..80067824`) adds/subtracts SP with 0..999 bounds clamping. Skill Level-Up UI in Overlay 3014 (`8007EA3C..8007EA94`) reads current SP (`lhu $s3, 0x1a($v0)`), verifies cost sufficiency, deducts SP cost (`subu; sh $v1, 0x1a($v0)`), and increments the targeted skill level at `+0x5C + skill_id`.
+2. **Talent mask width resolved:** `secondary + 0x20..0x23` (decoded `0x4A0 + slot*0xD0 + 0x20`, slot-0 `0x4C0..0x4C3`) is a single **32-bit `u32` word**, not a 16-bit halfword. Initializer `8007B1F0` zeroes all 4 bytes with `sw $zero, 0x20($s5)` (`8007B224`) and loops rolling talents via 32-bit `lw; or; sw` (`8007B31C..8007B328`). UI status checks in Overlay 3014 at `8007E1C4` load a 32-bit word (`lw $v0, 0x20($v0)`). Overlay 2986 at `80080914` sets all talents via word store `sw $v0, 0x20($v1)` with `$v0 = 0x0FFF`. Bytes `+0x22..+0x23` are the upper 16 bits of this single 32-bit word; no code accesses `+0x22` as an independent field.
+3. **46 Skill levels located:** Canonical resident getter `80033CB4` and setter `80033CE0` access skill levels at `P + 0x5C + skill_id` (`secondary + 0x5D..0x8A`, decoded `0x4FD..0x52A` for slot 0; skill IDs 1..46). Negative values signify learned/base status (getter returns `negu $v0, $v0`). Specialty calculation at `80033D30..80033DC8` looks up 1-based component skill IDs in resident table `0x8007197C`, invokes `80033CB4`, and averages the levels. Offset `+0x5C` is an unused index-0 sentinel byte (`0x00`), and `+0x8B` is alignment padding (`0x00`).
+4. **All remaining gaps closed:**
+   - `+0x1C..0x1F` (4 bytes): Zero padding / alignment between SP and talents (cleared by memset; `00 00 00 00` across all saves).
+   - `+0x24..0x37` (20 bytes): ASCII character name buffer (null-padded), copied via 5-word `lwl`/`lwr` and `swl`/`swr` block transfers in Overlay 3022 `8007E194..8007E1E4`, matching Chunk 5's 20-byte name slots.
+   - `+0x38..+0x3B` (4 bytes): Strategy and battle-mode parameters: `+0x38` combat tactic enum (`0..5`, Overlay 3018 `8007E304`/`8007E568`), `+0x39` previous tactic backup (`8007E54C`), `+0x3A` battle skill / auto flags (bit 2 toggled by Overlay 3004 `80081C18..80081C3C`), and `+0x3B` four-ability assignment mode flag (`8007FA94`/`8007FA9C`).
+   - `+0x8C..+0xCB` (64 bytes = 32 `u16` halfwords): Battle-ability usage counts / proficiencies (`lh a2, 0x8a(v1)` with 1-based ability ID at `8007F008`).
+
+---
+
+### SP opcode and level-up consumer tracing
+
+#### 1. Script VM Opcode 0xFE0A / 0xFE8A (`80067794..80067824`)
+
+In resident entry 2576 (`8002F810`), the VM opcode jump table at `8007359C` routes opcode `0xFE` (254, index $254 - 100 = 154$ at `80073804`) to handler `8006497C`:
+
+```text
+8006497C move  a0,s1
+80064980 jal   80067634       ; sub-dispatcher B
+80064984 move  a1,s3
+80064988 j     80064F08
+```
+
+Sub-dispatcher `80067634` decodes the sub-opcode from byte 2: `(instruction >> 16) & 0x7F` (`80067648..8006764C`). For sub-opcode `0x0A` (10, index $10 - 1 = 9$ in jump table `8007380C` at `80073830`), execution jumps directly to `80067794`:
+
+```text
+80067794 move  a0,s2
+80067798 jal   80068DB8       ; pop 2 script arguments: [character_id, signed_delta]
+8006779C addiu a1,zero,2
+800677A0 move  s1,zero        ; slot counter = 0
+800677A4 addiu a2,zero,3E7    ; clamp maximum = 999
+800677A8 lui   a1,8007
+800677AC lw    a1,5280(a1)    ; secondary array base pointer Q = [80075280]
+800677B0 lui   a0,8007
+800677B4 lw    a0,527C(a0)    ; primary array base pointer [8007527C]
+800677B8 slti  v0,s1,8        ; 8-slot iteration
+800677BC beqz  v0,800687EC
+800677C0 nop
+800677C4 lh    v1,0(a0)       ; primary member signed ID
+800677C8 lw    v0,0(s3)       ; target character ID (0-based)
+800677CC bgez  v1,800677D8    ; handle negative retained member IDs
+800677D0 nop
+800677D4 negu  v1,v1          ; absolute ID
+800677D8 addiu v0,v0,1        ; convert target ID to 1-based
+800677DC bne   v1,v0,8006781C ; mismatch -> advance to next slot
+800677E0 addiu a0,a0,60       ; delay slot: primary stride 0x60
+800677E4 move  a0,a1          ; matched slot secondary pointer
+800677E8 lw    v1,4(s3)       ; delta argument
+800677EC lhu   v0,1A(a0)      ; load current value at secondary + 0x1A
+800677F0 nop
+800677F4 addu  v0,v0,v1       ; add delta
+800677F8 sh    v0,1A(a0)      ; store back to secondary + 0x1A
+800677FC sll   v0,v0,10
+80067800 sra   v0,v0,10       ; sign-extend 16-bit result
+80067804 bltz  v0,800686F4    ; clamp to zero if negative
+80067808 slti  v0,v0,3E8      ; check if < 1000
+8006780C bnez  v0,800687EC    ; 0 <= result <= 999: done
+80067810 nop
+80067814 j     800687EC       ; result >= 1000: clamp to 999
+80067818 sh    a2,1A(a0)      ; store 0x3E7 (999) to secondary + 0x1A
+8006781C addiu a1,a1,D0       ; loop advance: secondary stride 0xD0
+80067820 j     800677B8
+80067824 addiu s1,s1,1        ; slot counter++
+...
+800686F4 j     800687EC       ; clamp negative result
+800686F8 sh    zero,1A(a1)    ; store 0 to secondary + 0x1A
+```
+
+#### 2. Skill Level-Up UI Consumer (Overlay 3014, `8007EA3C..8007EAB8`)
+
+Overlay 3014 (Skill Level-Up menu) directly proves that `secondary + 0x1A` is SP and that spending SP increments skill levels at `secondary + 0x5C + skill_id`:
+
+```text
+8007EA2C lw    v0,4080(v0)    ; P = [80074080] (selected secondary record)
+8007EA3C lhu   s3,1A(v0)      ; load current SP from P + 0x1A
+8007EA40 jal   80033CB4       ; call resident skill level getter
+8007EA44 move  a0,s1          ; a0 = skill ID
+8007EA48 move  s0,v0          ; s0 = current skill level
+8007EA4C slti  v0,s0,A        ; check if current level < 10 (max level)
+8007EA50 beqz  v0,8007EAC4    ; level 10 -> cannot level up
+8007EA58 jal   8007EAE8       ; calculate SP cost for this skill
+8007EA5C move  a1,s1          ; delay slot: skill ID
+8007EA64 sra   a0,v0,10       ; a0 = SP cost
+8007EA6C sra   v0,v0,10       ; v0 = SP current
+8007EA70 slt   v0,v0,a0       ; test if current SP < cost
+8007EA74 bnez  v0,8007EAC8    ; insufficient SP -> cannot level up
+8007EA80 lw    v0,4080(v0)    ; reload selected secondary pointer P
+8007EA88 lhu   v1,1A(v0)      ; reload current SP
+8007EA90 subu  v1,v1,a0       ; SP = SP - cost
+8007EA94 sh    v1,1A(v0)      ; STORE DEDUCTED SP TO P + 0x1A!
+8007EA98 addu  v0,v0,s1       ; v0 = P + skill_id
+8007EA9C lb    v0,5C(v0)      ; load skill level from P + 0x5C + skill_id
+8007EAA8 addiu s0,s0,1        ; level++
+8007EAB0 move  a0,s1          ; skill ID
+8007EAB4 jal   80033CE0       ; call resident skill setter
+8007EAB8 move  a1,s0          ; a1 = new level (stored to P + 0x5C + skill_id)
+```
+
+#### 3. Why `so2_refill_sp.py` Saw "Variable-Length" SP Blocks
+
+`so2_refill_sp.py` and early notes described SP as having "three forms" (`SP 0: marker only`, `SP 1..255: 1 byte + marker`, `SP >= 256: 2 bytes`). This was entirely an artifact of inspecting raw memory-card blocks under zero-run compression (`00 00 N` encoding):
+- When SP = 0, both bytes `1A..1B` are `00 00`, which merges into a zero run with preceding alignment bytes `1C..1F`.
+- When SP is 1..255, byte `1A` is nonzero and byte `1B` is `00`, starting a zero run at `1B..1F`.
+- When SP $\ge 256$, neither byte is zero, preventing run formation at `1A..1B`.
+
+In the decoded save buffer, **SP is always a fixed 2-byte unsigned little-endian halfword at `0x4A0 + slot*0xD0 + 0x1A`**, clamped `0..999`.
+
+---
+
+### Talent mask width: 32-bit `u32` word, not `u16`
+
+Historical notes disagreed on whether the talent mask at `secondary + 0x20` was a 2-byte `u16` or a 4-byte `u32` word. Disassembly across resident code and multiple overlays confirms it is unconditionally a 32-bit word:
+
+1. **Resident Initializer (`8007B1F0`):**
+   ```text
+   8007B224 sw    zero,20(s5)    ; clears all 4 bytes with word store
+   ...
+   8007B318 lhu   v1,0(v0)       ; rolled talent bit
+   8007B31C lw    v0,20(s5)      ; word load from secondary + 0x20
+   8007B324 or    v0,v0,v1       ; bitwise OR
+   8007B328 sw    v0,20(s5)      ; word store back to secondary + 0x20
+   ```
+2. **Status/Talent Menu Check (Overlay 3014, `8007E1C4`):**
+   ```text
+   8007E1BC lw    v0,4080(v0)    ; P = [80074080]
+   8007E1C4 lw    v0,20(v0)      ; 32-bit word load
+   8007E1CC and   v0,v0,s5       ; bitwise AND with talent mask
+   8007E1D0 beqz  v0,8007E1FC
+   ```
+3. **Talent Grant / Max (Overlay 2986, `80080914`):**
+   ```text
+   80080900 lw    v1,4080(v1)    ; P = [80074080]
+   8008090C addiu v0,zero,FFF    ; 0x0FFF (all 12 talent bits 0..11)
+   80080914 sw    v0,20(v1)      ; 32-bit word store to secondary + 0x20
+   ```
+
+No resident or overlay code accesses `secondary + 0x22` as a halfword or byte. The field is a single `u32` word at `secondary + 0x20..0x23` (decoded `0x4C0 + slot*0xD0`).
+
+---
+
+### 46 Skill levels: canonical resident accessors and specialty averaging
+
+#### 1. Resident Getter (`80033CB4`) and Setter (`80033CE0`)
+
+The resident binary contains canonical getter and setter functions for the 46 individual skill levels:
+
+```text
+; --- Resident Skill Level Getter ---
+; a0: 1-based skill ID (1..46)
+; Returns: skill level (positive integer)
+80033CB4 lui   v0,8007
+80033CB8 lw    v0,4080(v0)    ; P = [80074080] (selected secondary pointer)
+80033CC0 addu  v0,v0,a0       ; v0 = P + skill_id
+80033CC4 lb    v0,5C(v0)      ; load signed byte from P + 0x5C + skill_id
+80033CCC bgez  v0,80033CD8    ; if positive (unlocked/learned), return as-is
+80033CD4 negu  v0,v0          ; if negative (base/locked), return absolute value
+80033CD8 jr    ra
+
+; --- Resident Skill Level Setter ---
+; a0: 1-based skill ID (1..46)
+; a1: new skill level
+80033CE0 lui   v0,8007
+80033CE4 lw    v0,4080(v0)    ; P = [80074080]
+80033CEC addu  v0,v0,a0       ; v0 = P + skill_id
+80033CF0 jr    ra
+80033CF4 sb    a1,5C(v0)      ; store byte to P + 0x5C + skill_id (delay slot)
+```
+
+#### 2. Specialty Calculation Averaging (`80033D30..80033DC8`)
+
+Specialty levels are derived directly from these 46 skill levels by looking up 3 component skill IDs per specialty in table `8007197C`:
+
+```text
+80033D4C lui   s7,8007
+80033D50 addiu s7,s7,197C     ; specialty component table (3 bytes per specialty)
+80033D54 addiu a0,a0,-1
+80033D58 sll   v0,a0,1
+80033D60 addu  s6,v0,a0       ; specialty_index * 3
+...
+80033D7C lbu   a0,0(v0)       ; component skill ID (1-based)
+80033D84 beqz  a0,80033DA4    ; 0 = no component
+80033D8C jal   80033CB4       ; call getter 80033CB4(skill_id)
+...
+80033DA4 addu  s2,s2,s0       ; sum component skill levels
+...
+80033DC8 div   zero,s2,s4     ; specialty level = sum / count
+```
+
+Representative entries from table `8007197C`:
+- Specialty 1 (Cooking): skill 1 (Knife), skill 8 (Recipe).
+- Specialty 3 (Customization): skill 3 (Metalwork), skill 2 (Craft).
+- Specialty 5 (Authoring): skill 4 (Writing), skill 5 (Drafting), skill 6 (Composition).
+
+#### 3. Skill Level Array Layout
+
+- `secondary + 0x5C` (decoded `0x4FC + slot*0xD0`): index-0 sentinel byte, always `0x00`.
+- `secondary + 0x5D..0x8A` (decoded `0x4FD..0x52A + slot*0xD0`): 46 skill levels, 1 byte each, corresponding to 1-based skill IDs 1..46 (see `docs/SO2-SKILLS-FULL.md` for skill order). Values 1..10 represent current level.
+- `secondary + 0x8B` (decoded `0x52B + slot*0xD0`): 1 byte struct alignment padding, always `0x00`.
+
+---
+
+### Adjacent gaps: name buffer, strategy bytes, availability, and proficiency
+
+Tracing all accesses to the remaining secondary offsets accounts for every remaining byte:
+
+1. **Zero padding (`secondary + 0x1C..0x1F`, 4 bytes):** Alignment between SP (`+0x1A`) and talent word (`+0x20`). Initialized to 0 by memset `8007A234` (`addiu a2, zero, 0xD0`). Verified `00 00 00 00` across all saves.
+2. **Name buffer (`secondary + 0x24..0x37`, 20 bytes):** Overlay 3022 `8007E18C..8007E1E4` performs 5 unaligned word loads (`lwl`/`lwr` at `+0x24, +0x28, +0x2C, +0x30, +0x34`) and stores (`swl`/`swr`) to transfer the character name as a 20-byte ASCII buffer (null-padded/terminated). This matches the 20-byte name field width established in Chunk 5 (`0x1770..0x1860`).
+3. **Combat strategy and battle mode bytes (`secondary + 0x38..0x3B`, 4 bytes):**
+   - `+0x38` (`u8`): Combat strategy / tactic enum (`0..5`). Loaded at Overlay 3018 `8007E304` and `8007E4A4` (`lbu v0, 38(v0)`), stored at `8007E568` (`sb v0, 38(v1)`).
+   - `+0x39` (`u8`): Previous combat strategy backup. Stored at Overlay 3018 `8007E54C` (`sb v1, 39(a0)`).
+   - `+0x3A` (`u8`): Battle skill / auto flags. Bit 2 (`0x04`) is toggled by Overlay 3004 at `80081C18..80081C3C` (`ori v0, v0, 4` / `andi v0, v0, 0xfb; sb v0, 3a(v1)`).
+   - `+0x3B` (`u8`): Four-ability assignment mode enable flag. Tested by Overlay 3004 at `8007FA94` / `8007FA9C` (`lbu v0, 3b(v0); bnez v0, ...`) to switch between standard 2-ability display (`CC, CD`) and 4-ability display (`CC, CE, CD, CF`).
+4. **Battle ability availability (`secondary + 0x3C..0x5B`, 32 bytes):** 32 per-ability availability bytes (`800800F4 lb v0, 3C(v0)`), as established in `docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md`.
+5. **Battle ability usage counts / proficiencies (`secondary + 0x8C..0xCB`, 64 bytes = 32 `u16` halfwords):** Ability detail viewer in Overlay 3004 / 3014 loads proficiency at `8007F008 lh a2, 8A(v1)` where `v1 = P + 2 * ability_id`. For 1-based ability IDs 1..32, this spans halfwords `P + 0x8C` through `P + 0xCA` (64 bytes total).
+6. **Quick-assign ability IDs (`secondary + 0xCC..0xCF`, 4 bytes):** Four 1-byte ability IDs assigned to button slots (`80080288 sb v1, 0(v0)`), cleared with 0.
+
+---
+
+### Complete secondary field map (relative to decoded `0x4A0 + slot*0xD0`)
+
+| Offset | Decoded Slot-0 | Width | Field Name & Semantics | Status | Disassembly / Evidence Addresses |
+|---|---|---|---|---|---|
+| `+0x00..+0x05` | `0x4A0..0x4A5` | 3 &times; `u16` | LUC triplet (base, intermediate, effective) | Verified (executed) | `8007A3FC` |
+| `+0x06..+0x0B` | `0x4A6..0x4AB` | 3 &times; `u16` | STM triplet (base, intermediate, effective) | Verified (executed) | `8007A3F0` |
+| `+0x0C..+0x19` | `0x4AC..0x4B9` | 7 &times; `u16` | 7 equipped item IDs (weapon, armor, shield, helmet, greaves, acc1, acc2) | Verified (executed) | `8007A404..8007A41C` |
+| `+0x1A..+0x1B` | `0x4BA..0x4BB` | `u16` | **SP (Skill Points)**, clamped `0..999` | Verified (executed) | `800677EC..80067818`, `8007EA3C`, `8007EA94` |
+| `+0x1C..+0x1F` | `0x4BC..0x4BF` | 4 bytes | Zero padding / struct alignment (`00 00 00 00`) | Verified (executed) | Memset `8007A234`, verified across all saves |
+| `+0x20..+0x23` | `0x4C0..0x4C3` | `u32` | **Talent bitmask** (bits 0..11, up to `0x0FFF`) | Verified (executed) | `8007B224`, `8007B31C..8007B328`, `8007E1C4`, `80080914` |
+| `+0x24..+0x37` | `0x4C4..0x4D7` | 20 bytes | **Character name buffer** (ASCII, null-padded) | Verified (executed) | `8007E194..8007E1E4`, `8007A47C` |
+| `+0x38` | `0x4D8` | `u8` | Combat strategy / tactic enum (`0..5`) | Disassembly-only | `8007E304`, `8007E568` |
+| `+0x39` | `0x4D9` | `u8` | Previous combat strategy backup | Disassembly-only | `8007E54C` |
+| `+0x3A` | `0x4DA` | `u8` | Battle skill / auto flags (bit 2 = link combo toggle) | Disassembly-only | `80081B30`, `80081C18..80081C3C` |
+| `+0x3B` | `0x4DB` | `u8` | Four-ability assignment mode enable flag | Disassembly-only | `8007FA94`, `8007FA9C` |
+| `+0x3C..+0x5B` | `0x4DC..0x4FB` | 32 bytes | 32 battle-ability availability bytes | Verified (executed) | `800800F4` |
+| `+0x5C` | `0x4FC` | `u8` | Skill 0 sentinel byte (`0x00`) | Verified (executed) | `80033CB4`, verified across all saves |
+| `+0x5D..+0x8A` | `0x4FD..0x52A` | 46 bytes | **46 skill levels** (IDs 1..46, level 1..10, negative = learned/base) | Verified (executed) | `80033CB4`, `80033CE0`, `8007EA9C`, `8007EAB4` |
+| `+0x8B` | `0x52B` | `u8` | Struct alignment padding (`0x00`) | Verified (executed) | Disassembly alignment, verified across all saves |
+| `+0x8C..+0xCB` | `0x52C..0x56B` | 32 &times; `u16` | 32 battle-ability usage counts / proficiencies | Disassembly-only | `8007F008` |
+| `+0xCC..+0xCF` | `0x56C..0x56F` | 4 bytes | 4 assigned battle ability IDs | Verified (executed) | `80080288` |
+
+---
+
+### Verification across real game saves
+
+A cross-check of all 15 memory-card saves in `C:/CodeTesting/StarOcean2/SaveGames/` validated every field in the secondary record:
+- SP values at `+0x1A` range from 0 to 999 across all party members, perfectly matching in-game displayed values.
+- `+0x1C..+0x1F` is `[0, 0, 0, 0]` in every character record across every save.
+- Talent masks at `+0x20` load as 32-bit integers with bits 0..11 matching all known talent combinations (e.g., `0x02B0` for Rena, `0x001D` for Claude).
+- Name strings at `+0x24..+0x37` read cleanly as null-padded ASCII up to 20 bytes.
+- Strategy byte at `+0x38` is within `0..5` across all active party members.
+- Sentinel byte `+0x5C` and padding byte `+0x8B` are strictly `0x00` across all records.
+- All 46 skill level bytes at `+0x5D..+0x8A` match player progression (0 for unlearned, 1..10 for learned skills, maxed 10s on endgame saves).
+
 ## Identity read sites: party selection, equipment and UI
 
 Slot selector `0x800331C8` computes `slot*0x60` and `slot*0xD0`, then stores

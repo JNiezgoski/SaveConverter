@@ -12,9 +12,9 @@ the actual PS1 code that reads and writes it.
 |---|---|
 | Checksums, party list, character ID swaps | ✅ Verified |
 | Level, HP, MP, STR/CON/AGL/DEX/INT | ✅ Verified (999 safe; 9999 unproven) |
-| All 46 skill levels **and** all 46 skill names/order | ✅ Verified |
-| SP (skill points) — every internal form, all 12 characters | ✅ Verified |
-| Talents (all 10) | ✅ Verified |
+| All 46 skill levels **and** all 46 skill names/order | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x5D..0x8A` (slot 0 `0x4FD..0x52A`), 1 byte per skill (IDs 1..46), resident getter/setter `80033CB4`/`80033CE0` — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
+| SP (skill points) — every internal form, all 12 characters | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x1A` (slot 0 `0x4BA..0x4BB`), u16 clamped 0..999, script opcode `0xFE0A` / `0xFE8A` and level-up UI in Overlay 3014 — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
+| Talents (all 10) | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x20` (slot 0 `0x4C0..0x4C3`), 32-bit u32 word, bits 0..11 — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
 | Item ID table, inventory counts for items already owned (max 20) | ✅ Verified |
 | Giving a character an item type they've **never** owned before | ✅ Verified in-game (via `so2_inventory.py`) — Seraphic Garb 0→20 confirmed equipped and usable on save 15 — [details](docs/SO2-INVENTORY-ADD-INVESTIGATION.md) |
 | Equipment — full 7-slot characters (incl. Noel, Chisato) | ✅ Verified |

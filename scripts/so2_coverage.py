@@ -62,18 +62,24 @@ RANGES = [
     *[(0x1A0 + slot * 0x60 + 0x42, 0x1A0 + slot * 0x60 + 0x4E, f"Party primary slot {slot}: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)", "partial", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
     *[(0x1A0 + slot * 0x60 + 0x4E, 0x1A0 + slot * 0x60 + 0x60, f"Party primary slot {slot}: opaque bytes (nonzero, no established meaning)", "unknown", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
 
-    # ---- party secondary array (0x4A0-0xB20): 8 slots x 0xD0 ----
-    # Named-by-decoded-offset fields per slot: LUC(+0..5), STM(+6..B), equipment 7xu16(+C..19),
-    # talent mask(+20..21), name(+24..2B), 32 availability bytes(+3C..5B), battle-ability
-    # quick-assign(+CC..CF). SP block + 46 skill levels are known to exist and are read/written
-    # correctly by so2_refill_sp.py, but their exact decoded sub-offset within this array isn't
-    # published as a single clean number in SAVE-FORMAT.md - marked "partial" rather than
-    # assigning a location this script doesn't actually have.
-    *[(0x4A0 + slot * 0xD0 + 0x00, 0x4A0 + slot * 0xD0 + 0x0C, f"Party secondary slot {slot}: LUC/STM triplets", "mapped", "docs/SAVE-FORMAT.md") for slot in range(8)],
+    # ---- party secondary array (0x4A0-0xB20): 8 slots x 0xD0 (208 bytes) ----
+    # Full 208-byte map resolved (2026-09-27): LUC/STM triplets (+0..B), equipment 7xu16 (+C..19),
+    # SP u16 (+1A..1B), padding (+1C..1F), talent mask u32 (+20..23), name 20 bytes ASCII (+24..37),
+    # combat strategy / tactic / battle-mode bytes (+38..3B), 32 availability bytes (+3C..5B),
+    # skill sentinel (+5C), 46 skill levels (+5D..8A), padding (+8B), 32 usage/proficiency
+    # halfwords (+8C..CB), and 4 quick-assign ability IDs (+CC..CF).
+    *[(0x4A0 + slot * 0xD0 + 0x00, 0x4A0 + slot * 0xD0 + 0x0C, f"Party secondary slot {slot}: LUC/STM triplets", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
     *[(0x4A0 + slot * 0xD0 + 0x0C, 0x4A0 + slot * 0xD0 + 0x1A, f"Party secondary slot {slot}: 7x equipment u16", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
-    *[(0x4A0 + slot * 0xD0 + 0x20, 0x4A0 + slot * 0xD0 + 0x22, f"Party secondary slot {slot}: talent mask u16", "mapped", "docs/SAVE-FORMAT.md") for slot in range(8)],
-    *[(0x4A0 + slot * 0xD0 + 0x24, 0x4A0 + slot * 0xD0 + 0x2C, f"Party secondary slot {slot}: name (8 bytes ASCII)", "mapped", "docs/SAVE-FORMAT.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x1A, 0x4A0 + slot * 0xD0 + 0x1C, f"Party secondary slot {slot}: SP (Skill Points) u16 (0..999)", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x1C, 0x4A0 + slot * 0xD0 + 0x20, f"Party secondary slot {slot}: zero padding / alignment", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x20, 0x4A0 + slot * 0xD0 + 0x24, f"Party secondary slot {slot}: talent mask u32 word", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x24, 0x4A0 + slot * 0xD0 + 0x38, f"Party secondary slot {slot}: character name (20 bytes ASCII)", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x38, 0x4A0 + slot * 0xD0 + 0x3C, f"Party secondary slot {slot}: combat strategy, backup tactic, auto flags, 4-ability flag", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
     *[(0x4A0 + slot * 0xD0 + 0x3C, 0x4A0 + slot * 0xD0 + 0x5C, f"Party secondary slot {slot}: 32 battle-ability availability bytes", "mapped", "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x5C, 0x4A0 + slot * 0xD0 + 0x5D, f"Party secondary slot {slot}: skill 0 sentinel byte (0x00)", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x5D, 0x4A0 + slot * 0xD0 + 0x8B, f"Party secondary slot {slot}: 46 skill levels (1 byte each)", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x8B, 0x4A0 + slot * 0xD0 + 0x8C, f"Party secondary slot {slot}: struct alignment padding (0x00)", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md") for slot in range(8)],
+    *[(0x4A0 + slot * 0xD0 + 0x8C, 0x4A0 + slot * 0xD0 + 0xCC, f"Party secondary slot {slot}: 32 battle-ability usage counts / proficiencies (32xu16)", "mapped", "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md") for slot in range(8)],
     *[(0x4A0 + slot * 0xD0 + 0xCC, 0x4A0 + slot * 0xD0 + 0xD0, f"Party secondary slot {slot}: battle-ability quick-assign (4 IDs)", "mapped", "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md") for slot in range(8)],
 
     # ---- inventory + adjacent bookkeeping (0xB20-0x1744) ----

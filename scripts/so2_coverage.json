@@ -1,8 +1,8 @@
 {
   "total_bytes": 7048,
   "tier_totals": {
-    "mapped": 4092,
-    "unknown": 1765,
+    "mapped": 5180,
+    "unknown": 677,
     "partial": 163,
     "runtime": 1028
   },
@@ -37,10 +37,10 @@
       "end": 2848,
       "size": 1664,
       "tiers": {
-        "mapped": 576,
+        "mapped": 1664,
         "partial": 0,
         "runtime": 0,
-        "unknown": 1088
+        "unknown": 0
       }
     },
     {
@@ -452,7 +452,7 @@
       "end": 1196,
       "label": "Party secondary slot 0: LUC/STM triplets",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1196,
@@ -463,38 +463,38 @@
     },
     {
       "start": 1210,
+      "end": 1212,
+      "label": "Party secondary slot 0: SP (Skill Points) u16 (0..999)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1212,
       "end": 1216,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 0: zero padding / alignment",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1216,
-      "end": 1218,
-      "label": "Party secondary slot 0: talent mask u16",
-      "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
-    },
-    {
-      "start": 1218,
       "end": 1220,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 0: talent mask u32 word",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1220,
-      "end": 1228,
-      "label": "Party secondary slot 0: name (8 bytes ASCII)",
+      "end": 1240,
+      "label": "Party secondary slot 0: character name (20 bytes ASCII)",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
-      "start": 1228,
+      "start": 1240,
       "end": 1244,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 0: combat strategy, backup tactic, auto flags, 4-ability flag",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1244,
@@ -505,10 +505,31 @@
     },
     {
       "start": 1276,
+      "end": 1277,
+      "label": "Party secondary slot 0: skill 0 sentinel byte (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1277,
+      "end": 1323,
+      "label": "Party secondary slot 0: 46 skill levels (1 byte each)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1323,
+      "end": 1324,
+      "label": "Party secondary slot 0: struct alignment padding (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1324,
       "end": 1388,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 0: 32 battle-ability usage counts / proficiencies (32xu16)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
     },
     {
       "start": 1388,
@@ -522,7 +543,7 @@
       "end": 1404,
       "label": "Party secondary slot 1: LUC/STM triplets",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1404,
@@ -533,38 +554,38 @@
     },
     {
       "start": 1418,
+      "end": 1420,
+      "label": "Party secondary slot 1: SP (Skill Points) u16 (0..999)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1420,
       "end": 1424,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 1: zero padding / alignment",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1424,
-      "end": 1426,
-      "label": "Party secondary slot 1: talent mask u16",
-      "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
-    },
-    {
-      "start": 1426,
       "end": 1428,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 1: talent mask u32 word",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1428,
-      "end": 1436,
-      "label": "Party secondary slot 1: name (8 bytes ASCII)",
+      "end": 1448,
+      "label": "Party secondary slot 1: character name (20 bytes ASCII)",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
-      "start": 1436,
+      "start": 1448,
       "end": 1452,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 1: combat strategy, backup tactic, auto flags, 4-ability flag",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1452,
@@ -575,10 +596,31 @@
     },
     {
       "start": 1484,
+      "end": 1485,
+      "label": "Party secondary slot 1: skill 0 sentinel byte (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1485,
+      "end": 1531,
+      "label": "Party secondary slot 1: 46 skill levels (1 byte each)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1531,
+      "end": 1532,
+      "label": "Party secondary slot 1: struct alignment padding (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1532,
       "end": 1596,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 1: 32 battle-ability usage counts / proficiencies (32xu16)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
     },
     {
       "start": 1596,
@@ -592,7 +634,7 @@
       "end": 1612,
       "label": "Party secondary slot 2: LUC/STM triplets",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1612,
@@ -603,38 +645,38 @@
     },
     {
       "start": 1626,
+      "end": 1628,
+      "label": "Party secondary slot 2: SP (Skill Points) u16 (0..999)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1628,
       "end": 1632,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 2: zero padding / alignment",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1632,
-      "end": 1634,
-      "label": "Party secondary slot 2: talent mask u16",
-      "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
-    },
-    {
-      "start": 1634,
       "end": 1636,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 2: talent mask u32 word",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1636,
-      "end": 1644,
-      "label": "Party secondary slot 2: name (8 bytes ASCII)",
+      "end": 1656,
+      "label": "Party secondary slot 2: character name (20 bytes ASCII)",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
-      "start": 1644,
+      "start": 1656,
       "end": 1660,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 2: combat strategy, backup tactic, auto flags, 4-ability flag",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1660,
@@ -645,10 +687,31 @@
     },
     {
       "start": 1692,
+      "end": 1693,
+      "label": "Party secondary slot 2: skill 0 sentinel byte (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1693,
+      "end": 1739,
+      "label": "Party secondary slot 2: 46 skill levels (1 byte each)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1739,
+      "end": 1740,
+      "label": "Party secondary slot 2: struct alignment padding (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1740,
       "end": 1804,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 2: 32 battle-ability usage counts / proficiencies (32xu16)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
     },
     {
       "start": 1804,
@@ -662,7 +725,7 @@
       "end": 1820,
       "label": "Party secondary slot 3: LUC/STM triplets",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1820,
@@ -673,38 +736,38 @@
     },
     {
       "start": 1834,
+      "end": 1836,
+      "label": "Party secondary slot 3: SP (Skill Points) u16 (0..999)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1836,
       "end": 1840,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 3: zero padding / alignment",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1840,
-      "end": 1842,
-      "label": "Party secondary slot 3: talent mask u16",
-      "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
-    },
-    {
-      "start": 1842,
       "end": 1844,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 3: talent mask u32 word",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1844,
-      "end": 1852,
-      "label": "Party secondary slot 3: name (8 bytes ASCII)",
+      "end": 1864,
+      "label": "Party secondary slot 3: character name (20 bytes ASCII)",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
-      "start": 1852,
+      "start": 1864,
       "end": 1868,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 3: combat strategy, backup tactic, auto flags, 4-ability flag",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 1868,
@@ -715,10 +778,31 @@
     },
     {
       "start": 1900,
+      "end": 1901,
+      "label": "Party secondary slot 3: skill 0 sentinel byte (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1901,
+      "end": 1947,
+      "label": "Party secondary slot 3: 46 skill levels (1 byte each)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1947,
+      "end": 1948,
+      "label": "Party secondary slot 3: struct alignment padding (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1948,
       "end": 2012,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 3: 32 battle-ability usage counts / proficiencies (32xu16)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
     },
     {
       "start": 2012,
@@ -732,7 +816,7 @@
       "end": 2028,
       "label": "Party secondary slot 4: LUC/STM triplets",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2028,
@@ -743,38 +827,38 @@
     },
     {
       "start": 2042,
+      "end": 2044,
+      "label": "Party secondary slot 4: SP (Skill Points) u16 (0..999)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2044,
       "end": 2048,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 4: zero padding / alignment",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2048,
-      "end": 2050,
-      "label": "Party secondary slot 4: talent mask u16",
-      "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
-    },
-    {
-      "start": 2050,
       "end": 2052,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 4: talent mask u32 word",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2052,
-      "end": 2060,
-      "label": "Party secondary slot 4: name (8 bytes ASCII)",
+      "end": 2072,
+      "label": "Party secondary slot 4: character name (20 bytes ASCII)",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
-      "start": 2060,
+      "start": 2072,
       "end": 2076,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 4: combat strategy, backup tactic, auto flags, 4-ability flag",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2076,
@@ -785,10 +869,31 @@
     },
     {
       "start": 2108,
+      "end": 2109,
+      "label": "Party secondary slot 4: skill 0 sentinel byte (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2109,
+      "end": 2155,
+      "label": "Party secondary slot 4: 46 skill levels (1 byte each)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2155,
+      "end": 2156,
+      "label": "Party secondary slot 4: struct alignment padding (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2156,
       "end": 2220,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 4: 32 battle-ability usage counts / proficiencies (32xu16)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
     },
     {
       "start": 2220,
@@ -802,7 +907,7 @@
       "end": 2236,
       "label": "Party secondary slot 5: LUC/STM triplets",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2236,
@@ -813,38 +918,38 @@
     },
     {
       "start": 2250,
+      "end": 2252,
+      "label": "Party secondary slot 5: SP (Skill Points) u16 (0..999)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2252,
       "end": 2256,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 5: zero padding / alignment",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2256,
-      "end": 2258,
-      "label": "Party secondary slot 5: talent mask u16",
-      "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
-    },
-    {
-      "start": 2258,
       "end": 2260,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 5: talent mask u32 word",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2260,
-      "end": 2268,
-      "label": "Party secondary slot 5: name (8 bytes ASCII)",
+      "end": 2280,
+      "label": "Party secondary slot 5: character name (20 bytes ASCII)",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
-      "start": 2268,
+      "start": 2280,
       "end": 2284,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 5: combat strategy, backup tactic, auto flags, 4-ability flag",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2284,
@@ -855,10 +960,31 @@
     },
     {
       "start": 2316,
+      "end": 2317,
+      "label": "Party secondary slot 5: skill 0 sentinel byte (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2317,
+      "end": 2363,
+      "label": "Party secondary slot 5: 46 skill levels (1 byte each)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2363,
+      "end": 2364,
+      "label": "Party secondary slot 5: struct alignment padding (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2364,
       "end": 2428,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 5: 32 battle-ability usage counts / proficiencies (32xu16)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
     },
     {
       "start": 2428,
@@ -872,7 +998,7 @@
       "end": 2444,
       "label": "Party secondary slot 6: LUC/STM triplets",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2444,
@@ -883,38 +1009,38 @@
     },
     {
       "start": 2458,
+      "end": 2460,
+      "label": "Party secondary slot 6: SP (Skill Points) u16 (0..999)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2460,
       "end": 2464,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 6: zero padding / alignment",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2464,
-      "end": 2466,
-      "label": "Party secondary slot 6: talent mask u16",
-      "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
-    },
-    {
-      "start": 2466,
       "end": 2468,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 6: talent mask u32 word",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2468,
-      "end": 2476,
-      "label": "Party secondary slot 6: name (8 bytes ASCII)",
+      "end": 2488,
+      "label": "Party secondary slot 6: character name (20 bytes ASCII)",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
-      "start": 2476,
+      "start": 2488,
       "end": 2492,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 6: combat strategy, backup tactic, auto flags, 4-ability flag",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2492,
@@ -925,10 +1051,31 @@
     },
     {
       "start": 2524,
+      "end": 2525,
+      "label": "Party secondary slot 6: skill 0 sentinel byte (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2525,
+      "end": 2571,
+      "label": "Party secondary slot 6: 46 skill levels (1 byte each)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2571,
+      "end": 2572,
+      "label": "Party secondary slot 6: struct alignment padding (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2572,
       "end": 2636,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 6: 32 battle-ability usage counts / proficiencies (32xu16)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
     },
     {
       "start": 2636,
@@ -942,7 +1089,7 @@
       "end": 2652,
       "label": "Party secondary slot 7: LUC/STM triplets",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2652,
@@ -953,38 +1100,38 @@
     },
     {
       "start": 2666,
+      "end": 2668,
+      "label": "Party secondary slot 7: SP (Skill Points) u16 (0..999)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2668,
       "end": 2672,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 7: zero padding / alignment",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2672,
-      "end": 2674,
-      "label": "Party secondary slot 7: talent mask u16",
-      "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
-    },
-    {
-      "start": 2674,
       "end": 2676,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 7: talent mask u32 word",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2676,
-      "end": 2684,
-      "label": "Party secondary slot 7: name (8 bytes ASCII)",
+      "end": 2696,
+      "label": "Party secondary slot 7: character name (20 bytes ASCII)",
       "tier": "mapped",
-      "note": "docs/SAVE-FORMAT.md"
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
-      "start": 2684,
+      "start": 2696,
       "end": 2700,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 7: combat strategy, backup tactic, auto flags, 4-ability flag",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 2700,
@@ -995,10 +1142,31 @@
     },
     {
       "start": 2732,
+      "end": 2733,
+      "label": "Party secondary slot 7: skill 0 sentinel byte (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2733,
+      "end": 2779,
+      "label": "Party secondary slot 7: 46 skill levels (1 byte each)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2779,
+      "end": 2780,
+      "label": "Party secondary slot 7: struct alignment padding (0x00)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2780,
       "end": 2844,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Party secondary slot 7: 32 battle-ability usage counts / proficiencies (32xu16)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
     },
     {
       "start": 2844,
