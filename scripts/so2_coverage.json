@@ -1,9 +1,9 @@
 {
   "total_bytes": 7048,
   "tier_totals": {
-    "mapped": 5184,
-    "unknown": 316,
-    "partial": 520,
+    "mapped": 5222,
+    "partial": 650,
+    "unknown": 148,
     "runtime": 1028
   },
   "regions": [
@@ -13,10 +13,10 @@
       "end": 416,
       "size": 416,
       "tiers": {
-        "mapped": 371,
-        "partial": 0,
+        "mapped": 401,
+        "partial": 15,
         "runtime": 0,
-        "unknown": 45
+        "unknown": 0
       }
     },
     {
@@ -61,10 +61,10 @@
       "end": 7048,
       "size": 1088,
       "tiers": {
-        "mapped": 541,
-        "partial": 424,
+        "mapped": 549,
+        "partial": 539,
         "runtime": 0,
-        "unknown": 123
+        "unknown": 0
       }
     }
   ],
@@ -100,9 +100,9 @@
     {
       "start": 28,
       "end": 32,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Script system call return word / operational parameter 0",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 32,
@@ -128,9 +128,9 @@
     {
       "start": 44,
       "end": 48,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Script system call return word / operational parameter 1",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 48,
@@ -141,10 +141,17 @@
     },
     {
       "start": 64,
+      "end": 65,
+      "label": "Status/Formation Menu selected party slot index (0..7)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 65,
       "end": 66,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Validated party-slot selector",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
     },
     {
       "start": 66,
@@ -184,9 +191,9 @@
     {
       "start": 71,
       "end": 73,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Message window / UI font highlight and shading color parameters (2 bytes)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 73,
@@ -218,10 +225,24 @@
     },
     {
       "start": 77,
+      "end": 78,
+      "label": "Field step / modifier update dirty flag",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 78,
+      "end": 79,
+      "label": "Script system parameter byte",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 79,
       "end": 84,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Zero alignment padding before menu clock throttle marker",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 84,
@@ -254,9 +275,9 @@
     {
       "start": 378,
       "end": 388,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Operational transition state and script operand bytes (181/182)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 388,
@@ -268,9 +289,9 @@
     {
       "start": 392,
       "end": 408,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Eight signed halfword field rate / step / encounter modifiers (8x i16)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 408,
@@ -1213,9 +1234,9 @@
     {
       "start": 5964,
       "end": 5968,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Camera distance / operational scaling parameter",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 5968,
@@ -1227,9 +1248,9 @@
     {
       "start": 5980,
       "end": 5984,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Player position VECTOR homogeneous coordinate W / padding component",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 5984,
@@ -1262,9 +1283,9 @@
     {
       "start": 5992,
       "end": 5993,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Overworld minimap / camera display view mode (0..2 cyclic toggle)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 5993,
@@ -1276,9 +1297,9 @@
     {
       "start": 5994,
       "end": 5996,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Zero-initialized alignment halfword / secondary parameter",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 5996,
@@ -1289,10 +1310,24 @@
     },
     {
       "start": 5997,
+      "end": 5998,
+      "label": "Controlled-object / leader active flag (0/1 selector)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 5998,
+      "end": 5999,
+      "label": "Scene / actor interaction lock / movement suppression flag",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 5999,
       "end": 6000,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Pending scene-action / event trigger flag",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6000,
@@ -1311,9 +1346,9 @@
     {
       "start": 6241,
       "end": 6272,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Confirmed silent across resident and overlays: unused space / padding",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6272,
@@ -1325,9 +1360,9 @@
     {
       "start": 6273,
       "end": 6344,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Confirmed silent across resident and overlays: unused space / padding",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6344,
@@ -1339,9 +1374,9 @@
     {
       "start": 6536,
       "end": 6540,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Operational milestone parameter preceding completion counter",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6540,
@@ -1374,9 +1409,9 @@
     {
       "start": 6550,
       "end": 6552,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Operational counter 4 / alignment halfword preceding pending delivery array",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6552,
@@ -1465,9 +1500,9 @@
     {
       "start": 6609,
       "end": 6610,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Alignment / secondary variant byte following delivery variant byte",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6610,

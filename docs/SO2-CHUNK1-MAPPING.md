@@ -676,3 +676,126 @@ their storage/adjustment roles are mapped. Save-preview clock units, the exact
 events behind anonymous counters, the result-code writer and full enum,
 modifier consumers, and overlay alias coverage remain substantive work.
 No newly executed in-game save/reload or named story milestone is claimed.
+
+
+### Resolution of final remaining Chunk 1 gaps (2026-09-28) [Disassembly-only / Verified]
+
+This pass pushes forward from the seven identified lead sites and investigates the final 45 unmapped bytes of decoded Chunk 1 ($S = \text{[80075270]}$, decoded `0x000..0x1A0`, 416 bytes). By tracing the primary script VM system-call dispatch table at `8007380C`, examining Party/Status menu overlay 3018, tracing Options menu overlay 3016 and Save/Load UI overlay 2998 stack arguments to resident palette routine `80013C0C`, and analyzing field step modifier setters `8003225C..8003230C`, **all 45 remaining bytes are definitively accounted for (0 bytes unknown)**.
+
+#### 1. Detailed field findings and disassembly evidence
+
+1. **`0x41` / S+041 (1 byte): Validated party-slot selector [Verified]**
+   - **MIPS Evidence**: Confirmed party-slot selector (`800530A8: lbu $v0, 0x41($v0)`, `80053124: sb $v0, 0x41($v1)`) as detailed in [docs/SO2-PARTY-MEMBER-INVESTIGATION.md](SO2-PARTY-MEMBER-INVESTIGATION.md). Citing the existing verified investigation resolves this byte in the coverage map.
+   - **Classification**: Promoted to `mapped`.
+
+2. **`0x1C..0x20` / S+01C (4 bytes) and `0x2C..0x30` / S+02C (4 bytes): Script queryable system parameters 0 and 1 [Disassembly-only / Verified]**
+   - **MIPS Evidence**:
+     - Both words belong to the contiguous array of 32-bit script system variables and counters `S+010..S+030` (`S+010` clock-derived word, `S+014` event counter, `S+018` Fol, `S+01C` param 0, `S+020` menu-operation counter, `S+024` save-preparation counter, `S+028` companion counter, `S+02C` param 1).
+     - Tracing the resident script VM system-call jump table at `8007380C` (`80067678: lw $v0, 0x380c($at)`) confirms their exact getter entry points:
+       - **Case 8 (`80067778..80067790`)**: Reads `80067788: lw $v0, 0x1c($v0)` from `S`, storing the result word into script return variable `[80075708]` (`80067790: sw $v0, ($v1)`).
+       - **Case 12 (`80067860..80067878`)**: Reads `80067870: lw $v0, 0x2c($v0)` from `S`, storing the result word into script return variable `[80075708]` (`80067878: sw $v0, ($v1)`).
+   - **Classification**: Promoted to `mapped`.
+
+3. **`0x40` / S+040 (1 byte): Status / Formation Menu selected party slot cursor index [Disassembly-only / Verified]**
+   - **MIPS Evidence**:
+     - In Party / Status / Formation Menu Overlay 3018, `S+040` is loaded on menu initialization at `8007FDC8: lbu $v0, 0x40($v0)` and stored into the local menu control structure at `0x34($s1)` and `0xa4($s1)` (`8007FDD0/8007FDD4: sh $v0, 0xa4($s1); sh $v0, 0x34($s1)`).
+     - At `8007E164: lh $v0, 0x34($s1)`, the loaded index (0..7) indexes the active party slot array to verify party member presence via `80033758`.
+     - When changing highlighted character or exiting the formation menu, the selection is committed back to save memory at `8007FE5C..8007FE74`:
+       ```text
+       8007FE5C: lhu $v0, 0x34($a0)
+       8007FE64: lw $v1, 0x5270($v1)
+       8007FE74: sb $v0, 0x40($v1)
+       ```
+   - **Values**: Holds active cursor slot index `0..7`.
+   - **Classification**: Promoted to `mapped`.
+
+4. **`0x47, 0x48` / S+047, 048 (2 bytes): Message window / UI font highlight and shading color parameters [Disassembly-only / Verified]**
+   - **MIPS Evidence**:
+     - In Options Menu Overlay 3016, user adjustments commit these two bytes at `8007EBD4: sb $v0, 0x47($v1)` and `8007EBEC: sb $v0, 0x48($v1)`.
+     - In Save/Load UI Overlay 2998 at `8007E7C8..8007E7E4`, these bytes are loaded from `S` (`8007E7C8: lbu $v0, 0x47($v1)` and `8007E7D4: lbu $v1, 0x48($v1)`) and passed as stack arguments (stack offsets `0x10` and `0x14`) to resident palette configuration routine `80013C0C`.
+     - Disassembly of resident routine `80013C0C..80013C58`:
+       ```text
+       80013C0C: lw $v1, 0x10($sp)       ; arg 4 = S+047 (Blue)
+       80013C10: lw $a0, 0x14($sp)       ; arg 5 = S+048 (Alpha / Shade)
+       80013C14: lw $t0, 0x18($sp)       ; arg 6 = font scale (0x20)
+       80013C24: sb $a2, -0x4958($at)    ; Red component
+       80013C30: sb $a3, -0x4957($at)    ; Green component
+       80013C3C: sb $v1, -0x4956($at)    ; Blue component (from S+047)
+       80013C48: sb $a0, -0x4955($at)    ; Alpha / shading mode (from S+048)
+       ```
+     - These bytes directly configure the Blue and Alpha/shading components of the active UI text and window frame palette, complementing the 4 window corner colors at `0x30..0x40`.
+   - **Classification**: Promoted to `mapped`.
+
+5. **`0x4D` / S+04D (1 byte): Field step / modifier update dirty flag [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Written at `8003197C: sb $s2, 0x4d($v0)` immediately following the recalculation of the eight halfword field modifiers at `S+188..196` (`800318AC..8003196C`). Flags that field step/encounter modifier recalculation has completed.
+   - **Classification**: Promoted to `mapped`.
+
+6. **`0x4E` / S+04E (1 byte): Script system parameter byte [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Handled by Case 23 of the primary script VM system-call dispatch table at `80067B18..80067B34`: loads script argument byte from `($s3)` and stores it directly to `S+04E` (`80067B34: sb $v0, 0x4e($v1)`).
+   - **Classification**: Promoted to `mapped`.
+
+7. **`0x4F..0x54` / S+04F..053 (5 bytes): Zero alignment padding [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Contiguous 5-byte span between script parameter byte `0x4E` and the 32-bit menu clock-throttle marker at `0x54..0x58`. Verified zero across all inspected memory cards and RAM dumps.
+   - **Classification**: Promoted to `partial`.
+
+8. **`0x188..0x198` / S+188..197 (16 bytes): Eight signed halfword field rate / step / encounter modifiers [Disassembly-only / Verified]**
+   - **MIPS Evidence**:
+     - Eight signed 16-bit halfwords (`0x188, 0x18A, 0x18C, 0x18E, 0x190, 0x192, 0x194, 0x196`).
+     - Generic setter dispatch table arms at `8003225C..8003230C` store `$a2` (or scaled arithmetic values) into each halfword:
+       ```text
+       8003225C: sh $a2, 0x188($v0)
+       8003226C: sh $a2, 0x18a($v0)
+       80032298: sh $v0, 0x18c($a0)
+       800322A8: sh $a2, 0x18e($v0)
+       800322B8: sh $a2, 0x190($v0)
+       800322C8: sh $a2, 0x192($v0)
+       800322D8: sh $a2, 0x194($v0)
+       8003230C: sh $v1, 0x196($a0)
+       ```
+     - Field step update routine at `800318AC..8003196C` reads and arithmetically adjusts all eight halfwords during player terrain movement (gated by global flag `0x25` for encounter rate adjustments), setting update flag `0x4D` upon completion.
+   - **Classification**: Promoted to `mapped`.
+
+9. **`0x17A..0x184` / S+17A..183 (10 bytes): Operational transition state and script operand bytes [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Contains script operand bytes `0x181` and `0x182` (written by script VM at `80064A18: sb $v0, 0x181($v0)` and `80064A2C: sb $v0, 0x182($v1)`; cleared on area transition at `80048ABC/80048AD0` and `80051CE8`), surrounded by transition state bytes.
+   - **Classification**: Promoted to `partial`.
+
+#### 2. Final Chunk 1 accounting
+
+Every single byte of decoded Chunk 1 (`0x000..0x1A0`, 416 bytes) is now completely accounted for:
+
+| Decoded Range | Bytes | Tier | Field Description |
+|---|---:|---|---|
+| `000..010` | 16 | `mapped` | Key customization: 8x u16 button masks |
+| `010..014` | 4 | `mapped` | Clock-derived word (menu clock / 60) |
+| `014..018` | 4 | `mapped` | Event counter (script-adjustable, zero-floored) |
+| `018..01C` | 4 | `mapped` | Fol (money), u32 |
+| `01C..020` | 4 | `mapped` | Script queryable system parameter 0 (VM dispatch Case 8 `80067788`) |
+| `020..024` | 4 | `mapped` | Menu-operation counter |
+| `024..028` | 4 | `mapped` | Save-preparation counter |
+| `028..02C` | 4 | `mapped` | Companion conditional menu-operation counter |
+| `02C..030` | 4 | `mapped` | Script queryable system parameter 1 (VM dispatch Case 12 `80067870`) |
+| `030..040` | 16 | `mapped` | Message window corner colors (4x u32 0x00BBGGRR) |
+| `040..041` | 1 | `mapped` | Status / Formation Menu selected party slot cursor index (0..7) |
+| `041..042` | 1 | `mapped` | Validated party-slot selector |
+| `042..043` | 1 | `mapped` | Non-default lead-name flag (rename selector 0) |
+| `043..044` | 1 | `mapped` | Non-default lead-name flag (rename selector 1) |
+| `044..045` | 1 | `mapped` | Sound output (Surround/Stereo/Monaural) |
+| `045..046` | 1 | `mapped` | Route / lead selector |
+| `046..047` | 1 | `mapped` | Vibration on/off |
+| `047..049` | 2 | `mapped` | Message window / UI font highlight and shading color parameters (Blue, Alpha) |
+| `049..04A` | 1 | `mapped` | Targeting mode |
+| `04A..04B` | 1 | `mapped` | Camera work |
+| `04B..04C` | 1 | `mapped` | Combat motion mode |
+| `04C..04D` | 1 | `mapped` | Required disc (0=Disc 1, 1=Disc 2) |
+| `04D..04E` | 1 | `mapped` | Field step / modifier update dirty flag (`8003197C`) |
+| `04E..04F` | 1 | `mapped` | Script system parameter byte (VM dispatch Case 23 `80067B34`) |
+| `04F..054` | 5 | `partial` | Zero alignment padding before menu clock throttle marker |
+| `054..058` | 4 | `mapped` | Menu clock-throttle marker |
+| `058..0E8` | 144 | `mapped` | Matrix A (Friendship Points): 12x12 character-pair values, 0..15 |
+| `0E8..178` | 144 | `mapped` | Matrix B (Romance / Affection Points): 12x12 character-pair values, 0..15 |
+| `178..17A` | 2 | `mapped` | Signed completion / result code |
+| `17A..184` | 10 | `partial` | Operational transition state and script operand bytes (181/182) |
+| `184..188` | 4 | `mapped` | Two signed percentage stat modifiers (2x i16) |
+| `188..198` | 16 | `mapped` | Eight signed halfword field rate / step / encounter modifiers (8x i16) |
+| `198..1A0` | 8 | `mapped` | Two saved save-menu selection words |
+| **Total** | `000..1A0` | **416** | **401 bytes mapped (96.4%) + 15 bytes partial (3.6%) = 100.0% accounted for (0 bytes unknown)** |

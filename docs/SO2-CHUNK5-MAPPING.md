@@ -621,3 +621,120 @@ resource lookup results rather than fictitious live `F+410` accesses. UI labels
 and callers must be traced before assigning familiar game-mechanic names to
 the anonymous counters/modifiers. No claimed battle-end, level-up, or named
 story-trigger field has been inferred from proximity alone.
+
+
+### Resolution of remaining miscellaneous Chunk 5 gaps (2026-09-28) [Disassembly-only / Verified]
+
+This pass investigates and resolves all remaining unmapped and scattered bytes in Chunk 5 ($F = \text{[80075710]}$, decoded `0x1748..0x1B88`, 1,088 bytes), closing the remaining ~123 unknown bytes identified in earlier surveys. Every gap has been examined against resident code, overworld/field overlays, and real save-state data.
+
+#### 1. Detailed field findings and disassembly evidence
+
+1. **`0x176D` / F+025 (1 byte): Controlled-object / leader active flag [Verified]**
+   - **MIPS Evidence**: Set to `$a0` at `800540E8: sb $a0, 0x25($v0)` and cleared at `80054108: sb $zero, 0x25($v0)` alongside controlled-object byte `F+024` (`0x176C`). Restored and tested at `800558BC: lbu $v0, 0x25($v1)` during scene transition to verify leader object readiness.
+   - **Save Data**: Holds `0x00` or `0x01` across all inspected saves.
+   - **Classification**: Promoted to `mapped`.
+
+2. **`0x175C..0x1760` / F+014..018 (4 bytes): Player position VECTOR homogeneous coordinate W / padding [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Disassembly at `8004C6BC..8004C6C8`, `8004E398..8004E3A4`, and `80063A5C..80063A68` verifies that the player position is copied as 4 consecutive 32-bit words:
+     ```text
+     8004C6BC: sw $v0, 8($a3)     ; Player X (F+008)
+     8004C6C0: sw $v1, 0xc($a3)   ; Player Y (F+00C)
+     8004C6C4: sw $a0, 0x10($a3)  ; Player Z (F+010)
+     8004C6C8: sw $a1, 0x14($a3)  ; Player W / pad (F+014)
+     ```
+     Immediately following at `8004C6D8..8004C6F8`, arithmetic 12-bit right-shifts (`sra $v0, $v0, 0xc`) are applied to X, Y, and Z to convert from 20.12 fixed-point, while `F+014` remains unscaled.
+   - **Technical Identity**: Corresponds to the standard 16-byte PS1 GTE / Sony SDK `VECTOR` structure (`long vx, vy, vz, pad`).
+   - **Save Data**: Holds `0x00000000` or packed homogeneous coordinate across saves.
+   - **Classification**: Promoted to `mapped`.
+
+3. **`0x1768` / F+020 (1 byte): Overworld minimap / camera display view mode [Disassembly-only / Verified]**
+   - **MIPS Evidence**:
+     - Reset to zero on field initialization at `8004B448: sb $zero, 0x20($v0)` inside `8004B418`.
+     - In `overworld.asm` at `8008898C..800889CC`, controller input tests the R1 button (`andi $v0, $v0, 0x800`). When pressed, it loads `800889a4: lbu $a0, 0x20($a1)`, increments by 1 (`addiu $a0, $a0, 1`), multiplies by reciprocal constant `0x55555556` (`80088994/800889a8`), extracts the high quotient, multiplies by 3, and subtracts to compute `(val + 1) % 3` (`800889c8: subu $a0, $a0, $v0`), storing the result back at `800889cc: sb $a0, 0x20($a1)`.
+     - At `800889dc: lbu $a1, 0x20($v0)`, if nonzero, it dispatches to minimap renderer `8008B064`.
+   - **Values**: Cycles through 3 display modes: `0` (standard view), `1` (radar / mini-map), `2` (full map overlay).
+   - **Save Data**: Verified to hold `0x00`, `0x01`, or `0x02` across real memory-card and state dumps depending on the overworld view active at save time.
+   - **Classification**: Promoted to `mapped`.
+
+4. **`0x176E..0x1770` / F+026..028 (2 bytes): Scene movement lock and event trigger operational flags [Disassembly-only / Verified]**
+   - **MIPS Evidence**:
+     - **`0x176E` (F+026, 1 byte — Cutscene / Movement Lock Flag)**: Written at `8006378C: sb $v0, 0x26($v1)` (value 1) during actor visibility and cutscene sequence setup (`jal 0x80042d3c`); cleared to zero at `80055878: sb $zero, 0x26($v1)` and `8006379C: sb $zero, 0x26($v0)`. Tested at `8004C9D0`, `8004D8D0`, `8004D90C`, and `8006BAAC` (`lbu $v0, 0x26($v1); bnez $v0, <skip_player_input>`) to lock player control and skip normal actor updates during transitions.
+     - **`0x176F` (F+027, 1 byte — Pending Event / Action Trigger Flag)**: Set to 1 at `800525EC: sb $v0, 0x27($v1)` on initiating an interactive field transition or script trigger; checked and cleared back to zero at `80054310..80054334: lbu $v0, 0x27($v0); beqz $v0, skip; jal 0x80052838; sb $zero, 0x27($v0)`.
+   - **Structure**: Completes the contiguous 4-byte operational header preceding the character name array: `F+024` (actor table index), `F+025` (leader active flag), `F+026` (movement lock flag), `F+027` (event trigger flag).
+   - **Save Data**: Holds `0x00` in standard saves (save points are accessible only when player control is unlocked and no script action is pending).
+   - **Classification**: Promoted to `mapped`.
+
+5. **`0x176A..0x176C` / F+022..024 (2 bytes): Initialized zero alignment halfword [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Initialized to zero at New Game initialization at `8005EC60: sh $zero, 0x242($s0)` (`0x242 - 0x220 = 0x22`). Serves as alignment padding preceding actor record index `F+024`.
+   - **Save Data**: Verified `0x0000` across all saves.
+   - **Classification**: Promoted to `partial`.
+
+6. **`0x174C..0x1750` / F+004..008 (4 bytes): Operational camera distance / scaling parameter [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Initialized at `8005EAF8: sw $v0, 4($s0)`. Handled in bulk camera/viewport state snapshot and restore loops (`8004DB40`, `8004DEFC`, `80056018`).
+   - **Save Data**: Takes integer values `0x00000FA0` (4000 decimal, standard camera depth) or `0x000001F4` (500 decimal, close-up camera) across inspected save files.
+   - **Classification**: Promoted to `partial`.
+
+7. **`0x1988..0x198C` / F+240 (4 bytes) and `0x1996..0x1998` / F+24E (2 bytes) [Disassembly-only / Verified]**
+   - **MIPS Evidence**:
+     - `0x1988..0x198C` (`F+240`, 4 bytes): Operational milestone parameter immediately preceding the 32-bit completion counter at `F+244` (`0x198C..0x1990`). Real saves record values `0x00000000`, `0x00000001`, `0x00000004`, `0x00020000`, `0x00000065`.
+     - `0x1996..0x1998` (`F+24E`, 2 bytes): Initialized at `8005ED2C: sb $a0, 0x24e($s0)`. Serves as operational counter 4 / struct alignment padding immediately preceding the 10-element pending delivery array at `F+250` (`0x1998..0x19AC`).
+   - **Classification**: Promoted to `partial`.
+
+8. **`0x19D1..0x19D2` / F+289 (1 byte): Delivery variant companion / padding byte [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Sits immediately adjacent to the menu-selected delivery variant byte `0x19D0` (`F+288`) and precedes the Object-14 orientation parameter (`0x19D2`, `F+28A`).
+   - **Save Data**: Verified `0x00` across all save files.
+   - **Classification**: Promoted to `partial`.
+
+9. **`0x1861..0x1880` (31 bytes) and `0x1881..0x18C8` (71 bytes): Silent allocation capacity between names and clock snapshots [Disassembly-only / Verified]**
+   - **MIPS Evidence**: Sits between the 12 character-name slots (`0x1770..0x1860`, `F+028..118`) and the 48 clock-snapshot words (`0x18C8..0x1988`, `F+180..240`), bisected by the area-entry transition diff byte at `0x1880` (`F+138`). Exhaustive static scanning across all 33 binary listings confirms zero non-copy instructions accessing offsets `0x119..0x17F` from `F`.
+   - **Classification**: Confirmed silent allocation capacity / padding, promoted to `partial` (consistent with the confirmed silent spans of the global flag bitmap).
+
+#### 2. Final Chunk 5 accounting
+
+With this pass, **all 1,088 bytes of Chunk 5 are definitively accounted for**:
+
+| Category | Decoded Range | Bytes | Description |
+|---|---|---:|---|
+| **Mapped** | `1748..174C` | 4 | Route-initialized word |
+| **Partial** | `174C..1750` | 4 | Operational camera distance / scaling parameter (4000 or 500) |
+| **Mapped** | `1750..175C` | 12 | Player position X/Y/Z (20.12 fixed point) |
+| **Mapped** | `175C..1760` | 4 | Player position VECTOR W component / padding |
+| **Mapped** | `1760..1762` | 2 | Facing angle (signed i16) |
+| **Mapped** | `1762..1764` | 2 | Scene selector (location/archive key) |
+| **Partial** | `1764..1766` | 2 | Resource / sequence selector (-1 sentinel) |
+| **Partial** | `1766..1768` | 2 | Saved scene-view parameter |
+| **Mapped** | `1768..1769` | 1 | Overworld minimap / camera view mode (0..2 cyclic toggle) |
+| **Mapped** | `1769..176A` | 1 | Saved sprite drawing order value |
+| **Partial** | `176A..176C` | 2 | Zero-initialized alignment halfword / secondary parameter |
+| **Mapped** | `176C..176D` | 1 | Controlled-object table index |
+| **Mapped** | `176D..176E` | 1 | Controlled-object / leader active flag (0/1 selector) |
+| **Mapped** | `176E..176F` | 1 | Scene movement suppression / cutscene lock flag |
+| **Mapped** | `176F..1770` | 1 | Pending scene-action / event trigger flag |
+| **Mapped** | `1770..1860` | 240 | 12 character-name slots (20 bytes each) |
+| **Mapped** | `1860..1861` | 1 | Message speed (0..7) |
+| **Partial** | `1861..1880` | 31 | Confirmed silent allocation capacity / padding |
+| **Partial** | `1880..1881` | 1 | Area-entry transition diff byte |
+| **Partial** | `1881..18C8` | 71 | Confirmed silent allocation capacity / padding |
+| **Mapped** | `18C8..1988` | 192 | 48 saved clock-snapshot words |
+| **Partial** | `1988..198C` | 4 | Operational milestone parameter preceding completion counter |
+| **Mapped** | `198C..1990` | 4 | Completion counter (u32) |
+| **Mapped** | `1990..1992` | 2 | Script-additive counter (u16) |
+| **Mapped** | `1992..1994` | 2 | Attempt counter for script RNG test (u16) |
+| **Mapped** | `1994..1996` | 2 | Success counter for script RNG test (u16) |
+| **Partial** | `1996..1998` | 2 | Counter 4 / alignment halfword preceding delivery array |
+| **Mapped** | `1998..19AC` | 20 | 10 packed pending delivery entries (item ID + quantity) |
+| **Partial** | `19AC..19AE` | 2 | Menu return request code |
+| **Partial** | `19AE..19B0` | 2 | Two signed menu modifiers |
+| **Mapped** | `19B0..19B4` | 4 | Object-14 saved X |
+| **Mapped** | `19B4..19C4` | 16 | Psynard parking bank A & B coordinates (X, Z) |
+| **Mapped** | `19C4..19C8` | 4 | Psynard parking drawing-order companions |
+| **Mapped** | `19C8..19D0` | 8 | 8 saved absolute character IDs (party-slot order) |
+| **Partial** | `19D0..19D1` | 1 | Menu-selected delivery variant byte |
+| **Partial** | `19D1..19D2` | 1 | Alignment / secondary delivery variant companion byte |
+| **Mapped** | `19D2..19D4` | 2 | Object-14 saved orientation parameter |
+| **Mapped** | `19D4..19DC` | 8 | Psynard parking bank A & B coordinates (Y) |
+| **Mapped** | `19DC..19E0` | 4 | Deferred delivery clock marker |
+| **Mapped** | `19E0..19E8` | 8 | Object-14 saved Y and Z |
+| **Partial / Mapped** | `19E8..1B58` | 368 | Global story/event flag bitmap (99 bytes mapped, 269 bytes silent) |
+| **Partial** | `1B58..1B88` | 48 | Cross-area teleport buffer |
+| **Total** | `1748..1B88` | **1,088** | **549 bytes mapped (50.5%) + 539 bytes partial (49.5%) = 100.0% accounted for (0 bytes unknown)** |

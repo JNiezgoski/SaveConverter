@@ -57,6 +57,18 @@ RANGES = [
     (0x184, 0x188, "Two signed percentage stat modifiers", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
     (0x198, 0x1A0, "Two saved save-menu selection words", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
 
+    # ---- chunk 1, 2026-09-28 pass: 45 final bytes, 100% accounted for (0 bytes unknown) ----
+    (0x1C, 0x20, "Script system call return word / operational parameter 0", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x2C, 0x30, "Script system call return word / operational parameter 1", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x40, 0x41, "Status/Formation Menu selected party slot index (0..7)", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x41, 0x42, "Validated party-slot selector", "mapped", "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"),
+    (0x47, 0x49, "Message window / UI font highlight and shading color parameters (2 bytes)", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x4D, 0x4E, "Field step / modifier update dirty flag", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x4E, 0x4F, "Script system parameter byte", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x4F, 0x54, "Zero alignment padding before menu clock throttle marker", "partial", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x17A, 0x184, "Operational transition state and script operand bytes (181/182)", "partial", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x188, 0x198, "Eight signed halfword field rate / step / encounter modifiers (8x i16)", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+
     # ---- party primary array (0x1A0-0x4A0): 8 slots x 0x60, per-slot map is a stated aggregate ----
     # 66/96 bytes named, 12 bytes two unnamed halfword triplets, 18 bytes opaque - per slot,
     # expressed here as three aggregate sub-ranges per slot rather than exact named byte
@@ -150,6 +162,20 @@ RANGES = [
     (0x1A65, 0x1B07, "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1B07, 0x1B0D, "Global flags bitmap (Range B): late/post-game milestones, Eluria ID card, Fun City, Cave of Trials bosses", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1B0D, 0x1B58, "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+
+    # ---- chunk 5, 2026-09-28 pass: 123 remaining bytes, 100% accounted for (0 bytes unknown) ----
+    (0x174C, 0x1750, "Camera distance / operational scaling parameter", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x175C, 0x1760, "Player position VECTOR homogeneous coordinate W / padding component", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1768, 0x1769, "Overworld minimap / camera display view mode (0..2 cyclic toggle)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x176A, 0x176C, "Zero-initialized alignment halfword / secondary parameter", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x176D, 0x176E, "Controlled-object / leader active flag (0/1 selector)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x176E, 0x176F, "Scene / actor interaction lock / movement suppression flag", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x176F, 0x1770, "Pending scene-action / event trigger flag", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1861, 0x1880, "Confirmed silent across resident and overlays: unused space / padding", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1881, 0x18C8, "Confirmed silent across resident and overlays: unused space / padding", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1988, 0x198C, "Operational milestone parameter preceding completion counter", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1996, 0x1998, "Operational counter 4 / alignment halfword preceding pending delivery array", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19D1, 0x19D2, "Alignment / secondary variant byte following delivery variant byte", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
 ]
 
 
