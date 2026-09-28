@@ -1,9 +1,12 @@
 # SO2 map terrain / collision: real record format found, per-area archive entry still open
 
-**Latest: see the third-pass subsection below.** Scene-to-archive selection and
+**Latest: see the fourth-pass subsection below.** Scene-to-archive selection and
 fresh/cache loading are now traced; real field triangles are extracted. The
-overworld uses another asset format, so its height cross-check remains open.
-The third pass also corrects the historical area-byte and coordinate claims.
+overworld's real "type 3" format was traced to a 9-slot streaming cache backed
+by what looks like a quadtree spatial structure, distinct from the dungeon's
+triangle array — but its node layout and height/collision output were not
+fully decoded, so the overworld cross-check still remains open. The third pass
+also corrects the historical area-byte and coordinate claims.
 
 Investigation: **2026-09-27**. US PS1 BASCUS-94421/SCUS-94421 (Disc 1). Continues
 from the field-leader follow-up's side finding (see
@@ -494,7 +497,10 @@ cited earlier as a second walk over the 88-byte array.
   not an unknown archive-number problem for those samples.
 - Exact semantics of decoded `0x1769` / object `+22`, a reliable scene-to-name
   catalogue, and any broader location-tool corrections. A unique byte-only
-  area-to-archive table is unsupported by the evidence.
+  area-to-archive table is unsupported by the evidence. (Resolved separately
+  — see [SO2-MAP-LOCATION-CHECK.md](SO2-MAP-LOCATION-CHECK.md)'s "`0x1769` is
+  saved drawing order, not an area ID": it is a rendering property, and
+  decoded `0x1762` is the real location selector.)
 - General validation across further scenes/disc assets, alternate-context selection and
   story-dependent overworld remaps; no claim that every scene has triangles.
 - Unnamed triangle bytes and runtime modifications in the snapshot comparison.
@@ -505,3 +511,172 @@ comparison. No PS1 instruction harness, emulator, new in-game test, memory-card
 write, or source-disc/state modification occurred. Extracted copyrighted game
 bytes and scratch output remain under ignored `artifacts/`; only the extraction
 script and documentation are intended for the commit.
+
+## 2026-09-27 fourth pass: overworld's real "type 3" structure traced — a quadtree streaming system, not a triangle array
+
+**Status: disassembly tracing only, no execution, no numeric cross-check
+reached.** Real progress on the actual open question (what is type 3, and
+does it have a height consumer), but the height/collision value it produces
+was not conclusively identified, and the two area-0 sightings were not
+numerically verified against it. Do not treat the quadtree hypothesis below
+as more than strongly-evidenced structural inference until it is executed.
+
+All addresses in this section are from `artifacts/so2-terrain-pass3/overworld.asm`,
+a full disassembly of archive entry 3102 (already extracted to
+`artifacts/so2-terrain-pass3/code-3102-lba-36717.bin` by an earlier, partial
+run of this same investigation before it hit an external usage limit — no new
+extraction was needed). This is the overlay resident code sends type-3 assets
+to (`8004B0C0..CC`, already documented above). No PS1 instructions were
+executed; this is static reading only.
+
+### The tag dispatcher's real jump table
+
+`80088A3C` walks a tagged stream (pointer in `a1`, saved as `$s3`): read a
+32-bit tag word, and if it's `1..7`, jump through a table at `0x8008F488`
+(`(tag-1)*4` index). Read directly from the extracted binary at file offset
+`0x11488`, the seven entries are:
+
+```text
+tag 1 -> 80088b88   tag 2 -> 80088b88   tag 3 -> 80088d2c   tag 4 -> 80088b3c
+tag 5 -> 80088af0   tag 6 -> 80088cc8   tag 7 -> 80088b88
+```
+
+This confirms and extends the third pass's partial finding (tags 4 and 5)
+with the full table. Tags 1/2/7 share one handler; tag 6 is a related but
+distinct variant. Each handler is responsible for advancing `$s3` itself
+past its own payload before looping back to `80088AB4` — payload sizes are
+not fixed across tags.
+
+- **Tag 4 (`80088B3C`)**: reads a single `u32` offset, resolves it against the
+  stream's own base pointer, calls the generic fetch/decompress pair
+  `80012154`/`800121A8`, and stores the result pointer at resident global
+  **`[8007617C]`**. A single, one-off decompressed resource — likely a shared
+  header/index resource for the bundle, not itself the terrain data (nothing
+  else in this overlay reads `[8007617C]` back for a query; it is written and
+  otherwise unused in the traced paths).
+- **Tag 5 (`80088AF0`)**: reads a `u32` offset, resolves `s0 = stream_base +
+  offset`, checks global `[80075704]+1` bit 4 (`(byte >> 4) & 1`) and if set
+  calls `80052BF4(1)` — a real, concrete instance of the "story-dependent
+  overworld remap" flagged as unconfirmed in the third pass. It then calls
+  **`80088EEC(context, stream_base, s0)`** — the real terrain/geometry loader.
+- **Tags 1/2/7 (`80088B88`)**: read two `u16` fields plus a `u32` offset (8
+  bytes total), fetch+decompress a small sub-resource from that offset, then
+  copy processed data via `80012EC4` using fixed marker values (`0x1FA`/
+  `0x1FB` for tag 1 vs. tag 2) — the shape of this (small fetched resource,
+  fixed marker constants, immediately freed via `8001FD70`) resembles a
+  map-icon/label loader (town/dungeon markers), not terrain geometry, but
+  this is a plausible read of the shape, not confirmed by tracing the
+  consumer of `80012EC4`'s output.
+- **Tag 3 (`80088D2C`)**: writes bytes into resident tables at
+  `[0x80075C4C + s4*8]` and `[0x80076108/0x80076120 + s6]` from an
+  accumulator (`s4`)/index (`s6`) not fully traced back to origin in this
+  pass — plausibly per-entity placement data (e.g. dungeon-entrance icons on
+  the world map), unconfirmed.
+- **Tag 6 (`80088CC8`)**: same general shape as tag 1/2/7 but with a fixed
+  `+0x14` stride added to the resolved pointer before the `80012EC4` copy —
+  not traced further.
+
+### Tag 5's real target: a 9-slot streaming cache, not a single resource
+
+`80088EEC` is the actual terrain/geometry loader reached by tag 5:
+
+1. `80088F04..FAC`: writes to PS1 hardware/scratchpad I/O addresses in the
+   `0x1F80xxxx` range in a 13-iteration loop, copying 32-byte blocks and
+   incrementing two 16-bit fields by `0xC00` each pass — engine
+   setup/bookkeeping unrelated to terrain content; not traced further.
+2. `80088FB0..D8`: lazily allocates a **`0x75000`-byte (479,232-byte) buffer**
+   via `80012FEC` if `[80076178]` is not already set, and stores it there.
+   `0x75000 = 9 * 0xD000` exactly.
+3. `80088FD8..9008`: reads decoded `0x1762` (scene, via `F=[80075710]+0x1A`)
+   and picks a small base constant: **scene 1 -> `0xFD4`, scene 2 -> `0x1060`,
+   other -> `0x10DE`**. These are suspiciously close to, but distinct from,
+   the third pass's already-confirmed *archive-index* bases for the same
+   scenes (`0x1014`/`0x109F`/`0x10E0`) — consistent with this being a
+   parallel, closely-related resource set (the actual terrain geometry that
+   ships alongside each scene's main type-3 container), not the same table
+   reread.
+4. `8008901C..90BC`: loops up to **9 times** over entries in the resolved
+   resource (`s2`, the pointer tag 5 computed). Each entry is 8 bytes: a
+   `u32` local index and a `u32` size. A local index of `-1` marks an empty
+   slot (written as `-1` into a small 9-entry `s16` table at
+   **`[80076164]`**); otherwise the archive index is `local_index + scene_base`
+   (from step 3), with one confirmed special-case remap (scene 1, a
+   resident byte in range `[15,60]`, archive index exactly `0x1004` becomes
+   `0x1013` — a second concrete story/context-dependent remap instance).
+   Each present entry is decompressed **directly into its own fixed
+   `0xD000`-byte slot** of the big buffer from step 2 (slot `i` at
+   `[80076178] + i*0xD000`), via the same `80012154`/`800121A8` pair.
+
+This is a real 9-slot streaming cache for large terrain-geometry chunks,
+distinct in mechanism from the dungeon system's single-resource `R`/`TB`/`T`
+globals (`[80075330]`/`[80075334]`/`[80075338]`, confirmed by an exhaustive
+grep of this whole overlay finding **zero** references to those three
+addresses anywhere in it — the overworld path genuinely does not populate
+them, so the dungeon's `80083628`/`80083944` height/point-in-cell functions,
+whose raw instructions do exist unchanged at their usual addresses in this
+overlay too, are not fed valid data for the overworld and are not the
+consumer of this cache).
+
+### Cell selection matches the archive formula; a real quadtree collision structure was found
+
+`8008E2AC` (called with an object's `+0xC`/`+0x10` fields as X/Z, plus the
+scene) computes `floor(X/N)`/`floor(Z/N)`-style cell coordinates using the
+**same unsigned-reciprocal-multiply trick** (`mult` by `0x2AAAAAAB`-family
+constants, arithmetic shift) as the third pass's already-confirmed
+archive-selection formula — real evidence that the streaming cache's tiling
+aligns with the same world-space grid already documented, not a separate
+scheme. It also does neighbor-cell distance work using PS1 scratchpad RAM
+(`0x1F800000`-range addresses) for what looks like chunk-prefetch/streaming
+logic (which neighboring cell to load next), not a fine-grained height query.
+
+Tracing forward from this into `8008D86C`+ and `8008CA04` found what is
+almost certainly a **quadtree spatial structure** used per-slot for
+position queries: `8008CA04` recurses up to **16 levels deep** (`slti v0,
+depth, 0x10`), reading a 16-bit active/child mask per node and following
+child pointers spaced at fixed strides (`+0x200`, `+0x240`, `+0x280` off a
+per-level base, i.e. 4 children per node) — a textbook quadtree walk, not a
+linear scan like the dungeon's triangle list. The leaf-level query (around
+`8008D920..D9D0`) reads global `[80075704]+1` bit 6 (yet another
+story-flag gate) and appears to resolve to a **single bit or small value**
+per leaf (`1 << (15-n)` mask pattern into a 16-bit word) rather than the
+dungeon's continuous plane-equation height formula — consistent with a
+coarse walkable/blocked classification (or a small terrain-type enum)
+instead of a smooth height field.
+
+**This was not fully decoded or executed.** The exact quadtree node byte
+layout, what the resolved leaf value actually represents (a boolean, a
+terrain-type ID, or something else), and whether it ever produces a
+continuous Y coordinate at all, are all **Unverified**. No `div` specific to
+a height formula was found in this call chain (unlike the dungeon's
+`80083754`); this is evidence *against* a smooth interpolated height on the
+overworld, not proof, since the exact leaf-value consumer downstream of
+`8008CA04`'s caller was not traced to its own use site.
+
+### Why the cross-check still wasn't performed, and a supporting data point
+
+Decoding this quadtree's real node layout well enough to answer "what value
+does the tree return for a specific X/Z" was not completed in this pass —
+unlike the dungeon triangle format, this required tracing a genuinely
+larger, recursive structure, and time did not allow finishing it safely
+without risking a guessed/wrong byte layout. No numeric height was computed
+for either real area-0 sighting.
+
+One suggestive, non-conclusive data point: `area_data.json`'s two real area-0
+sightings both have recorded Y within a few hundredths of `0.0`
+(`-0.06` and `-0.04`). This is consistent with (but does not prove) an
+overworld rendered at an effectively flat or near-flat elevation, which would
+explain why its "terrain" query looks like a coarse classification rather
+than a continuous height formula — the game may not need one there. This is
+a hypothesis suggested by the two available data points, not a finding.
+
+### What remains open after this pass
+
+- The quadtree node's real byte layout and what its resolved value means.
+- Whether the overworld has a true height field anywhere, or is effectively
+  flat/tiered, and where (if anywhere) a player's live Y actually gets set
+  while on the overworld.
+- The tag 1/2/7 "map icon" and tag 3 "placement table" hypotheses are
+  plausible reads of the code shape, not confirmed.
+- No execution, no emulator, no in-game test, no card read/write. This pass
+  is disassembly tracing only, reusing already-extracted binaries; no new
+  disc/state extraction was performed.
