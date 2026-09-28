@@ -973,3 +973,75 @@ Across all 8 areas, 21 distinct scene files were generated covering all 24 sight
 4. **Empty Collision Arrays (NO_TRIANGLES: 2/24, 8.3%)**:
    - Scenes 183 and 671 (Linga town entrance and interior hub): The disc Type 0 asset contains a valid header with 0 triangle records, confirming Pass 3's finding that town hub movement is handled without the standard dungeon 88-byte triangle collision array.
 
+## 2026-09-28 seventh pass: full-map enumeration — 827 dungeon archives, 126 overworld cells, and 516 geometry-bearing scenes
+
+**Status: COMPLETE. Extended `tools/so2_terrain_extract.py` with batch enumeration (`--batch`, `--range`, `--dungeon-only`, `--overworld-only`, `--include-zero-triangles`). 100% of the 827-archive dungeon/town range (3207..4033) and all valid overworld cells across both discs enumerated and decoded. 516 scenes/cells yielded real decoded geometry (178,450 total polygons/triangles). All 21 original files preserved untouched. 37/37 unit tests passing.**
+
+### 1. Scope & Execution
+
+The goal of this pass was to move beyond the 8 areas / 21 scenes with recorded saves in `area_data.json` and decode the entire map space across both discs:
+- **Dungeon / Town Range**: Archives `3207..4033` (827 container archives, corresponding to scene selectors $0..826$ via $\text{archive} = \text{scene} + 3207$).
+- **Overworld Space**: Disc 1 Expel ($\text{archive} = 4116 + \text{cell}$) and Disc 2 Nede ($\text{archive} = 4255 + \text{cell}$).
+
+Execution was performed entirely read-only against the source ISO binary tracks using `tools/so2_terrain_extract.py --batch`, completing in 18 seconds total.
+
+### 2. Dungeon / Town Scene Archive Enumeration (3207..4033)
+
+Every archive in the 827-entry range `3207..4033` was scanned and parsed:
+
+| Category | Count | Percentage | Description |
+|---|---:|---:|---|
+| **Succeeded (>0 triangles)** | **390** | **47.16%** | Real walkable collision geometry. Contain 1 to 109 triangles per room (average: 8.9 triangles; 3,486 total triangles). |
+| **Zero Triangles (empty)** | **437** | **52.84%** | Valid Type 0 terrain container header (`TB = R + *(R + 0x80)`), but triangle count at `TB + 0x20` is exactly 0. Towns, hubs, cutscenes, and scripted event rooms. |
+| **No Type 0 Asset** | **0** | **0.00%** | Every single archive in `3207..4033` contains a Type 0 terrain subchunk. |
+| **Parse / Read Failures** | **0** | **0.00%** | Zero SLZ decompression errors, zero container table errors. |
+| **Total Archives** | **827** | **100.00%** | Entire known scene container range fully scanned and resolved. |
+
+#### Disc 1 vs. Disc 2 Comparison for Archives 3207..4033:
+An exhaustive sector-by-sector comparison revealed that all 827 scene archives in `3207..4033` are **100% byte-identical** between Disc 1 and Disc 2 (same LBA, same byte size, same SHA-256 hash). The scene/room geometry database is fully mirrored across both discs.
+
+#### Area ID Resolution for Dungeon Scenes:
+For the 21 scenes present in `area_data.json` and `assets.json` (such as scenes 183, 704, 740, 788, etc.), their confirmed area IDs (e.g. 118, 128, 138, 140, 148, 150, 160) are retained. For all other unvisited scenes, `area_id` falls back to `scene_id` as documented in Pass 3 and the task specification, since decoded save byte `0x1769` is a runtime sprite drawing-order bucket rather than a static disc container selector.
+
+### 3. Overworld World-Cell Space Enumeration
+
+The overworld cell space was probed sequentially from the confirmed base offsets until archive container types ceased to resolve to Type 3 overworld assets:
+
+#### Disc 1: Expel (Scene 1, Base 0x1014 = 4116)
+- **Valid Cell Range**: Cells **0 to 62** (63 valid cells total, arranged in a uniform $9 \times 7$ grid).
+- **Archive Bounds**: Archives `4116` to `4178` represent the 63 primary cells.
+- **Story-Remap Archives**: Archives `4179` to `4187` (cells 63 to 71) are replacement cells for story events (the conditional remap when `resource9+220` is 15..60, remapping cells 38..58).
+- **Archive Boundary**: Archive `4188` transitions to an executable/data container (`count = 12, kind = 77272`), confirming that the Expel overworld cell range terminates at index 71.
+- **Polygon Totals**: All 63 primary cells contain valid 4x4 sub-cell meshes:
+  - Minimum polygons per cell: 1,024
+  - Maximum polygons per cell: 2,229
+  - Average polygons per cell: 1,468.6
+  - **Total Expel Polygons**: **92,521 polygons**
+
+#### Disc 2: Nede (Scene 2, Base 0x109F = 4255)
+- **Valid Cell Range**: Cells **0 to 62** (63 valid cells total, arranged in a uniform $9 \times 7$ grid).
+- **Archive Bounds**: Archives `4255` to `4317` represent the 63 primary cells.
+- **Archive Boundary**: Archives `4318` and `4319` are non-overworld container types; Archive `4320` (`0x10E0`) is the distinct Scene 3 container.
+- **Polygon Totals**: All 63 primary cells contain valid 4x4 sub-cell meshes:
+  - Minimum polygons per cell: 1,022
+  - Maximum polygons per cell: 1,992
+  - Average polygons per cell: 1,308.6
+  - **Total Nede Polygons**: **82,443 polygons**
+
+#### Total Overworld Geometry:
+Across both discs, the overworld comprises **126 valid cells** containing **174,964 polygons**.
+
+### 4. Overall Geometry & File Inventory
+
+| Environment | Distinct Scenes / Cells | Total Polygons / Triangles | Emitted JSON Files | File Naming Convention |
+|---|---:|---:|---:|---|
+| **Dungeon / Town** | 390 scenes | 3,486 triangles | 390 files | `area_<area_id>_scene_<scene_id>.json` |
+| **Dungeon (Zero-Tri Hubs)** | 2 scenes (original 21) | 0 triangles | 2 files | `area_128_scene_183.json`, `area_128_scene_671.json` |
+| **Overworld (Expel)** | 63 cells | 92,521 polygons | 63 files | `area_0_scene_1_cell_<cell>.json` |
+| **Overworld (Nede)** | 63 cells | 82,443 polygons | 63 files | `area_0_scene_2_cell_<cell>.json` |
+| **Overworld (Sighting Chunks)** | 2 scenes (original 21) | 3,336 polygons | 2 files | `area_0_scene_1.json`, `area_0_scene_2.json` |
+| **Total Real Geometry** | **516 scenes/cells** | **178,450 polygons** | **518 files** | (Plus 1 pre-existing index file `_area_map_data.json`) |
+
+All 21 original files generated during the sixth pass were preserved without alteration. The full output directory `artifacts/so2-terrain-map/` now provides structured geometry for every walkable area in Star Ocean: The Second Story.
+
+

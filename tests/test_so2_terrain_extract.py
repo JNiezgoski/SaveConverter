@@ -137,3 +137,37 @@ def test_generated_geometry_artifacts():
 
     assert total_sightings == 24
     assert pass_sightings == 14
+
+
+def test_batch_enumeration_artifacts():
+    out_dir = _ROOT / "artifacts" / "so2-terrain-map"
+    assert out_dir.is_dir()
+
+    # Verify all 63 cells for Expel (scene 1)
+    for c in range(63):
+        cell_file = out_dir / f"area_0_scene_1_cell_{c}.json"
+        assert cell_file.exists(), f"Missing Expel cell file {cell_file.name}"
+        with cell_file.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        assert data["area_id"] == 0
+        assert data["scene_id"] == 1
+        assert data["format_type"] == "overworld_mesh"
+        assert data["metadata"]["cell_id"] == c
+        assert len(data["polygons"]) > 0
+
+    # Verify all 63 cells for Nede (scene 2)
+    for c in range(63):
+        cell_file = out_dir / f"area_0_scene_2_cell_{c}.json"
+        assert cell_file.exists(), f"Missing Nede cell file {cell_file.name}"
+        with cell_file.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        assert data["area_id"] == 0
+        assert data["scene_id"] == 2
+        assert data["format_type"] == "overworld_mesh"
+        assert data["metadata"]["cell_id"] == c
+        assert len(data["polygons"]) > 0
+
+    # Verify at least 390 dungeon scenes exist
+    dungeon_files = [f for f in out_dir.glob("area_*_scene_*.json") if "_cell_" not in f.name]
+    assert len(dungeon_files) >= 390
+
