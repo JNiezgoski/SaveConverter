@@ -274,6 +274,128 @@ All field scripts embed a shared relationship tuning/fortune routine:
    `Matrix B > 10` for heterosexual pairs and `Matrix A > 10` for same-sex pairs) were not audited on Disc 2
    binaries in this pass and remain open for future work.
 
+### 2026-09-28 follow-up: Disc 2 Ending-Threshold System & Item-Creation Recipes
+
+#### 1. Part 1: Disc 2 Ending-Selection & Threshold System [Disassembly-only / Verified]
+
+An exhaustive scan across all 4,170 archives on Disc 2 (`SCUS-94422`) located the master ending determination engine in **Archive 3788** (LBA 90812, tag 1 field script container). The ending evaluation begins immediately following dialogue message 347 ("Time passed---") at script bytecode offset `0xBE80` (`0xBE80..0xC600`), and resolves every character's paired or solo ending.
+
+##### A. Character Gender Initialization (`0xBE90..0xBEEC`)
+The script initializes a 12-element character gender table in script variables `0x398..0x3A3` (`0` = Male, `1` = Female):
+- `0x398` (Claude): `0` (Male)
+- `0x399` (Rena): `1` (Female)
+- `0x39A` (Celine): `1` (Female)
+- `0x39B` (Bowman): `0` (Male)
+- `0x39C` (Dias): `0` (Male)
+- `0x39D` (Precis): `1` (Female)
+- `0x39E` (Ashton): `0` (Male)
+- `0x39F` (Leon): `0` (Male)
+- `0x3A0` (Opera): `1` (Female)
+- `0x3A1` (Ernest): `0` (Male)
+- `0x3A2` (Noel): `0` (Male)
+- `0x3A3` (Chisato): `1` (Female)
+
+##### B. Pair Iteration and Selective Matrix Evaluation (`0xBEF0..0xBFFC`)
+The engine iterates over every unique character pair `(charA, charB)` with `charA < charB`:
+- Outer loop: `charA` from 0 to 10 (`0xBEF0..0xBF04`, local variable `128`)
+- Inner loop: `charB` from `charA + 1` to 11 (`0xBF54..0xBF70`, local variable `132`)
+- Party presence: Opcode `0xB1` verifies that both `charA` and `charB` are currently active party members.
+- Gender comparison at `0xBFA0`:
+  - **Opposite-Sex Pairs (`gender[charA] != gender[charB]`):**
+    - Evaluates **Matrix B** (Romance / Affection, live `[80075270]+0xE8`, script opcode `0xFF13` stack mode):
+      - `0xBFB4`: Fetches `Matrix_B[charA][charB]` (Romance A -> B) into local variable `140`.
+      - `0xBFC8`: Fetches `Matrix_B[charB][charA]` (Romance B -> A) into local variable `144`.
+  - **Same-Sex Pairs (`gender[charA] == gender[charB]`):**
+    - Evaluates **Matrix A** (Friendship, live `[80075270]+0x58`, script opcode `0xFF11` stack mode):
+      - `0xBFE0`: Fetches `Matrix_A[charA][charB]` (Friendship A -> B) into local variable `140`.
+      - `0xBFF4`: Fetches `Matrix_A[charB][charA]` (Friendship B -> A) into local variable `144`.
+
+##### C. Mutual Threshold Verification (`0xC000..0xC020`) — Fan Hypothesis Confirmed
+The engine tests whether both characters meet the numeric threshold:
+```text
+0xC000: op=0x43 (CMP_GE)  local[140], imm=0x000A (10)   ; Test A->B >= 10
+0xC00C: op=0x43 (CMP_GE)  local[144], imm=0x000A (10)   ; Test B->A >= 10
+0xC018: op=0x38 (LOG_AND)                               ; Require BOTH directions >= 10
+0xC020: op=0x16 (JZ)      target=0xC050 / next_pair     ; Reject pair if either < 10
+```
+**Conclusion on Fan Hypothesis:**
+The longstanding fan community model is **CONFIRMED** by direct bytecode disassembly. A paired ending requires mutual emotion level `>= 10` in both directions:
+- Opposite-sex pairs require **Matrix B (Romance) >= 10** mutually (`Matrix_B[A][B] >= 10 && Matrix_B[B][A] >= 10`).
+- Same-sex pairs require **Matrix A (Friendship) >= 10** mutually (`Matrix_A[A][B] >= 10 && Matrix_A[B][A] >= 10`).
+
+##### D. Candidate Pair Table & Bubble Sort by Combined Score (`0xC024..0xC2D8`)
+If a pair satisfies the mutual `>= 10` threshold:
+1. `0xC024..0xC048`: Appends `charA` and `charB` to candidate array tables at base index `local[120]`.
+2. `0xC04C..0xC064`: Computes `combined_score = local[140] + local[144]` (sum of mutual emotion points) and stores it in the score array.
+3. `0xC068`: Increments candidate count `local[120]`.
+4. Special plot flags are also tested for specific character pairs (e.g., `0xC07C` tests Celine with flag `0x1AB` for Ernest, `0xC0D0` tests Ashton with flag `0x163`, `0xC124` tests Opera & Ernest).
+5. At `0xC180..0xC2D8`, the script executes an in-place **Bubble Sort** on the candidate list:
+   - Compares `score[i]` against `score[j]` (`0xC1D8..0xC1F4`).
+   - If `score[i] < score[j]`, swaps `score`, `charA`, and `charB` across the arrays (`0xC200..0xC2D4`).
+   - The candidate list is thus strictly ordered by descending total combined affinity points.
+
+##### E. Greedy Ending Assignment & Solo Endings (`0xC2E8..0xC450`)
+- **Greedy Pairing (`0xC2E8..0xC3AC`):** The engine walks the sorted candidate list. For each pair `(charA, charB)`:
+  - Checks if either character has already been claimed by a higher-priority pair (`assigned[char] != 0` tracked in script variable array `0x3B4..0x3BF`).
+  - If both `assigned[charA] == 0` and `assigned[charB] == 0`:
+    - Calls ending registration subroutine `0x2B3C` (`0xACF0`) with `(charA, charB)`.
+    - Locks both characters: `assigned[charA] = pair_index + 1`, `assigned[charB] = pair_index + 1`.
+- **Solo Endings (`0xC3B8..0xC448`):** Any character remaining with `assigned[char] == 0` is assigned their individual solo ending (subroutine `0x2B3C` invoked with argument `0x0F` / solo).
+- Final resolved ending IDs and character associations are recorded into script variables `0x348..0x37F` and `0x388..0x3B3` for the post-credits epilogue theater.
+
+---
+
+#### 2. Part 2: Item-Creation & Synthesis Recipe Tables [Disassembly-only / Verified]
+
+An exhaustive search for the item synthesis engine located the master recipe overlay in **Disc Archive 2990** (LBA 36156, raw size 10,240 bytes / decompressed size 19,496 bytes `0x4C28`, resident memory address `0x8007E000` / `0x80081FBC`), executed by specialty execution overlay **Disc Archive 3012** (LBA 36282).
+
+##### A. Synthesis Execution and Inventory Calls (Overlay 3012)
+Disassembly of `code-3012-lba-36282.asm` verifies the inventory integration:
+- `800808E4`: Invokes `8003C594` (`add_inventory_item`) passing output item ID `0x64($s2)` and count `1`.
+- `8008091C`: Invokes `8003C928` (`consume_inventory_item`) to decrement input items from the 1,024-slot inventory.
+- `8007E2F4`: Blacksmithing modifier check verifies presence of item `0x2E7` (Magical Rasp) via XOR check and global flag `0x2DB`.
+
+##### B. Recipe Table Format (Overlay 2990, Offset `0x3FBC`)
+Item creation is governed by fixed static recipe lookup tables. Each recipe entry is a variable-length record formatted as little-endian 16-bit integers:
+```c
+struct RecipeEntry {
+    uint16_t base_success_rate;    // Base success percentage (1..100)
+    uint16_t output_item_id;        // Resulting item ID (1..1023)
+    uint16_t material_item_id;      // Required mineral/catalyst item ID
+    uint16_t base_item_ids[];       // Zero-terminated list of valid base items
+    uint16_t terminator;            // 0x0000
+};
+```
+
+##### C. Decoded Customization Recipes (119 Weapon Recipes)
+The table contains **119 distinct weapon Customization recipes**. Cross-referencing against `item_ids.txt` decodes major endgame equipment pathways:
+
+| Base Weapon(s) | Mineral Material | Output Weapon | Base Success % |
+|---|---|---|---:|
+| Minus Sword (`0x1F6`) | Mithril (`0x1A9`) | **Eternal Sphere (`0x1FB`)** (Claude Best Weapon) | 80% |
+| Sharp Edge (`0x1F0`) | Mithril (`0x1A9`) | Minus Sword (`0x1F6`) | 60% |
+| Sharp Edge (`0x1F0`) | Damascus (`0x1AA`) | Grand Stinger (`0x1F2`) | 40% |
+| Broad / Long / Worn-out Sword | Gold (`0x1A4`) | Golden Fangs (`0x1E7`) | 40% |
+| Kaiser Knuckles (`0x226`) | Moonite (`0x1A6`) | **Empresia (`0x227`)** (Rena Best Weapon) | 80% |
+| Sorceress Knuckles (`0x225`) | Diamond (`0x1B3`) | Kaiser Knuckles (`0x226`) | 70% |
+| Holy Rod (`0x23C`) | Star Ruby (`0x1B0`) | Dragon's Tusk (`0x241`) (Celine) | 80% |
+| Silver Rod (`0x23B`) | Green Beryl (`0x1A8`) | Holy Rod (`0x23C`) | 70% |
+| Asura (`0x231`) | Diamond (`0x1B3`) | Hecatoncheire (`0x232`) (Bowman) | 70% |
+| Hard Knuckles (`0x222`) | Mithril (`0x1A9`) | Asura (`0x231`) | 60% |
+| Hard Knuckles (`0x222`) | Rainbow Diamond (`0x1B2`) | Pain Cestus (`0x224`) | 50% |
+| Twin Edge (`0x203`) | Damascus (`0x1AA`) | Lotus Eater (`0x205`) (Ashton) | 60% |
+| Melufa (`0x208`) | Meteorite (`0x1AE`) | Holy Cross (`0x209`) (Ashton) | 80% |
+| Crimson Diablos (`0x217`) | Star Ruby (`0x1B0`) | Soul Slayer (`0x219`) (Dias) | 70% |
+| Hard Whip (`0x247`) | Damascus (`0x1AA`) | Splinter (`0x249`) (Ernest) | 60% |
+| Shock Gun (`0x25C`) | Rainbow Diamond (`0x1B2`) | Psychic Gun (`0x25E`) (Chisato) | 60% |
+| Light Box (`0x261`) | Damascus (`0x1AA`) | Plasma Box (`0x262`) (Precis) | 70% |
+
+##### D. Art and Specialty Synthesis Tables
+Subsequent blocks in Overlay 2990 define:
+- **Art (Magic Canvas `0x0001`)**: Table maps artist character IDs and skill levels to portrait/painting item IDs `0x0002..0x0012` (e.g., Portrait A..L, "The Scream").
+- **Blacksmith**: Verified item `0x2E7` (Magical Rasp) conditional lookup gate in `8007E2F4`.
+- **Cooking / Compounding**: Material pairing matrices mapping pairs of ingredient IDs (`0x00D0..0x0180`) to finished dishes and medicine items.
+
 ## Other examined leads, excluded from the new-byte total
 
 | Decoded / live | Observed behavior | Evidence / unresolved boundary |
