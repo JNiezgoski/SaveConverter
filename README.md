@@ -1,9 +1,10 @@
-# SaveConverter
+# StarOcean2-SaveTools
 
-PS1 memory card / save-file tools, built primarily around reverse-engineering **Star Ocean: The
-Second Story (US)**'s save format from scratch — there's no published spec for it. Every field
-documented here was found by diffing real save files and matching numbers against the game's own
-screens.
+PS1 memory-card save tools for **Star Ocean: The Second Story (US)**. Started as a format-ingestion
+tool (bringing GME/VGS/DexDrive/raw card images into a usable form) and grew into full save-format
+reverse engineering — there's no published spec for this format, so every field documented here was
+found by diffing real save files, matching numbers against the game's own screens, or disassembling
+the actual PS1 code that reads and writes it.
 
 ## What's solved
 
@@ -19,7 +20,7 @@ screens.
 | Equipment — full 7-slot characters (incl. Noel, Chisato) | ✅ Verified |
 | Equipment — compressed 6-slot (missing one accessory) | ✅ Verified |
 | Fol (money) | ✅ Verified in-game (via `so2_fol.py` — see below) |
-| Specialties (shop-bought Skill Shop tiers: Knowledge/Sensibility/Technique/Combat ×3 levels) | ✅ Verified — mechanism explained and full 12-tier bit table confirmed by executing the real purchase code — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
+| Specialties (shop-bought Skill Shop tiers: Knowledge/Sensibility/Technique/Combat ×3 levels) | ✅ Verified — mechanism explained and full 12-tier bit table (`0x1A3F`/`0x1A40`) confirmed by executing the real purchase code; one clean live purchase would close out the last loose end — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
 | Adding/recruiting a party member | ✅ Verified in-game (via `so2_party.py`) — two parallel per-slot arrays, identity is a numeric ID not the name string — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md) |
 | Battle-ability quick-assignment slots (4 per character) | ✅ Mapped and disassembly-verified — decoded `0x56C-0x56F` per character, real candidate/read/write code executed against real saves — [details](docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md) |
 | Map position (X/Y/Z, facing, area ID + real scene selector) and area/scene → name lookup | ✅ Verified in-game — tool: `so2_location.py`. 8 areas / 24 sightings recorded, including all 13 floors of Cave of Trials plus 2 in-cave escape points — [details](docs/SO2-MAP-LOCATION-CHECK.md) |
@@ -28,7 +29,7 @@ screens.
 | Required disc (Disc 1 vs Disc 2) | ✅ Verified — decoded byte `0x4C` (0=Disc 1, 1=Disc 2), confirmed by executing the real disc-check code against both actual disc images — [details](docs/SO2-DISC-AND-PSYNARD-CHECK.md) |
 | Psynard (flying mount) teleport | ✅ Verified in-game — editing its parking coordinates (`0x19B4-0x19D8`) moves it to the new spot, confirmed live twice — [details](docs/SO2-DISC-AND-PSYNARD-CHECK.md) |
 | Options menu — all 8 settings (see table below) | ✅ Mapped and disassembly-verified — [details](docs/SO2-OPTIONS-MENU-INVESTIGATION.md) |
-| Story/event flags, recipes | ⚠️ Open — [Private Actions](docs/SO2-PRIVATE-ACTIONS.md) documented as a lead, not yet tested against a save |
+| The "stuck area ID" mystery | ✅ Resolved — decoded `0x1769` (long assumed to be a location ID) is actually a saved sprite drawing-order value; the real location selector is decoded `0x1762` ("scene"), confirmed by real code. `so2_location.py` uses scene throughout — [details](docs/SO2-MAP-LOCATION-CHECK.md#2026-09-27-disassembly-follow-up-0x1769-is-saved-drawing-order-not-an-area-id) |
 
 ### Menu settings — verified
 
@@ -78,18 +79,17 @@ never poke raw bytes there directly.
 "Disassembly" = disc image + disassembly + existing save files only, no emulator run required.
 "In-game testing" = the result has to actually be booted and observed in-game to confirm it.
 
-### Not started
+### Open items
+
+Genuinely unresolved work — fully resolved items live in "What's solved" above, not here.
 
 | Task | Status | Validation | Notes |
 |---|---|---|---|
 | **Map terrain / collision data** | **In progress — overworld traced to a quadtree streaming system; node layout/height output still open** | Disassembly + read-only extraction | Dungeon format solved: scene-to-archive rule, 88-byte triangle records, height formula. Overworld ("type 3") is a fundamentally different system: a 9-slot streaming cache of large decompressed chunks, each apparently holding a 16-level quadtree spatial structure (not a triangle list) — found by tracing the real tag dispatcher and its handlers. The quadtree's node byte layout and what value it actually returns (boolean walkability vs. a real height) were not decoded, so the area-0 height cross-check is still open. Real recorded overworld Y values are both near 0, suggestive of a flat/near-flat overworld but not proven — [details](docs/SO2-MAP-TERRAIN-INVESTIGATION.md) |
-| Specialty Knowledge-vs-Sensibility bit mapping | Resolved | Disassembly (done) | All 12 shop tiers now have a confirmed bit table (`0x1A3F`/`0x1A40`), verified by executing the real purchase code — [details](docs/SO2-SPECIALTY-INVESTIGATION.md). The old "contradiction" was a mislabeled historical test, not a code bug; one clean live purchase would fully close out the last loose end |
-| Field-leader / walking-sprite slot | Corrected — resident connection ruled out; "can it be forced to a 3rd character?" still open | Disassembly (48 real trials + new overlay tracing) | The on-foot sprite constructor uses a simple 0/1 protagonist flag derived from a global story-route byte (`0x19E8`), independent of party order and of `0x41` — confirmed across 3 saves × 4 party selections × 2 flag values × 2 modes. Practical answer to "can the walking sprite be any party member": no, not via this mechanism — it's fixed to the route protagonist (Claude/Rena). A follow-up traced the actual constructors (`80082E5C`/`8007E540`, found inside a previously-unlocated field-engine overlay) and showed construction does NOT hard-branch into 2 fixed graphics — the selector just gets stored as a generic field — but the real graphics-selection code (one of ~12 further reads of the same resident index elsewhere in that overlay) was not located. Genuinely inconclusive on "can it be a third character (e.g. Dias)" — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md) |
+| Field-leader / walking-sprite slot — "can it be forced to a 3rd character?" | Genuinely inconclusive, on hold | Disassembly (48 real trials + overlay tracing) | The walking sprite is a fixed 0/1 protagonist flag from a global story-route byte (`0x19E8`), independent of party order and `0x41` — confirmed it's fixed to the route protagonist (Claude/Rena), not swappable by party order. A follow-up showed construction does NOT hard-branch into exactly 2 fixed graphics — the selector is stored as a generic field — but the real graphics-selection code (one of ~12 further reads of the same resident index) was not located, so whether a 3rd character (e.g. Dias) is reachable remains open — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md) |
 | Map decoded chunks 1 (`0x000–0x1A0`) and 5 (`0x1748–0x1B88`) — remaining unmapped portions | Pending | Disassembly | Partially mapped: Options now located at decoded `0x00..0x0F`, `0x30..0x3F`, `0x44`, `0x46`, `0x49..0x4B`, and `0x1860` — [evidence](docs/SO2-OPTIONS-MENU-INVESTIGATION.md). Remaining bytes still need investigation; story flags remain a separate task |
-| Story/event flags (raw header `0x2B4`–`0x2E3`) | Checked, ruled out as flags | Disassembly (done) | Turned out to be a raw mirror of party-stat data (load-screen/status cache), not a flags bitmap — [details](docs/SO2-STORY-FLAGS-HEADER-CHECK.md). Still open inside the unmapped decoded chunks above |
-| Map/location - "stuck area ID" anomaly | Resolved field identity: saved sprite drawing order, not area ID | Disassembly + real assets + bounded execution | `0x1769` snapshots object `+22` on menu opening; the renderer uses it for drawing order. All 13 recorded floor assets default to 128 and disable the triangle-property update; projected regions can assign shared values or preserve the old value on a miss. No walking-only or cheat-specific cause established for individual recordings. Refresh cannot make this field unique; decoded scene halfword `0x1762` is the location selector - [evidence](docs/SO2-MAP-LOCATION-CHECK.md#2026-09-27-disassembly-follow-up-0x1769-is-saved-drawing-order-not-an-area-id) |
+| Story/event flags | Old suspected location ruled out | Disassembly | Raw header `0x2B4`–`0x2E3` was checked and ruled out — it's a raw mirror of party-stat data (load-screen/status cache), not a flags bitmap — [details](docs/SO2-STORY-FLAGS-HEADER-CHECK.md). Still open inside the unmapped decoded chunks above |
 | Private Actions / emotion levels / item-creation recipes | Pending | Disassembly (trace PA-trigger script opcodes) + light in-game confirmation | Fan-sourced only so far, never located in the save itself |
-| Options: message speed, sound, window colors, targeting, camera work, combat motion, key customization, vibration | Resolved (field mappings); live confirmation open | Disassembly + bounded execution (done) | All eight are in the per-save decoded body; extracted Options overlay 3016 and its actual labels, executed menu writers and serializer/codec checks. Sound has three modes; targeting uses reordered stored values. No new in-game test — [evidence and limits](docs/SO2-OPTIONS-MENU-INVESTIGATION.md) |
 | Inventory word's bit-15 flag meaning | Pending | Disassembly (trace more callers) + minor in-game confirmation | Present on every add call; purpose not established |
 | Party primary array — full byte-by-byte map | 69% mapped | Disassembly (done for now) | All 96 bytes covered; 66 named (ID/EXP/HP/MP/level/STR/CON/AGL/DEX/INT/GUTS), 12 are two unnamed stat triplets, 18 unresolved. Generic-accessor lead (selectors 1-17) and a whole-binary reader/writer scan both checked and ruled out for these bytes — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27). Revisit later to name the rest |
 
