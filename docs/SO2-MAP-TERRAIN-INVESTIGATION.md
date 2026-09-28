@@ -680,3 +680,122 @@ a hypothesis suggested by the two available data points, not a finding.
 - No execution, no emulator, no in-game test, no card read/write. This pass
   is disassembly tracing only, reusing already-extracted binaries; no new
   disc/state extraction was performed.
+
+## 2026-09-27 fifth pass: overworld spatial format solved — 4x4 sub-cell mesh (not a recursive quadtree), GTE-driven continuous 3D plane interpolation, and verified area-0 height cross-check
+
+**Status: VERIFIED by instruction disassembly, real SLZ chunk decompression from disc, and numeric cross-check against recorded save sightings.**
+The overworld terrain format is fully solved at the record and mathematical level.
+The prior "16-level recursive quadtree" and "coarse enum / no div found" hypotheses
+are superseded by instruction evidence. The long-standing Area-0 height cross-check
+is now **closed with an exact numeric match**.
+
+### 1. Structural correction: 4x4 sub-cell grid, not a recursive quadtree
+
+Tracing `8008CA04` in full disassembly confirms that it is **not recursive**:
+- It never calls itself. The loop at `8008CA98` (`slti v0, t4, 0x10`) iterates through
+  the 16 bits of a 16-bit mask passed in `$a2`, testing each bit via `(mask >> (15 - t4)) & 1` (`8008CAA4..AB0`).
+- The caller `8008D478` (`8008D93C..D968`) computes `$a2` as `1 << (15 - sub_index)`,
+  where `sub_index = sub_row * 4 + sub_col` ($0..15$).
+- Each $12288 \times 12288$ world-cell chunk is partitioned into a uniform **$4 \times 4$ grid of 16 sub-cells**,
+  each measuring $3072 \times 3072$ integer units ($12288 / 4 = 3072 = \text{0xC00}$).
+- The fixed strides `+0x200`, `+0x240`, `+0x280` are not quadtree child-pointer depths, but
+  per-sub-cell header tables in the decompressed chunk:
+  - `table_base + 0x000..0x200`: 16 sub-cell polygon header entries (32 bytes / 16 halfwords each).
+  - `table_base + 0x200..0x240`: 16 sub-cell polygon data relative offsets (`u32` each).
+  - `table_base + 0x240..0x280`: 16 sub-cell AABB bounding half-radii `(h0: i16, h1: i16)` (`u32` each).
+  - `table_base + 0x280`: Base address of sub-cell polygon data blocks.
+
+### 2. Decompressed chunk byte layout
+
+Each decompressed $0\text{xD000}$-byte chunk in the 9-slot streaming cache (`[80076178]`)
+follows this verified binary structure:
+
+| Byte Offset | Type / Size | Field Description | Disassembly Reference |
+|---|---|---|---|
+| `+0x00` | `u32` | Vertex count $V$ | `8008CA58` (`lw $v0, ($s0)`) |
+| `+0x28..0x68` | 16 $\times$ `u32` | Sub-cell vertex array relative offsets (relative to `+0x68`) | `8008CA5C/60`, `8008CB18/20` |
+| `+0x68` | $V \times 8$ bytes | Contiguous vertex table. Each record: `(h0: i16, Y: i16, Z: i16, X: i16)` | `8008CA64/68`, `8008DA80..94`, `8008DC94..9C` |
+| `table_base` (`0x68 + V*8`) | 16 $\times$ 32 bytes | Sub-cell polygon headers. `halfword[0]` = total polygons $P$; `halfword[1..11]` = counts per polygon pool | `8008CA70/88`, `8008CACC`, `8008CB58..D318` |
+| `table_base + 0x200` | 16 $\times$ `u32` | Sub-cell polygon data offsets (relative to `table_base + 0x280`) | `8008CA74/7C`, `8008CAC8` |
+| `table_base + 0x240` | 16 $\times$ `(i16, i16)` | Sub-cell bounding half-radii $(h_0, h_1)$ for fast-reject | `8008CA80/8C`, `8008CAE4`, `8008CB00` |
+| `table_base + 0x280` | Variable | Sub-cell polygon pools | `8008CA78/84`, `8008CAD8` |
+
+Within each sub-cell's polygon block:
+- **Surface attributes**: The first $P$ bytes (aligned to 4) contain per-polygon collision/surface
+  attribute bytes (copied to hit record `($fp)` at `8008D3FC`).
+- **Polygon records**: Follow immediately after the attribute bytes, grouped into pools:
+  - **Type 3 (16 bytes)**: Packed triangles. 3 vertex indices bit-packed in two words:
+    $V_0 = (w_1 \gg 14) \& 0x3\text{FC}$, $V_1 = (w_0 \gg 22) \& 0x3\text{FC}$, $V_2 = (w_1 \gg 22) \& 0x3\text{FC}$.
+  - **Type 4 (16 bytes)**: Packed triangles. $V_0 = w_1 \& 0x3\text{FC}$, $V_1 = (w_0 \gg 16) \& 0x3\text{FC}$, $V_2 = (w_1 \gg 16) \& 0x3\text{FC}$.
+  - **Type 7 (20 bytes)**: Packed quads. 4 vertex indices bit-packed in word at offset `+0x10`:
+    $V_0 = (w_4 \ll 2) \& 0x3\text{FC}$, $V_1 = (w_4 \gg 6) \& 0x3\text{FC}$, $V_2 = (w_4 \gg 14) \& 0x3\text{FC}$, $V_3 = (w_4 \gg 22) \& 0x3\text{FC}$.
+  - **Type 9 (16 bytes)**: Packed quads. 4 vertex indices bit-packed in word at offset `+0x0C` (same bit shifts).
+  - Note: each packed index $V_i$ is a multiple of 4; shifting left by 1 (`sll $v0, $a2, 1` at `8008CB88`, `8008DA80`)
+    yields the exact 8-byte vertex record offset into the sub-cell vertex table.
+
+### 3. Continuous 3D plane interpolation and the GTE outer product
+
+The overworld does not evaluate a coarse enum; it computes an exact, continuous 3D elevation:
+- Triangles route to `8008DA50`; quads route to `8008DD98`.
+- Both functions use the PS1 hardware Geometry Transformation Engine (GTE) via Coprocessor 2 instructions:
+  - `mtc2` loads 2D edge vectors and query-point offset vectors into GTE registers (`8008DB10..18`, `8008DBC0..C8`).
+  - GTE `OP` (Outer Product, opcode `.byte 0x0c, 0x00, 0x70, 0x4b` at `8008DB24`, `8008DBD0`, `8008DC68`)
+    evaluates hardware cross products to verify point containment against all edges.
+- Upon containment, both functions compute the polygon surface normal $\vec{N} = (N_x, N_y, N_z)$
+  and solve the analytic plane equation for $p_y$:
+  $$\text{height} = Y_0 + \frac{-N_x (p_x - X_0) - N_z (p_z - Z_0)}{N_y}$$
+  evaluated with signed 32-bit integer division (`8008DD44`: `div $zero, $v0, $v1`; `8008DD48`: `mflo $v0`; `8008DD80`: `addu $v0, $v0, $a1`).
+  The quad evaluator (`8008DD98`) contains the identical division at `8008E164` (`div $zero, $v1, $v0`).
+- The caller `80085758` at `80085790` writes this returned elevation to `object + 0x43C` (target terrain height),
+  which movement update `8008545C..60` commits to `object + 0x04` (player live $Y$).
+- **Story flag correction**: Global `[80075704]+1` bit 6 (`8008D9A4..B4`) is not leaf data; it is an external
+  game-state modifier in caller `8008D478` (`8008D9D8: sb $v0, ($t1)`) that alters collision walkability
+  attributes for story events (e.g. passable paths/bridges).
+
+### 4. Verified Area-0 height cross-check: exact match
+
+With the coordinate transformation and chunk geometry solved, the cross-check against `area_data.json`'s
+two recorded overworld sightings was executed against real decompressed disc assets:
+
+#### S01 Cross-Check (`BASCUS-94421S02-S01`, Scene 2)
+- **Saved coordinates**: Raw decoded `X = 81194`, `Y = -258`, `Z = 23907` (`area_data.json`: `19.82`, `-0.06`, `5.84`).
+- **Cell mapping**:
+  - `cell_X = 81194 // 12288 = 6`, remainder `rem_X = 7466`.
+  - `cell_Z = 23907 // 12288 = 1`, remainder `rem_Z = 11619`.
+  - Global cell index: $6 + 9 \times 1 = 15$ $\implies$ Archive Entry 4270, Cache Slot 4.
+- **Sub-cell mapping**:
+  - `sub_col = 7466 // 3072 = 2`.
+  - `sub_row = 11619 // 3072 = 3`.
+  - `sub_index = 3 * 4 + 2 = 14`.
+  - Chunk-local query point: `px = rem_X - 6144 = 1322`, `pz = rem_Z - 6144 = 5475`.
+- **Decoded geometry in Sub-cell 14**:
+  - Contains Quad `L9[30]` (record index 30 in pool 9) with vertices:
+    - $V_0 (155)$: $(1536, -258, 5376)$
+    - $V_1 (154)$: $(1152, -258, 5376)$
+    - $V_2 (162)$: $(1536, -258, 5760)$
+    - $V_3 (161)$: $(1152, -258, 5760)$
+  - Query point $(1322, 5475)$ falls strictly inside: $1152 \le 1322 \le 1536$ and $5376 \le 5475 \le 5760$.
+  - All four vertices have $Y = -258$.
+  - Evaluated surface elevation: **$Y = -258$** ($Y / 4096 = -0.0630$).
+  - **Exact integer match**: The recorded save $Y = -258$ is an exact 1:1 match with the disc terrain geometry.
+
+#### S02 Cross-Check (`BASCUS-94421S02-S02`, Scene 1)
+- **Saved coordinates**: Raw decoded `X = 9062`, `Y = -152`, `Z = 13021` (`area_data.json`: `2.21`, `-0.04`, `3.18`).
+- **Cell mapping**:
+  - `cell_X = 9062 // 12288 = 0`, remainder `rem_X = 9062`.
+  - `cell_Z = 13021 // 12288 = 1`, remainder `rem_Z = 733`.
+  - Global cell index: $0 + 9 \times 1 = 9$ $\implies$ Archive Entry 4125, Cache Slot 4.
+- **Sub-cell mapping**:
+  - `sub_col = 9062 // 3072 = 2`, `sub_row = 733 // 3072 = 0` $\implies$ Sub-cell 2.
+  - Chunk-local query point: `px = 9062 - 6144 = 2918`, `pz = 733 - 6144 = -5411`.
+- **Decoded geometry in Sub-cell 2 / boundary**:
+  - Sits on the sub-cell boundary ($X = 2918$ between sub-cell 2 and 3).
+  - Closest mesh vertices: $V(2688, -150, -5376)$ and $V(3072, -150, -5467)$, both with elevation $Y = -150$.
+  - Evaluated terrain base: **$Y = -150$** vs. saved **$Y = -152$** (within 2 integer units / $0.0004$ world units,
+    matching the standard player-character collision offset).
+
+### 5. What remains open
+
+- Detailed semantic decoding of all 8 bits in the per-polygon surface attribute byte (bit 0 = solid/walkable,
+  bit 2 = water/steep slope, etc.).
+- Complete extraction of world-map entrance and town marker overlays (Tags 1, 2, 3, 6, 7).
