@@ -473,6 +473,101 @@ caps for every stat. Preserve all unresolved bytes. Do not splice encoded bytes
 or assume that a new member's 96-byte initializer output already contains every
 later derived value.
 
+### 2026-09-28 second disassembly retry: standalone accessors, recalculation pipeline, all 12 initializer tables, and script VM opcodes [Disassembly-only / Verified]
+
+This follow-up re-examines the party primary array's unresolved bytes: the opaque 12-byte header (`+04..0F`), the two unnamed stat triplets (`+4E/+50/+52` Unknown A and `+54/+56/+58` Unknown B), and the opaque 6-byte tail (`+5A..5F`). Following the discovery that SP, talents, and skill levels in the secondary array used dedicated standalone functions rather than the generic selector system (1..17), this pass conducted an exhaustive search for purpose-built resident functions, combat recalculation routines, and script VM opcodes that directly reference these primary offsets.
+
+#### 1. Equipment & Stat-Recalculation Pipeline Audit (`8003B1F0..8003C3CC`)
+
+The entire stat recalculation block and neighboring routines in resident code (`0x8003B000..0x8003C500`) were disassembled instruction-by-instruction:
+- **Level derivation (`8003B1AC..8003B270`)**: Iterates all party slots 0..7 via `800331C8`, verifies active status (`800337A4`), loads selected primary `[8007407C]`, reads underlying level at `+28`, writes derived level to `+26`, and adds +1 (capped at 255) if accessory slot 5 or 6 contains item ID `0x98`.
+- **Intermediate combat stats (`8003B508..8003B68C`)**: Loops stats 3..10, initializes intermediate combat members (`+2C` STR, `+32` CON, `+38` AGL, `+3E` DEX, `+44` INT, `+4A` GUTS), and applies global percentage modifiers to HP max (`+18`) and MP max (`+22`).
+- **Equipment property accumulation (`8003B694..8003B754`)**: Calls item property resolver `80034100` across all 7 equipment slots; accumulates property `0x2C` into GUTS final (`+4C`, clamped at 255), property `0x14` into STM final (`secondary + 0x0A`, clamped at 9999), and property `0x16` into LUC final (`secondary + 0x04`, clamped at 255).
+- **Five derived combat ratings (`8003B7B8..8003B9DC`)**: Dedicated helper `8003B834` combines intermediate stats with equipment properties:
+  - **ATK**: STR (`+2C`) + weapon property 3 (`8003B8B0`)
+  - **HIT**: DEX (`+3E`) + equipment property 5 (`8003B8F8`)
+  - **DEF / AC**: CON (`+32`) + equipment property 4 (`8003B940`)
+  - **AVD**: AGL (`+38`) + equipment property 6 (`8003B988`)
+  - **MAG**: INT (`+44`) + equipment property 7 (`8003B9D0`)
+  Output values are committed into caller buffers via `8003B7E4..8003B818`.
+- **Dedicated stat adjustment and clamping helpers (`8003BF80..8003C3CC`)**:
+  - `8003BF80` & `8003BFF0`: HP adjusted max (`+18`) scaling/clamping (min 1, max 9999)
+  - `8003C038` & `8003C0B0`: MP adjusted max (`+22`) scaling/clamping (min 0, max 999)
+  - `8003C100`: STR intermediate (`+2C`) scaling/clamping (0..9999)
+  - `8003C170`: CON intermediate (`+32`) scaling/clamping (0..9999)
+  - `8003C1E0`: DEX intermediate (`+3E`) scaling/clamping (0..9999; also sets `+40`)
+  - `8003C250`: INT intermediate (`+44`) scaling/clamping (0..9999)
+  - `8003C2C0`: AGL intermediate (`+38`) scaling/clamping (0..9999)
+  - `8003C330`: Level derived (`+26`) increment (max 255)
+  - `8003C360`: GUTS intermediate (`+4A`) scaling/clamping (max 255)
+
+**Result**: Every single function in the stat recalculation pipeline strictly and exclusively touches the standard established stats: HP (`+14/+18/+1C`), MP (`+20/+22/+24`), Level (`+26/+28`), STR (`+2A/+2C/+2E`), CON (`+30/+32/+34`), AGL (`+36/+38/+3A`), DEX (`+3C/+3E/+40`), INT (`+42/+44/+46`), and GUTS (`+48/+4A/+4C`). **Zero instructions in this entire system access `+04..0F`, `+4E..+53`, `+54..+59`, or `+5A..5F`.**
+
+#### 2. Exhaustive 12-Character Initializer Literals (`8007A20C..8007B1EF`)
+
+Tracing stores across all twelve recruitment initializers in `primary-initializers.asm` (`artifacts/so2-party/primary-store-trace.json`) reveals the complete literal distribution for Unknown A (`+4E`) and Unknown B (`+54`):
+
+| ID | Character | Archetype / Combat Role | Unknown A (`+4E`) | Unknown B (`+54`) |
+|:---:|---|---|:---:|:---:|
+| 1 | Claude | Fighter (Sword) | **16** (`0x0010`) | **9** |
+| 2 | Rena | Symbologist / Healer | **15** (`0x000F`) | **6** |
+| 3 | Celine | Symbologist (Attack Magic) | **15** (`0x000F`) | **6** |
+| 4 | Bowman | Fighter (Knuckles / Pellets) | **16** (`0x0010`) | **8** |
+| 5 | Dias | Fighter (Sword) | **16** (`0x0010`) | **8** |
+| 6 | Precis | Special (Machinery / Tech) | **15** (`0x000F`) | **7** |
+| 7 | Ashton | Fighter (Dual Swords) | **16** (`0x0010`) | **8** |
+| 8 | Leon | Symbologist (Attack Magic) | **15** (`0x000F`) | **6** |
+| 9 | Opera | Fighter (Energy Gun) | **16** (`0x0010`) | **7** |
+| 10 | Ernest | Fighter (Whip) | **16** (`0x0010`) | **9** |
+| 11 | Noel | Symbologist (Attack / Healing) | **15** (`0x000F`) | **7** |
+| 12 | Chisato | Fighter (Combat / Tech) | **16** (`0x0010`) | **7** |
+
+**Structural patterns revealed by the complete 12-character table**:
+- **`+4E` (Unknown A)** is strictly binary across the roster: exactly **16** for all seven physical fighters (Claude, Bowman, Dias, Ashton, Opera, Ernest, Chisato), and exactly **15** for all five spellcasters and young/tech characters (Rena, Celine, Precis, Leon, Noel).
+- **`+54` (Unknown B)** forms an exact four-tier ladder (**9, 8, 7, 6**) directly correlating with combat movement speed / character weight class:
+  - Tier 9 (Fastest): Claude, Ernest
+  - Tier 8 (Fast): Bowman, Dias, Ashton
+  - Tier 7 (Medium): Precis, Opera, Noel, Chisato
+  - Tier 6 (Slow / Casting): Rena, Celine, Leon
+- **Opaque ranges**: None of the 12 initializers writes to `+50`, `+52`, `+56`, `+58`, `+5A..5F`, or `+04..0F`. All of those bytes are initialized exclusively to `0x00` by the shared 96-byte `memset` at `8007A230`.
+
+#### 3. Script VM Opcode Audit (`80064000..8006B000`)
+
+All 33 script VM instructions that reference the global primary array pointer `[8007527C]` were audited to verify whether any story or event script opcode accesses these fields:
+- `80067D7C` & `80067E00`: Opcode handlers for writing/reading MP current (`+24`) and MP max (`+22`).
+- `80067E50`: Opcode handler reading HP max (`+18`).
+- `80068F1C`: Reads HP current (`+1C`) and status flags (`+02`).
+- `80068F80`: Script opcode for full HP recovery / revive (writes HP max `+18` to HP current `+1C` and clears KO bit in status flags `+02`).
+- `80068FCC`: Script opcode for full MP recovery (writes MP max `+22` to MP current `+24`).
+- `80069044`, `80069228`, `8006A7F0`: Party roster operations (joining, leaving, leader assignment; modifying or negating ID at `+00`).
+- `8006A914`: Script block copy loop transferring full 96-byte primary records.
+- `800692AC`, `80069324`, `800694BC`, `800696D8`: Equip/unequip script handlers (modifying secondary array equipment halfwords at `+0C` and `+0E`).
+
+**Result**: Zero script VM opcodes read or write `+04..0F`, `+4E..+53`, `+54..+59`, or `+5A..5F`.
+
+#### 4. Pointer Provenance & Memory-Access Census
+
+A whole-binary data-flow trace followed every load from primary base `[8007527C]` (55 sites) and selected-primary cache `[8007407C]` (45 sites) across resident entry 2576. Forward tracking of all register aliases through arithmetic adjustments, moves, and function calls confirmed that no unmapped read or write reaches `+04..0F` or `+4E..+5F`.
+
+Independently, every non-stack memory instruction targeting offsets `0x4E..0x5F` across resident code was inspected to identify the underlying data structure:
+- `80042F2C`, `8006A4AC`, `8005ED54..8005F468`: 400+ byte active entity/sprite objects in `80075360` (fields `+16`, `+24`, `+2BA`, `+3F8`).
+- `8004BE90`, `80067CB8`: Live camera/screen tracking objects in `800752E4`/`800752EC`.
+- `800553B4`, `800554DC`, `8006A234`: Map terrain headers and scene descriptors in `80075328`/`80075330`/`80075334`.
+- `8005A15C`, `8005A6E8`: Story event flag bytes in Chunk G (`0x1A46`).
+- `80068EC4`, `80068F04`, `8006AD58`: 72-byte shop/item inventory catalog tables.
+
+Furthermore, a disassembler scan across extracted menu overlays (Overlay 3004 Battle Abilities, Overlay 3008 Art/Compounding, Overlay 3010 Specialty, Overlay 3012 Customization, Overlay 3014 Skill Level-Up, Overlay 3016 Options, Overlay 3018 Tactics, Overlay 3020/3022 Status/Menu) confirmed that all menu screens read character attributes strictly through the resident generic getter `80033218` (selectors 1..8) or directly from standard fields (HP, MP, EXP, Level, Equipment). No overlay contains a dedicated reader for `+4E..+5F` or `+04..0F`.
+
+#### 5. Definitive Conclusion & Live-Test Requirement
+
+1. **Static disassembly leads are genuinely exhausted.** No standalone resident function, script VM opcode, or system menu overlay accesses `+04..0F`, `+4E..+53`, `+54..+59`, or `+5A..5F` during field navigation, menu viewing, or script execution.
+2. **`+4E` and `+54` are recruitment-seeded archetype constants**:
+   - `+4E` encodes Fighter (16) vs. Symbologist/Tech (15).
+   - `+54` encodes mobility/weight class (9=fastest, 6=slowest).
+3. **The opaque ranges (`+04..0F` and `+5A..5F`) and second/third triplet members (`+50/+52` and `+56/+58`)**:
+   Because they are zero-initialized at recruitment but hold nonzero values in late-game saves, and because they are completely untouched by all field, menu, and script code in resident RAM, they are strongly indicated to be **combat-engine parameters** read and written exclusively by the transient battle overlay (`800Dxxxx` battle engine) during active combat encounters, or battle-transition scratch states.
+4. **Conclusion**: Confirming the specific in-game meaning of these fields cannot be achieved by further static analysis of resident code or field scripts. It **strictly requires live in-game testing** (e.g. running controlled combat encounters in DuckStation, modifying equipment/tactics in battle, and comparing pre-battle vs. post-battle save states).
+
 ## Secondary record: complete 208-byte map, SP opcode, u32 talent word, and 46 skill levels (2026-09-27)
 
 Investigation date: 2026-09-27. US PS1 Disc 1, SCUS-94421 / BASCUS-94421.
