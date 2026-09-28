@@ -36,21 +36,26 @@ characters at level 4+ in the major skill, one character at level 1+ in the mino
 is 10. Because low levels are easier to raise than high ones, spreading the major skill across more
 characters raises a Super faster than maxing it on one or two.
 
-## The Super Specialties
+## The 8 Super Specialties
 
-| Super | Major skill | Minor skill | Consumes | What it does |
-|---|---|---|---|---|
-| Master Chef | Cooking | Compounding | 2 ingredients | Combine two ingredients into a unique high-value dish, one result per ingredient pair |
-| Orchestra | Musical Talent | Art | Conductor's Baton | Boosts item-creation/Super success rates while active; needs one instrument+song per party member |
-| Comprehension | Practice | Survival | — | Chance of bonus Skill Points on level-up; slows the whole party in combat while active |
-| Come on Bunny | Familiar | Scout | — | Summons a large mount ("Bunny") for overland travel, all terrain except water |
-| Publishing | Writing | Machinery | Fountain Pen | Each character can write up to 2 books (one FP-themed, one rarer RP-themed) to sell or read to reset a relationship's Emotional Level to a fixed 8 |
-| Identify All! | Identify | Metalwork | Spectacles | Temporarily shifts all shop prices by (skill level × 3%) — buy-only or sell-only, since it affects everything at once |
-| Blacksmith | Customize | Alchemy | Ore (Iron, Damascus, etc.) | Armor-crafting counterpart to weapon Customize; a Magical Rasp unlocks different results, not just better odds |
-| Reverse Side | Pickpocket | Copying | Vellum Paper | Creates powerful but "illegal" items (free inn stays, XP cheats, etc.); failure creates the game's worst item (a money-draining "Bounced Check"), and use lowers the whole party's Emotional Levels |
+All 8 Super Specialty names and their major/minor Specialty inputs are extracted directly from
+**Disc 1 Archive 3015** (slices 115..122 and 186..193) via
+[`tools/so2_skills_extract.py`](file:///C:/CodeTesting/SaveConverter/tools/so2_skills_extract.py).
+In-game description text itself is not reproduced, consistent with this doc's sourcing note above.
+
+| ID | Super Specialty | Major Specialty | Minor Specialty | Consumes | What it does |
+|---|---|---|---|---|---|
+| 1 | Master Chef | Cooking | Compounding | 2 ingredients | Combine two ingredients into a unique high-value dish, one result per ingredient pair |
+| 2 | Orchestra | Musical Talent | Art | Conductor's Baton | Boosts item-creation/Super success rates while active; needs one instrument+song per party member |
+| 3 | Comprehension | Practice | Survival | — | Chance of bonus Skill Points on level-up; slows the whole party in combat while active |
+| 4 | Come on Bunny | Familiar | Scout | — | Summons a large mount ("Bunny") for overland travel, all terrain except water |
+| 5 | Publishing | Authoring | Machinery | Fountain Pen | Each character can write up to 2 books (one FP-themed, one rarer RP-themed) to sell or read to reset a relationship's Emotional Level to a fixed 8 |
+| 6 | Identify All! | Identify | Metalwork | Spectacles | Temporarily shifts all shop prices by (skill level × 3%) — buy-only or sell-only, since it affects everything at once |
+| 7 | Blacksmith | Customize | Alchemy | Ore (Iron, Damascus, etc.) | Armor-crafting counterpart to weapon Customize; a Magical Rasp unlocks different results, not just better odds |
+| 8 | Reverse Side | Pickpocketing | Reproduction | Vellum Paper | Creates powerful but "illegal" items (free inn stays, XP cheats, etc.); failure creates the game's worst item (a money-draining "Bounced Check"), and use lowers the whole party's Emotional Levels |
 
 ## Status
 
-LIKELY, fan-sourced, and — critically — **not yet reconciled** with this project's own verified
-Skill/Specialty terminology. Before using this to interpret any save bytes, first determine whether
-"Specialty" here means this project's "Skill" (46-item list) or something not yet found at all.
+- **8 Super Specialty names and their major/minor Specialty inputs**: 100% VERIFIED directly from Disc 1 Archive 3015.
+- **Terminology Collision**: FULLY RESOLVED. Individual characters learn 46 **Skills**. Combining Skills enables 17 **Specialties**. Combining Specialties across the party enables 8 **Super Specialties**. The 12 items sold in Skill Guilds are **Skill Shop Tiers** that unlock learning tiers in the 46-skill list.
+- **Save Storage**: Neither Specialties nor Super Specialties are stored as raw integers in save data; their levels are dynamically computed by the game engine from character skill levels.

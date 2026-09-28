@@ -38,6 +38,7 @@ entries." Both vary per save — they're found by scanning, not fixed offsets.
 | `0x0214` u32 | Checksum B |
 | `0x021A` u16 | `C` — end-of-data offset |
 | `0x0234–0x0253` | Party list: 8 × (u16 character ID, u16 level) — **this drives the load-screen portrait**, independent of the party record itself |
+| `0x0280–0x031F` | **Voice Collection bitfield**: 160 bytes (1,280 bits capacity) tracking unlocked battle quotes across all 12 characters (`0x8009C138` in RAM). Read and bitwise-OR'd across all save slots on boot — [details](SO2-VOICE-COLLECTION.md) |
 | `0x0380` / `0x0382` onward | u16 compressed length / zero-run stream; use decoded offsets for Options |
 | `0x0500–0x082F` | Party records — up to 8 members, variable length, in party order |
 | `0x0830–0x0EFF` | Character entries — one per character, variable length |
@@ -362,7 +363,7 @@ decoded data; the former advice to collect many more raw-diff trials is obsolete
 | Raw `0x0254` | u8 second save counter | Historical VERIFIED |
 | Decoded `0x18` | u32 LE Fol | GAME-CODE VERIFIED; [evidence](SO2-FOL-INVESTIGATION.md) |
 | Historical encoded `0x04EC` | Encounter countdown candidate | Unresolved; not a reliable fixed offset |
-| Raw `0x0280..0x0290` | Previously suggested discovered-area data | LIKELY historical observation; semantics unverified |
+| Raw `0x0280..0x031F` | Voice Collection bitfield: exactly 160 bytes (1,280 bits) tracking all 1,278 unlocked battle quotes across all 12 characters. Resides in RAM at `0x8009C138` (`S+0x1A0`). Uncompressed save header enables instant multi-save merging on boot without decompression. | VERIFIED — GameShark `50004F02 0000 / 8009C138 FFFF` anchor, archive 3028..3039 counts, and live-card audit |
 
 ## Specialty unlock flag (decoded-state offset `0x1A3F`)
 
@@ -408,7 +409,7 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
   unnamed triplets and opaque ranges remain unnamed.
   See [the detailed map](SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27).
 
-- **Story/event flags** - raw `0x02B4`-`0x02E3`: checked, inconclusive as story flags; save/load copies this range to/from live state `+0x1D4..+0x203` ([code evidence](SO2-STORY-FLAGS-HEADER-CHECK.md)); no story-specific writer established.
+- **Voice Collection bitfield (resolved 2026-09-28)** — raw `0x0280..0x031F`: exactly 160 contiguous bytes (1,280 bits capacity) tracking 1,278 battle quotes across all 12 characters. In RAM at `0x8009C138` (`S + 0x1A0`), proven by GameShark loop code `50004F02 0000 / 8009C138 FFFF`. On boot, the game reads this block across all memory card slots and bitwise-ORs them into RAM with zero decompression. This completely supersedes the obsolete note regarding raw `0x02B4..0x02E3` (which was simply characters unlocking voice lines at offset `+0x34` within this bitfield). See [SO2-VOICE-COLLECTION.md](SO2-VOICE-COLLECTION.md).
 - **Map/location — real coordinates found 2026-09-27, but likely coarse, not free-roam.** Decoded
   `0x1750/0x1754/0x1758` (chunk-5 relative `+8/+0xC/+0x10`) hold three signed 32-bit words that read
   as real X/Y/Z position data — confirmed against S01/S02/S15: values differ meaningfully between

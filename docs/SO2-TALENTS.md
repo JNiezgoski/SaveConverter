@@ -6,44 +6,42 @@ for this project's reference; original text is copyrighted to its authors and is
 
 ## Relationship to this project's own findings
 
-This project already has the **10-talent bitmask fully VERIFIED** from real save data — see
-`SAVE-FORMAT.md`'s "Talent mask" section (one u16 bitmask immediately before each character's SP
-block, confirmed on 16 tested character-slots). This page doesn't change that mapping; it explains
-the **game mechanic behind it**: talents aren't fixed per character, they're randomly rolled when a
-character joins the party (a saved-and-reloaded recruitment can reroll them), plus there's a slow
-chance to learn a missing talent through repeated use of a related Specialty. **The Blessing of
-Mana is the one exception — it's fixed per character (all spellcasters start with it, no fighter can
-ever learn it), never random.**
+This project has the **10-talent bitmask fully VERIFIED** directly from the Disc 1 game binary (Archive 3015)
+and confirmed against real save data:
+- In save memory, talents are stored as a 32-bit `u32` word at `secondary + 0x20` (lower 10 bits occupied,
+  upper bits 0, immediately preceding the SP block).
+- All 10 talent names were extracted and verified directly from Disc 1 Archive 3015 via
+  [`tools/so2_skills_extract.py`](file:///C:/CodeTesting/SaveConverter/tools/so2_skills_extract.py). In-game
+  description text itself is not reproduced here, consistent with this doc's sourcing note above.
+- Note the official game localization spelling: **The Blessing of Manna** (double 'n'). It is fixed per
+  character (all spellcasters start with it, no fighter can ever learn it), never random.
+- Gaining a talent through practice (not starting with it) also awards a fixed 100 Skill Points.
 
-Gaining a talent through practice (not starting with it) also awards a fixed 100 Skill Points —
-worth remembering if a future test sees SP jump by exactly 100 alongside a talent bit flipping.
+## The 10 talents (verified bit order and names)
 
-## The 10 talents (matching this project's existing bit order)
+| Bit | Talent Name (Official) | What it does | Related specialty (★ = learnable via use) |
+|---|---|---|---|
+| `0x001` | Originality | Creative ability to modify/customize things | Customize, ★Metalwork |
+| `0x002` | Sense of Taste | Judging what tastes good | ★Cooking |
+| `0x004` | Dexterity | Fine fingertip control | ★Metalwork, Compounding, Pickpocketing, ★Machinery |
+| `0x008` | Sense of Design | Artistic/creative talent | ★Art, ★Machinery |
+| `0x010` | Writing Ability | Putting thoughts into words | ★Authoring |
+| `0x020` | Sense of Rhythm | Grasping musical rhythm | ★Musical Talent |
+| `0x040` | Pitch | Grasping musical tones | ★Musical Talent |
+| `0x080` | Love of Animals | Animal affinity | ★Familiar |
+| `0x100` | Sixth Sense | Sensing the inexpressible | ★Scout |
+| `0x200` | The Blessing of Manna | Innate magical power | Alchemy (fixed, not learnable) |
 
-| Talent | What it does | Related specialty (★ = can be learned via repeated use) |
-|---|---|---|
-| Originality | Creative ability to modify/customize things | Customize, ★Metalwork |
-| Sense of Taste | Judging what tastes good | ★Cooking |
-| Dexterity | Fine fingertip control | ★Metalwork, Compounding, Pickpocket, ★Machinery |
-| Sense of Design | Artistic/creative talent | ★Art, ★Machinery |
-| Writing Ability | Putting thoughts into words | ★Authoring |
-| Sense of Rhythm | Grasping musical rhythm | ★Musical Talent |
-| Pitch | Grasping musical tones | ★Musical Talent |
-| Love of Animals | Animal affinity | ★Familiar |
-| Sixth Sense | Sensing the inexpressible | ★Scout |
-| The Blessing of Mana | Innate magical power | Alchemy (fixed, not learnable — see above) |
-
-Note: Dexterity cannot actually be learned via Pickpocket despite the specialty relation (per the
-source's own comment) — don't rely on farming it that way.
+Note: Dexterity cannot actually be learned via Pickpocketing despite the specialty relation — do not rely on farming it that way.
 
 ## Starting-talent probabilities by character (Prima Guide data)
 
-Each cell is `starting % / learn-through-practice %`. Blessing of Mana is 100% fixed for Celine,
+Each cell is `starting % / learn-through-practice %`. Blessing of Manna is 100% fixed for Celine,
 Leon, Noel, Rena and 0% (impossible) for everyone else — consistent with "spellcasters only."
 
 | Talent | Ashton | Bowman | Celine | Chisato | Claude | Dias | Ernest | Leon | Noel | Opera | Precis | Rena |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Blessing of Mana | 0/0 | 0/0 | 100/0 | 0/0 | 0/0 | 0/0 | 0/0 | 100/0 | 100/0 | 0/0 | 0/0 | 100/0 |
+| Blessing of Manna | 0/0 | 0/0 | 100/0 | 0/0 | 0/0 | 0/0 | 0/0 | 100/0 | 100/0 | 0/0 | 0/0 | 100/0 |
 | Dexterity | 50/3.9 | 20/0.4 | 80/15.6 | 60/3.9 | 50/7.8 | 50/5.9 | 60/7.8 | 20/0.8 | 10/2.0 | 100/0 | 30/62.5 | 70/3.9 |
 | Love of Animals | 50/0.8 | 0/23.4 | 10/0 | 50/39.1 | 20/3.9 | 20/0.8 | 30/3.9 | 10/2.0 | 90/3.9 | 0/0 | 70/2.0 | 85/15.6 |
 | Originality | 10/39.1 | 40/3.9 | 40/31.3 | 60/11.7 | 60/11.7 | 100/0 | 20/7.8 | 30/3.9 | 40/3.9 | 40/19.5 | 30/7.8 | 20/3.9 |
@@ -56,7 +54,5 @@ Leon, Noel, Rena and 0% (impossible) for everyone else — consistent with "spel
 
 ## Status
 
-The talent **bitmask mapping** (which bit = which talent) is VERIFIED from this project's own save
-data. The **probabilities** above are LIKELY (fan-sourced from the Prima Guide, not independently
-verified against this project's saves) but explain observed variance rather than requiring new
-reverse-engineering — nothing to test here, just context for why talent bits differ across saves.
+- The talent **bitmask mapping** and **official names** are 100% VERIFIED from Disc 1 Archive 3015 and save data.
+- The **starting probabilities** above are LIKELY (fan-sourced from the Prima Guide, not independently verified against game assembly) but explain observed variance across saves.

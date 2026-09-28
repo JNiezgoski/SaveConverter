@@ -22,61 +22,54 @@ guaranteed to fail" regardless of level.
 
 ## The 17 Specialties
 
-| Specialty | Related skills | Required talent | Feeds into (Super Specialty) |
-|---|---|---|---|
-| Alchemy | Mineralogy, Fairyology, Scientific Ability | Blessing of Mana (spellcasters only) | Blacksmith (minor) |
-| Art | Esthetic Sense, Sketching | Sense of Design | Orchestra (minor) |
-| Authoring | Writing | Writing Ability | Publishing (major) |
-| Compounding | Herbal Medicine, Biology, Mental Science | Dexterity | Master Chef (minor) |
-| Cooking | Recipe, Good Eye, Kitchen Knife | Sense of Taste | Master Chef (major) |
-| Customize | Functionality, Craft, Metal Casting | Originality | Blacksmith (major) |
-| Familiar | Whistling, Animal Training | Love of Animals | Come On Bunny (major) |
-| Identify | Mineralogy, Herbal Medicine, Tool Knowledge | none | Identify All! (major) |
-| Machinery | Mech Knowledge, Mech Operation | Dexterity, Sense of Design | Publishing (minor) |
-| Metalwork | Mineralogy, Esthetic Sense, Craft | Originality, Dexterity | Identify All! (minor) |
-| Musical Talent | Musical Notation, Music Instrument | Pitch, Sense of Rhythm | Orchestra (major) |
-| Oracle | Piety, Playfulness, Radar | none | none |
-| Pickpocket | Courage, Poker Face | Dexterity | Reverse Side (major) |
-| Practice | Patience, Perseverance, Effort | none | Comprehension (major) |
-| Reproduction | Copying | none | Reverse Side (minor) |
-| Scout | Danger Sense | Sixth Sense | Come On Bunny (minor) |
-| Survival | Herbal Medicine, Patience | none | Comprehension (minor) |
+All 17 Specialty names and their skill/talent inputs are extracted directly from **Disc 1 Archive
+3015** (slices 98..114 and 169..185) via
+[`tools/so2_skills_extract.py`](file:///C:/CodeTesting/SaveConverter/tools/so2_skills_extract.py).
+In-game description text itself is not reproduced, consistent with this doc's sourcing note above —
+see "Brief functional notes" below for a paraphrased summary of what each one does.
 
-## Brief functional notes (mechanics, not flavor text)
+| ID | Specialty | Related Skills | Required Talent | Feeds into Super Specialty |
+|---|---|---|---|---|
+| 1 | Art | Esthetic Sense, Sketching | Sense of Design | Orchestra (minor) |
+| 2 | Oracle | Piety, Playfulness, Radar | none | none |
+| 3 | Musical Talent | Musical Notation, Music Instrument | Pitch, Sense of Rhythm | Orchestra (major) |
+| 4 | Customize | Functionality, Craft, Metal Casting | Originality | Blacksmith (major) |
+| 5 | Identify | Mineralogy, Herbal Medicine, Tool Knowledge | none | Identify All! (major) |
+| 6 | Metalwork | Mineralogy, Esthetic Sense, Craft | Originality, Dexterity | Identify All! (minor) |
+| 7 | Authoring | Writing | Writing Ability | Publishing (major) |
+| 8 | Practice | Patience, Perseverance, Effort | none | Comprehension (major) |
+| 9 | Scout | Danger Sense | Sixth Sense | Come on Bunny (minor) |
+| 10 | Compounding | Herbal Medicine, Biology, Mental Science | Dexterity | Master Chef (minor) |
+| 11 | Cooking | Recipe, Good Eye, Kitchen Knife | Sense of Taste | Master Chef (major) |
+| 12 | Familiar | Whistling, Animal Training | Love of Animals | Come on Bunny (major) |
+| 13 | Alchemy | Mineralogy, Fairyology, Scientific Ability | The Blessing of Manna | Blacksmith (minor) |
+| 14 | Survival | Herbal Medicine, Patience | none | Comprehension (minor) |
+| 15 | Pickpocketing | Courage, Poker Face | Dexterity | Reverse Side (major) |
+| 16 | Reproduction | Copying | none | Reverse Side (minor) |
+| 17 | Machinery | Mech Knowledge, Mech Operation | Dexterity, Sense of Design | Publishing (minor) |
 
-- **Alchemy**: converts Iron into higher-value ore/gems for Customize/Metalwork; spellcaster-only
-  due to the talent requirement.
+## Brief functional notes (mechanics)
+
+- **Alchemy**: converts Iron into higher-value ore/gems for Customize/Metalwork; spellcaster-only due to The Blessing of Manna requirement.
 - **Art**: consumes Magical Canvas/Clay to create battle items, portraits, or dolls.
-- **Authoring**: writes a guidebook (consumes a Fountain Pen) that instantly grants another
-  character level 5 in a skill the author has at level 5+; only ~20 skills are eligible.
-- **Compounding**: mixes two herbs into one of several possible results, not all beneficial.
-- **Cooking**: turns ingredients into food; each character but Chisato has a unique max-recovery
-  "favorite dish."
-- **Customize**: combines a weapon with ore/gem into a different weapon (or occasionally something
-  else entirely); per-character, can't customize another character's weapon.
-- **Familiar**: lets you remote-shop via a bird messenger (consumes Pet Food); the bird "species"
-  changes with level and can't be reverted, so multiple characters at different levels is useful.
-- **Identify**: reveals unknown ("?"-prefixed) items; consumes a Spectacle per attempt.
-- **Machinery**: crafts battle bombs and other specialties' support items; important for
-  Precis/Opera's unique weapons.
-- **Metalwork**: crafts accessories from ore/gems; each character can only make about half the
-  possible results per material, so multiple crafters are needed for full coverage.
-- **Musical Talent**: 3-stage process (find instrument → compose up to 2 songs per instrument using
-  a Feather Pen → play a composed song with a Conductor's Baton for a temporary party-wide effect).
-- **Oracle**: cosmetic flavor-text specialty, no gameplay effect.
-- **Pickpocket**: requires Bandit's Glove/Magician's Hand equipped; one attempt per NPC ever;
-  lowers other present party members' Emotional Level toward the pickpocketing character each use.
-- **Practice**: weakens the practicing character's stats in battle in exchange for bonus party-wide
-  EXP; also grants bonus SP on level-up via its Super (Comprehension).
-- **Reproduction**: duplicates most shop-bought items (not most rare ones) using a Magical
-  Camera/Ririca and Magical Film.
-- **Scout**: adjusts encounter rate; only the current party leader's level in this specialty
-  matters.
-- **Survival**: random item find, costs 4 MP, mostly yields cooking ingredients/minerals.
+- **Authoring**: writes a guidebook (consumes a Fountain Pen) that grants another character level 5 in a skill the author has at level 5+.
+- **Compounding**: mixes two herbs into one of several possible medicine results.
+- **Cooking**: turns ingredients into food; characters have unique favorite dishes.
+- **Customize**: combines a weapon with ore/gem into an upgraded or unique weapon.
+- **Familiar**: remote shopping via bird messenger (consumes Pet Food).
+- **Identify**: reveals unknown ("?"-prefixed) items; consumes a Spectacle.
+- **Machinery**: crafts battle gadgets and support items (e.g. Precis/Opera unique moves/weapons).
+- **Metalwork**: crafts accessories from gems and metals.
+- **Musical Talent**: 3-stage process (find instrument -> compose music with Feather Pen -> play song with Conductor's Baton).
+- **Oracle**: cosmetic hint system, no gameplay effect.
+- **Pickpocketing**: requires Bandit's Glove or Magician's Hand equipped; executed using the [Square] button; decreases Emotional Levels with present party members.
+- **Practice**: lowers battle abilities in exchange for bonus EXP.
+- **Reproduction**: duplicates items using Magical Camera/Ririca and Magical Film.
+- **Scout**: adjusts enemy encounter rate.
+- **Survival**: field forage consuming 4 MP per attempt.
 
 ## Status
 
-The **Skill** levels feeding these are already VERIFIED from real save data. The **Specialty**
-computation rule (average, rounded down, capped 10) and the Talent gating are LIKELY (fan-sourced,
-not independently re-derived from this project's own saves) but are a straightforward function of
-already-known data, not a new field to locate.
+- **17 Specialty names, skill inputs, and talent gating**: 100% VERIFIED directly from Disc 1 Archive 3015.
+- **Skill Inputs & Talents**: Fully reconciled with the verified 46-skill list and 10-talent system.
+- **Specialty Level**: Computed value ($Average(\text{Skills})$, rounded down, capped at 10), not stored in save data.

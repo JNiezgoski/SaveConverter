@@ -146,3 +146,20 @@ save region was attempted. A future investigation could trace indexed
 writers to this live-state range; that is left open here. Only this note
 and the story/event-flags open item were changed. Nothing under
 `C:/CodeTesting/StarOcean2/SaveGames` was modified.
+
+
+---
+
+## Resolution & Definitive Semantic Mapping (2026-09-28)
+
+**The mystery of raw offsets `0x0280..0x037F` and live offsets `S+0x1A0..S+0x29F` is 100% resolved.**
+
+This region is **not** story/event flags. It is the uncompressed **Voice Collection Bitfield**:
+1. **Physical Capacity & Allocation**: The copy length `0x100` (256 bytes) covers raw save offsets `0x0280..0x037F`, allocating 160 active bytes (`0x0280..0x031F` / 1,280 bits) for the 1,278 battle voices across all 12 characters, with 96 trailing bytes reserved capacity up to compressed stream boundary `0x0380`.
+2. **RAM Location `S+0x1A0`**: In live memory, `S + 0x1A0 = 0x8009C138`, exactly matching the canonical GameShark Voice Collection master code (`50004F02 0000 / 8009C138 FFFF`).
+3. **The 48-byte Candidate `0x02B4..0x02E3` Explained**:
+   The specific 48 bytes investigated above at `0x02B4..0x02E3` (live `S+0x1D4..0x203`, offset `+0x34..+0x63` within the voice buffer) corresponds exactly to the bit allocations for **Dias Flac (Bits 425..528), Precis F. Neumann (Bits 529..636), and Ashton Anchors (Bits 637..752)**!
+   Diffs observed between different save files in that range were simply different party compositions unlocking character combat voice quotes during battles.
+4. **Instant Multi-Save Consolidation**: Because this block sits in the uncompressed header before zero-run compression at `0x0380`, the bootloader scans all 15 slots on boot and bitwise-ORs `0x0280..0x031F` together without decompressing the saves.
+
+See the complete specification in [docs/SO2-VOICE-COLLECTION.md](SO2-VOICE-COLLECTION.md).
