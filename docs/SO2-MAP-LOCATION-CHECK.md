@@ -684,6 +684,259 @@ This doesn't yet explain *why* `0x1769` gets stuck while `0x1762` keeps
 tracking correctly, but it confirms the practical impact and gives a working
 mitigation.
 
+### 2026-09-27 disassembly follow-up: `0x1769` is saved drawing order, not an area ID
+
+**VERIFIED — disassembly, real scene-asset extraction, and bounded instruction
+execution:** the controlled object's `+0x22` field supplies a **sprite drawing-order
+bucket**. Its saved low byte is decoded `0x1769`. Repeated values across locations
+are therefore legitimate; 128 is also an explicit initialization/default value.
+The proposed "ground material refreshed only while walking" explanation is
+refuted as an explanation of this field's identity and update requirements.
+The scene at decoded `0x1762` is a **signed halfword**, not a byte, and actually
+selects the scene loader. Using scene for location identity is the correct model,
+not merely a workaround for a broken area ID.
+
+**UNVERIFIED:** which precise initialization, region hit, or no-hit branch
+produced each historical Cave of Trials recording, and whether the save-anywhere
+cheat changed any of those branches. No cheat execution or complete gameplay
+transition was reproduced. The older observations prove repeated byte values,
+not that those values were stale Linga identifiers. In particular, the original
+report says the player **walked down stairs**; it does not establish instant warps
+on the affected floors. The database also records **both L6 and L7 as 160**.
+There is no established division into "walked/unique" and "warped/stale" floors.
+
+#### 1. What actually reaches `8004C708`
+
+**VERIFIED (static control flow):** neither `8004C708` nor `8004C654` is a
+function entry. They are fall-through instructions inside **`8004C334`**, a
+field/menu state handler. An aligned instruction scan of resident entry 2576
+and field overlay 3101 found exactly one direct call to that function:
+`8004A000: jal 8004C334`, with the field context in `a0`. Neither binary has
+a direct branch/call into `8004C654..8004C710`, or an aligned literal pointer
+to `8004C334`, `8004C654`, or `8004C708`. This is exhaustive for those two
+binaries' direct references, not a claim about every overlay or computed jump.
+
+The caller is in the field loop: controller state is sampled at
+`80049D8C..80049E24`, and `8004A404` loops back to `80049D40`. However, the
+copy **does not execute on every iteration**:
+
+- `8004C364..36C` requires context `+14 == 0` to enter the opening checks.
+- `8004C3F4..428` tests the configured Menu button (`[80075270]+4`) against
+  `[8007574C]`, or accepts a nonzero forced mode byte `[80076196]`.
+- `8004C43C..53C` additionally checks runtime `+93`, script state, story-mode
+  flags, controlled-object availability (`runtime+10 != -1`), script `+109C`,
+  and runtime `+26`; the forced-mode path can bypass the latter eligibility
+  failure. These are menu eligibility checks, not a test for walking velocity.
+- After setup/waits, `8004C664..67C` saves and clears the runtime control index
+  and sets context `+14=3`. The block then obtains
+  `object = [80075360 + 4*F[24]]`, where `F=[80075710]`.
+- `8004C69C/A4` skips the snapshot for forced mode **5** or a null object.
+  Otherwise it copies XYZ (shifting right 12), facing, and finally
+  `8004C708: lhu v0,22(a2)` / `8004C710: sb v0,21(v1)`.
+- `8004C818..848` constructs the menu context with `80030470` and starts it
+  through `80030908`, passing mode 1 normally or the forced mode value.
+
+Thus this is a **menu-opening snapshot of an already-computed object property**,
+not an area-entry assignment or a movement-tick writer to the saved byte.
+Bounded execution of `8004C654` through the snapshot confirmed object value 128
+overwrites a sentinel saved value 77; mode 5 and null-object trials preserve 77.
+No controller/menu lifecycle was simulated in those slice tests.
+
+#### 2. The consumer establishes what the property means
+
+**VERIFIED:** the field renderer at `8007F6F0..718` reads the same object's
+`+22`, adds one, and stores it in `object+378+2*i`, paired with a primitive
+pointer in `object+318+4*i`. Other sprite paths repeat this at
+`8007F9A8..9D0`, `80080B38..B64`, and `80081AE8..B10`.
+
+Resident **`8003F948`** consumes those arrays. At `8003FB3C..B98`, it uses
+the saved halfword as a table index (`<<2`), reads the bucket head at
+`[[[80075290]+F8]+70] + 40 + 4*index`, and splices the primitive into the
+list: preserve the primitive tag's high byte, replace its low 24-bit next
+pointer with the old bucket head, then replace the bucket head with the
+primitive's low 24-bit address. This is an actual graphics ordering-list
+operation, not an inferred name based on proximity to collision code.
+`8003F95C..964` also skips this renderer when object `+22` is zero.
+
+A bounded execution of `8003F948`, with one synthetic primitive and the real
+resident instructions, confirmed the splice at **bucket 129** for the renderer's
+stored `128+1`: primitive tag `09000000 -> 09FFFFFF`, bucket head
+`00FFFFFF -> 00174000`. No drawing or GPU execution is claimed. "Drawing-order
+bucket" is a verified use; the complete visual occlusion rules and every other
+consumer have not been reconstructed. The old terrain doc's "surface/footstep
+type" label must not be used as an established semantic name.
+
+#### 3. Initialization, movement, and the two terrain paths
+
+**VERIFIED:** constructor `8003D750` initializes this property before walking.
+`8003D778` loads its fifth argument; `8003D80C..834` writes either the explicit
+argument, resource-header byte **`R+5A`** when the argument is `-1`, or zero
+when no resource is present. Executing this constructor against scene 727's
+actual resource with argument `-1` produced **128**, without any movement.
+The sibling initializer `8003D8E4..91C` has the same default rule.
+
+Scene setup also preserves a saved drawing-order value deliberately:
+`80055348` loads `F+21` into `s2`; `8005536C` retains it when the load's
+`a2` (saved in `s7` at `80053EA4`) is nonzero. Otherwise `8005537C` assigns
+128. `8005555C` passes `s2` through `80043890`, whose `80043990/998` forwards
+it to field constructor `8007E540`; `8007E5B0/5BC` forwards it to
+`8003D750`. The scripted scene-entry call `8006BE80` passes `a2=1`
+(`8006BE54/68`). A scene change therefore need not reset this property to
+anything unique before local region rules run.
+
+The two geometry writers are **complementary passes**, not mutually exclusive
+"walking versus warp" cases:
+
+| Writer | Required conditions and source | No update when |
+|---|---|---|
+| `80083628` / store `8008381C` | Object flags `+4C & 2`; first matching enabled 88-byte world-space triangle; triangle `+0F != 0`; old object `+22 != 0`; flags `& 10 == 0`. Copies triangle byte `+54`. | Any gate fails or no triangle matches. Height can still update before the final property gates. |
+| `80083840` / store `800838FC` | Old object `+22 != 0`, flags `& 10 == 0`; valid projected-coordinate cell; first matching enabled 40-byte region at the object's height. Copies region byte `+24`. | Gates fail, cell is invalid/empty, or no region matches. There is **no default assignment on a miss**. |
+
+Here `10` in the flag masks is hexadecimal. Exact first-path gates are at
+`80083644..50`, `8008368C..D0`, and `800837E0..8008380C`. The second path
+calls `80085CC4 -> 80085CF0` with **object+74/+76**, the projected coordinates,
+not world X/Z. The resulting cell indexes 96-byte descriptors at
+`T + 96*cell`, `T=[80075334]=TB+4`. Descriptor `+4` is the region count;
+`+28` is the TB-relative pointer to its 40-byte array. Predicate `80083944`
+checks enabled byte `+10`, Y bounds `+4/+6`, projected bounding box
+`+8..+E`, then shape-specific tests. These are region-selected drawing-order
+values, not a demonstrated material classifier.
+
+The actual on-foot callback connection is also found. Constructor
+`8007E590..59C` installs the table at `8008EBE0`; its `+14` pointer is
+**`80082838`**. Resident object update `8003D95C`, reached by the object loop
+at `800442DC`, invokes that callback at `8003DA0C..24` when its control gate
+is enabled. On the normal callback branch:
+
+```text
+80082838 input/control callback
+  -> 80082B70 calls 80082CFC (movement)
+       -> 8008348C calls 80083628 (world triangle / height pass)
+  -> 80082B98 calls 80070CF4 (projection)
+  -> 80082CCC calls 80083840 (projected region / drawing-order pass)
+later menu opening -> 8004C708/710 snapshots object+22 into F+21
+```
+
+Crucially, `80082D34` skips movement when its movement argument is zero,
+but returns to the caller, which **still projects and calls `80083840`**.
+The normal region refresh is not conditional on positive displacement.
+There are separate global/patched callback branches (`80082864`,
+`80082B44..5C`), so this is not a claim that every frozen/scripted state runs it.
+Additional triangle callers are constructor setup `8007E6E8`, scripted
+movement `80082428`, and resident object setup `80045884`. Additional region
+calls `8007EFA8` and `80080070` occur during rendering/projection. A "must walk
+once after loading" requirement is therefore unsupported.
+
+#### 4. Real Cave of Trials assets explain the collisions
+
+**VERIFIED (read-only Disc 1 extraction):** selected each recorded scene's
+bundle using the established `scene + 0xC87` rule, then decoded type 0's first
+SLZ subchunk. All 13 floor resources have **header `R+5A=128`**, and **every
+88-byte triangle in those 13 resources has `+0F=0`, `+54=0`**. Consequently
+the proposed triangle-byte writer cannot refresh `+22` on those triangles,
+even during a successful height query and ordinary walking. The projected
+40-byte regions do contain the recorded non-128 values:
+
+| Floor | Scene | Archive entry | Recorded `0x1769` | Distinct authored 40-byte region values |
+|---|---:|---:|---:|---|
+| 1 | 704 | 3911 | 118 | 118, 128 |
+| 2 | 716 | 3923 | 148 | 90, 118, 128, 138, 148 |
+| 3 | 727 | 3934 | 128 | 90, 110, 118, 128 |
+| 4 | 740 | 3947 | 128 | 40, 60, 68, 70, 80, 130 |
+| 5 | 744 | 3951 | 128 | 40, 60, 80, 105, 110, 128 |
+| 6 | 760 | 3967 | 160 | 128, 140, 160, 170 |
+| 7 | 766 | 3973 | 160 | 100, 120, 138, 142, 148, 160 |
+| 8 | 777 | 3984 | 140 | 100, 120, 140 |
+| 9 | 788 | 3995 | 128 | 128, 140 |
+| 10 | 794 | 4001 | 138 | 118, 125, 138 |
+| 11 | 808 | 4015 | 128 | 40, 60, 128 |
+| 12 | 811 | 4018 | 150 | 128, 135, 150 |
+| 13 | 820 | 4027 | 128 | 118, 128 |
+
+These are sets across each resource, **not an assertion that every region
+contains the recorded player position**. Actual `80083840` executions using
+these resources and synthetic projected bounding-box centers, Y=0, flags
+`1000F`, and initial `+22=211` produced every distinct value listed above.
+For example, scene 727 at projected `(436,80)` overwrote 211 with 128; scene
+716 at `(142,403)` produced 148; scenes 760 and 766 at `(160,205)` and
+`(101,318)` both produced 160. No movement, cheat, or Linga history was needed.
+
+Floor 4's 128 is **not** one of its authored region values. It is compatible
+with initialization/inheritance plus a region miss, not proof of a special
+Linga state. The exact recorded position's projected coordinates and script
+history were not replayed. An independent real-snapshot check demonstrates
+the miss behavior: Disc-1 RAM scene 183 has object `801580E0`, projected
+`(89,45)`, flags `21000F`, and original `+22=128`. Changing only that property
+to 160 in scratch RAM and executing the complete `80083840` left **160**;
+the query does not unconditionally restore the resource default.
+
+The two recorded escape scenes were also checked. Scene 807 has default 128
+and region values 90/128/160/180. Scene 756 is a useful contrasting case:
+its four triangles have `+0F=1` and `+54=130/130/140/140`, showing that the
+triangle writer is real but asset-gated. It must not be generalized from this
+escape scene to the 13 floor scenes.
+
+#### 5. Why scene works, and whether there is a refresh fix
+
+**VERIFIED:** the independent scene transition writes its selector directly
+to `F+1A` at **`80054398`**. It uses that selector for archive selection;
+it does not derive it from object drawing order. Hence the observed distinct
+scene values can remain correct while the saved drawing-order byte repeats.
+
+The root error in the location tooling's interpretation is treating a saved
+rendering property as a unique area identifier. Values can stay unchanged
+because a query deliberately preserves them, or can be freshly recomputed
+to the same number in unrelated scenes. The evidence does **not** support
+attributing all collisions to a missing save point or skipped walking tick.
+
+**No unique-area-ID refresh fix exists for this byte under the traced model.**
+Calling `80083840` with a live object, loaded scene resources, correct projected
+coordinates, and eligible flags can refresh its drawing-order property on a
+region hit; it cannot manufacture location uniqueness, and a miss preserves
+the old value. Calling just `80083628` would not update this property for any
+of the 13 sampled floor assets. A raw position/scene write also does not itself
+perform projection, region lookup, or the later menu snapshot. These are
+evidenced dependencies, **not a validated one-call warp repair**. Do not assign
+arbitrary unique numbers to `0x1769`: the renderer consumes the value. Keep
+scene as the location key and preserve the real rendering byte in reference
+teleports. No editing tool or card-write change was made here.
+
+#### Evidence and execution limits
+
+Existing resident entry 2576 and field overlay 3101 were reused, with Capstone
+instruction checks and aligned direct-reference scans. SHA256:
+
+- Resident: `6dec3950348b57068a85759f472ea7d5c92241d28b00ff4ea139ddd8dc1587cf`.
+- Field overlay: `7d3fb80839ac0cfdddc5af6598fa91e31bf49dc255707b465857bf4488a9c20a`.
+- Disc-1 RAM: `02d60a27080b6bb2365a0bc3fb40dee340641cba3f70f6c81fa0c52835232a1e`.
+
+Scratch evidence is under ignored `artifacts/so2-stuck-area/`:
+`investigate.py`, `assets.json`, extracted `terrain-<scene>.bin`, `callers.json`,
+`verify.py`, and `execution.json`. Resource extraction reuses
+`tools/so2_disc_code.py` and `tools/so2_terrain_evidence.py`; the latter can
+reproduce the 13 floor resources with:
+
+```powershell
+python tools/so2_terrain_evidence.py 'C:/CodeTesting/StarOcean2/disc/Star Ocean - The Second Story (USA) (Disc 1).bin' artifacts/so2-stuck-area-reextract --entries 3911 3923 3934 3947 3951 3967 3973 3984 3995 4001 4015 4018 4027
+```
+
+For the additional 40-byte tables, use `TB=R+u32(R+80)`, enumerate
+`R[TB]*R[TB+1]` descriptors at `TB+4+96*i`, and read their count/pointer at
+`+4/+28` as described above. Bounds were checked against each decompressed
+resource. Linga (3390), Sanctuary (3609), and escape bundles (3963/4014)
+were also inspected; this is targeted scene selection, not an archive sweep.
+
+Execution used the existing `tools/so2_party_mips.py` interpreter, with the
+real overlay mapped at `8007E000`. It executes branch delay slots but models
+loads immediately. Whole constructor, region-query, and renderer routines were
+executed; snapshot and triangle-gate suffix tests used explicit start/stop hooks.
+Synthetic gate trials confirmed triangle `+0F=0`, old value zero, and flags
+`&10` each prevent the suffix write. No GTE projection, full triangle-height
+routine, complete menu/transition, emulator, or GPU was executed. Region-test
+coordinates are explicitly synthetic except for the unchanged real-snapshot
+coordinates. Disc-2 equivalence for these newly sampled bundles was not tested.
+All source discs, resume states, and memory cards remained read-only.
+
 ## 2026-09-27: cross-area teleport SOLVED — the missing field found and confirmed in-game
 
 Diffed the full decoded state of the one real, successful area transition
