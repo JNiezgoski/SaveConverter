@@ -2,8 +2,8 @@
   "total_bytes": 7048,
   "tier_totals": {
     "mapped": 5180,
-    "unknown": 604,
-    "partial": 236,
+    "unknown": 589,
+    "partial": 251,
     "runtime": 1028
   },
   "regions": [
@@ -62,9 +62,9 @@
       "size": 1088,
       "tiers": {
         "mapped": 537,
-        "partial": 140,
+        "partial": 155,
         "runtime": 0,
-        "unknown": 411
+        "unknown": 396
       }
     }
   ],
@@ -1548,10 +1548,38 @@
     },
     {
       "start": 6696,
-      "end": 6719,
+      "end": 6702,
+      "label": "Global flags bitmap (Range A): Nede arrival, Four Fields quest, Ten Wise Men raid",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6702,
+      "end": 6705,
       "label": "unmapped",
       "tier": "unknown",
       "note": ""
+    },
+    {
+      "start": 6705,
+      "end": 6707,
+      "label": "Global flags bitmap (Range A): ocean rescue, Eluria ID card, Field of Intelligence card barrier",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6707,
+      "end": 6713,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6713,
+      "end": 6719,
+      "label": "Global flags bitmap (Range A): Lacour Front Line encampment, hospital triage, Energy Stone weapon",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6719,
@@ -1590,6 +1618,20 @@
     },
     {
       "start": 6729,
+      "end": 6741,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6741,
+      "end": 6742,
+      "label": "Global flags bitmap (Range B): Battle Stadium simulation program",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6742,
       "end": 6743,
       "label": "unmapped",
       "tier": "unknown",

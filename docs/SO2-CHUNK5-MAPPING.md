@@ -313,6 +313,97 @@ Confirmed story milestones span both Range A (`0x1F..0x1FF`, bits 31..511) and R
     - The remaining 251 bytes in Range B remain open / unmapped.
   - **Total**: **73 bytes** (20.4%) of the 357 previously unknown bitmap bytes are now accounted for with real named plot milestones and verified VM opcodes. 284 bytes remain open.
 
+### Script VM flag opcodes and named story milestones — part 2 (2026-09-28)
+
+This follow-up pass resolves the open ranges left in the global story/event flag bitmap ($G = \text{[80075704]}$, capacity 368 bytes, decoded `0x19E8..0x1B58`), targeting:
+1. **Open Range 1**: `0x19EB..0x19F4` (flags 24..109, 10 bytes)
+2. **Open Range 2**: `0x1A28..0x1A3E` (flags 512..695, 23 bytes)
+3. **Open Range 3**: Bulk of Range B `0x1A49..0x1B58` (flags 760..889, 1000..2299, 2343..2943)
+
+#### 1. Negative proofs across unreferenced bitmap spans
+
+An exhaustive bytecode scan was executed across all scene container archives on both Disc 1 and Disc 2 (entries `3207..4447`, including 827 scene archives `3207..4033` and supplemental overlays up to 4447) for all four global bitmap opcodes (`0x2103`, `0x2203`, `0x1D00`, `0x0E00`):
+
+- **Flags 24..109 (`0x19EB..0x19F4`, 10 bytes)**: **0 occurrences found**. Flags 0..22 reside in `0x19E8..0x19EA` (route-protagonist flag, travel/state bits, and object-14 restoration). Story flags begin at flag 110 (`0x19F5` bit 6, Arlia prologue). Bytes `0x19EB..0x19F4` contain no script VM flag operations in either disc image; they hold no script-driven story milestone meaning and remain unmapped.
+- **Flags 1000..2299 (`0x1A65..0x1B06`, 162 bytes)**: **0 occurrences found** in scene archives. Between Cave of Trials riddles (flags 981..999 at `0x1A62..0x1A64`) and post-game Cave of Trials bosses (flags 2300..2342 at `0x1B07..0x1B0C`), this 162-byte span contains zero script VM flag operations.
+- **Flags 2343..2943 (`0x1B0D..0x1B58`, 76 bytes)**: **0 occurrences found** in scene archives. Above Central City flag 2342 (`0x1B0C` bit 6), no scene script references flag IDs up to the 2,944 capacity limit.
+
+Across the 284 bytes remaining open after Part 1, **248 bytes** are confirmed to contain zero script VM flag accesses in the game's disc scene corpus.
+
+#### 2. Newly identified plot milestones in Open Range 2 and Range B
+
+The scan identified **96 distinct flags in Open Range 2 (`0x1A28..0x1A3E`)** and **11 flags in Range 3a (`0x1A47..0x1A57`)**, densely concentrating two major narrative arcs:
+
+1. **Energy Nede: Four Fields Quest & Central City / North City (`0x1A28..0x1A2D`, flags 512..559)**:
+   - **Field of Courage**: Fountain spirit encounter (*"You did well to come here - I am the spirit of this fountain - Come this way..."* at flags 518..519, `0x1A28` bits 6, 7), crystal ball interaction (flags 516..517, `0x1A28` bits 4, 5), and monument inscription (*"What did you see? Hmm - 'Courage to forsake everything'..."* at flags 523..524, `0x1A29` bits 3, 4).
+   - **Field of Power**: Mountain arrival (*"Whoa! Yikes! Is this the Field of Power?"* at flag 527, `0x1A29` bit 7), mountain avalanche trigger (*"You see a ladder - Avalanche! Run for the cavern! Yikes!"* at flag 534, `0x1A2A` bit 6, with cavern escape flags 536..539 at `0x1A2B`), and mountain summit boss encounter (*"Guardian: You did well to make it this far"* at flag 528, `0x1A2A` bit 0).
+   - **Field of Intelligence**: Mirror and statue puzzle (*"It's a glass statue of a fighting man - 2 P is inscribed here"*, flag 535 at `0x1A2A` bit 7 — referenced across 42 distinct script sites, the single most referenced flag in Nede!), and card slot pillar barrier (*"This pillar has a slot for inserting some sort of card - It looks like we cannot proceed any further"* at flags 598..599, `0x1A32` bits 6, 7).
+   - **Mayor Narl's Rune Codes**: Flag 520 (`0x1A29` bit 0) in Scene 629 (*"The Rune Codes we got from Narl, they started glowing - It says: You should advance forward"*).
+   - **Central City & North City**: Library password retrieved (flag 526, `0x1A29` bit 6); Psynard search orientation (*"You're looking for a Psynard? You want to go to The Sanctuary [The Home] - If you want to know about the Ten Wise Men go to the Library"* at flag 540, `0x1A2B` bit 4); Ten Wise Men dark barrier (*"Feels strange - this black thing - It's surrounding me... I can't move"* at flags 546..549, `0x1A2C`); Nede city hubs orientation (*"North City if you want to study - Fun City if you want to play - Armlock if you like hobbies"* at flag 553, `0x1A2D` bit 1); and the Ten Wise Men attack on Central City (*"What was that light? Eeek! Yikes, Mommy! HELP! HEHE - RUN, RUN, YOU WORMS! MORE, MORE, I WANT TO SEE BLOOD!"* at flags 557..558, `0x1A2D` bits 5, 6).
+   - **Eluria Tower Escape ID Card**: Flags 592..597 (`0x1A32` bits 0..5) — 6 consecutive flags set in Scene 233 (*"When I escaped from Eluria, I picked this up... What is it? It's an ID card"*).
+
+2. **Lacour Front Line Campaign & Energy Stone Weapon Development (`0x1A39..0x1A3E`, flags 650..692)**:
+   - **Lacour Front Line Encampment**: Outpost soldier sentry (*"I'm a soldier, and I'll keep on standing here... even after you're gone"* at flags 650..651, `0x1A39` bits 2, 3), and supply tent store (flags 652..656, `0x1A39` bits 4..7 and `0x1A3A` bit 0).
+   - **Front Line Defenses & Reinforcements**: Outpost defense unit (*"You reinforcements, stay in your own unit! It's very dangerous outside"* at flags 657..661, `0x1A3A` bits 1..5), veteran reinforcements arrival (*"Veteran fighters are steadily being gathered in the front lines - A number of them arrived just a while ago"* at flags 662..664, `0x1A3A` bits 6..7 and `0x1A3B` bit 0).
+   - **Command Tent & Officer Interactions**: Command tent officer (flags 666, 677..678, `0x1A3B` bit 2 and `0x1A3C` bits 5, 6), and Melancholy Captain (*"Melancholy Captain... What are you doing? Pickpocket attempt failed"* at flags 675..676, `0x1A3C` bits 3, 4).
+   - **Front Line Field Hospital / Infirmary Triage**: 9 flags across `0x1A3C` bit 7 and all 8 bits of `0x1A3D` (flags 679..687) tracking wounded casualties and triage dialog in the infirmary (*"Nurse: Wounded people are increasing each day - I hope this is settled soon... Oh, are you taking a rest here? Oh, my daughter, my son... must your father die?"* in Scenes 442, 444).
+   - **Lacour Castle Laboratory Energy Stone Superweapon**: 4 flags in `0x1A3E` (flags 688..691) tracking development of the Energy Stone / Lacour Hope weapon (*"Hasn't the Energy Stone been finished yet? Is the Castle Laboratory slacking off in development? Hasn't the Energy Stone..."* in Scene 441).
+
+3. **Battle Stadium Program (`0x1A55`, flag 878)**:
+   - Flag 878 (`0x036E`, `0x1A55` bit 6): Scene 305 (Arch 3512) — Battle Stadium combat simulation program (*"Excuse me - but what exactly is going to start here? We have prepared a special program that will let you fight..."*).
+
+#### Newly resolved story milestone table (Part 2)
+
+| Decoded Byte | Bit | Flag ID | Opcode(s) | Scene (Arch) | Story Event / Dialogue Milestone |
+|---|---|---|---|---|---|
+| `1A28` | 4..5 | 516..517 (`0x0204..5`) | CLEAR, READ, SET | 590..595 (3797..3802) | **Field of Courage**: Crystal ball inspection (18 hits): *"It's a crystal ball - Will you touch it? Forget it"* |
+| `1A28` | 6..7 | 518..519 (`0x0206..7`) | SET | 596 (3803) | **Field of Courage**: Fountain Spirit: *"You did well to come here - I am the spirit of this fountain - Come this way..."* |
+| `1A29` | 0 | 520 (`0x0208`) | SET | 629 (3836) | **Energy Nede Four Fields**: Mayor Narl's Rune Codes: *"The Rune Codes we got from Narl, they started glowing - It says: You should advance forward"* |
+| `1A29` | 3..4 | 523..524 (`0x020B..C`) | CLEAR, READ, SET | 641, 642 (3848..9) | **Field of Courage**: Monument riddle: *"What did you see? Hmm - 'Courage to forsake everything'..."* |
+| `1A29` | 6 | 526 (`0x020E`) | SET | 266 (3473) | **Central City Information Library**: Password retrieved: *"This is a plastic case containing a paper with the password on it"* |
+| `1A29` | 7 | 527 (`0x020F`) | SET | 597 (3804) | **Field of Power**: Mountain entrance: *"Whoa! Yikes! Is this the Field of Power?"* |
+| `1A2A` | 0 | 528 (`0x0210`) | SET | 603 (3810) | **Field of Power Summit**: Guardian Boss: *"I can see some kind of ruin - Guardian: You did well to make it this far"* |
+| `1A2A` | 2..5 | 530..533 (`0x0212..5`) | READ, SET | 597..615 (3804..22) | **Field of Power**: Mountain passages and cavern trails |
+| `1A2A` | 6 | 534 (`0x0216`) | CLEAR, READ, SET | 598, 607..610 (3805..17) | **Field of Power**: Avalanche hazard (20 hits): *"You see a ladder - Avalanche! Run for the cavern! Yikes!"* |
+| `1A2A` | 7 | 535 (`0x0217`) | CLEAR, READ, SET | 560..565 (3767..72) | **Field of Intelligence**: Mirror/Statue puzzle (42 hits): *"It's a glass statue of a fighting man - 2 P is inscribed here"* |
+| `1A2B` | 0..3 | 536..539 (`0x0218..B`) | CLEAR, READ, SET | 598, 607..611 (3805..18) | **Field of Power**: Cavern escapes: *"Somehow we managed to run away..."* |
+| `1A2B` | 4 | 540 (`0x021C`) | CLEAR, SET | 260, 261 (3467..8) | **Central City / North City**: Psynard search: *"You're looking for a Psynard? You want to go to The Sanctuary - If you want to know about the Ten Wise Men go to the Library"* |
+| `1A2C` | 2, 5 | 546, 549 (`0x0222, 5`) | SET | 262 (3469) | **Central City**: Ten Wise Men dark barrier: *"Feels strange - this black thing - It's surrounding me... I can't move"* |
+| `1A2D` | 1 | 553 (`0x0229`) | SET | 235, 236 (3442..3) | **Energy Nede City Hubs**: City orientation: *"North City if you want to study - Fun City if you want to play - Armlock if you like hobbies"* |
+| `1A2D` | 5..6 | 557..558 (`0x022D..E`) | READ, SET | 281, 285 (3488..92) | **Central City**: Ten Wise Men assault: *"What was that light? Eeek! Yikes, Mommy! HELP! HEHE - RUN, RUN, YOU WORMS! MORE, MORE, I WANT TO SEE BLOOD!"* |
+| `1A31` | 3 | 587 (`0x024B`) | SET | 569 (3776) | **Ocean Rescue Milestone**: Expel ocean survival: *"I never imagined that you would live after falling into the ocean - You're pretty lucky"* |
+| `1A31` | 4 | 588 (`0x024C`) | READ, SET | 285 (3492) | **Central City Hospital**: Wounded patient care: *"I'm taking good care of her - She has still..."* |
+| `1A31` | 6 | 590 (`0x024E`) | READ, SET | 597..613 (3804..20) | **Field of Power**: Mountain navigation milestone |
+| `1A32` | 0..5 | 592..597 (`0x0250..5`) | SET | 233 (3440) | **Eluria Tower Escape / ID Card**: 6 consecutive flags set on ID card pickup: *"When I escaped from Eluria, I picked this up... It's an ID card"* |
+| `1A32` | 6..7 | 598..599 (`0x0256..7`) | READ, SET | 566 (3773) | **Field of Intelligence**: Card slot pillar barrier: *"This pillar has a slot for inserting some sort of card - It looks like we cannot proceed any further"* |
+| `1A39` | 2..3 | 650..651 (`0x028A..B`) | SET | 446 (3653) | **Lacour Front Line**: Sentry guard outpost: *"I'm a soldier, and I'll keep on standing here... even after you're gone"* |
+| `1A39` | 4..7 | 652..655 (`0x028C..F`) | SET | 445 (3652) | **Lacour Front Line**: Camp store / supply tent: *"I can take a little off - Welcome - What would you like?"* |
+| `1A3A` | 0 | 656 (`0x0290`) | SET | 445 (3652) | **Lacour Front Line**: Camp quartermaster merchant |
+| `1A3A` | 1..5 | 657..661 (`0x0291..5`) | SET | 438 (3645) | **Lacour Front Line Outpost**: Outpost defense: *"You reinforcements, stay in your own unit! It's very dangerous outside"* |
+| `1A3A` | 6..7 | 662..663 (`0x0296..7`) | SET | 439 (3646) | **Lacour Front Line**: Reinforcements arrival: *"Veteran fighters are steadily being gathered in the front lines - A number of them arrived just a while ago"* |
+| `1A3B` | 0 | 664 (`0x0298`) | SET | 439 (3646) | **Lacour Front Line**: Veteran fighters muster |
+| `1A3B` | 2 | 666 (`0x029A`) | SET | 443 (3650) | **Lacour Front Line**: Command tent officer: *"Maybe you are people of some importance... Dash it, how exasperating!"* |
+| `1A3C` | 3..4 | 675..676 (`0x02A3..4`) | SET | 447 (3654) | **Lacour Front Line**: Officer interaction: *"Melancholy Captain... What are you doing? Pickpocket attempt failed"* |
+| `1A3C` | 5..6 | 677..678 (`0x02A5..6`) | SET | 443 (3650) | **Lacour Front Line**: Military staff command tent |
+| `1A3C` | 7 | 679 (`0x02A7`) | SET | 444 (3651) | **Lacour Front Line Infirmary**: Triage triage: *"Nurse: Oh, my daughter, my son... must your father die?"* |
+| `1A3D` | 0..7 | 680..687 (`0x02A8..F`) | SET | 442, 444 (3649, 3651) | **Lacour Front Line Infirmary**: Field hospital triage (8 flags): *"Nurse: Wounded people are increasing each day - I hope this is settled soon... Oh, are you taking a rest here?"* |
+| `1A3E` | 0..3 | 688..691 (`0x02B0..3`) | SET | 441 (3648) | **Lacour Castle Laboratory**: Energy Stone superweapon quest (4 flags): *"Hasn't the Energy Stone been finished yet? Is the Castle Laboratory slacking off in development?"* |
+| `1A55` | 6 | 878 (`0x036E`) | SET | 305 (3512) | **Fun City Battle Stadium**: Special combat program: *"Excuse me - but what exactly is going to start here? We have prepared a special program that will let you fight..."* |
+
+#### 3. Byte accounting and updated coverage impact
+
+- **Additional bytes closed in this pass**: **15 bytes** promoted to `partial` in `scripts/so2_coverage.py`:
+  - `0x1A28..0x1A2E` (6 bytes, flags 512..559: Energy Nede Four Fields quest, Mayor Narl's Rune Codes, Central City library password, Ten Wise Men assault)
+  - `0x1A31..0x1A33` (2 bytes, flags 584..599: ocean rescue, Eluria Tower escape ID card, Field of Intelligence card slot barrier)
+  - `0x1A39..0x1A3F` (6 bytes, flags 650..692: Lacour Front Line encampment, defense outposts, veteran fighters, infirmary casualties triage, and Castle Laboratory Energy Stone weapon)
+  - `0x1A55..0x1A56` (1 byte, flag 878: Battle Stadium combat simulation program)
+- **Cumulative progress across Part 1 and Part 2**:
+  - Part 1 closed: 73 bytes
+  - Part 2 closed: 15 bytes
+  - **Total closed in global flag bitmap**: **88 bytes** (24.65% of the 368-byte / 357-unmapped bitmap space).
+  - **Remaining open bytes in bitmap**: **269 bytes** (of which 248 bytes were exhaustively verified to hold 0 script VM flag references in the disc scene archives).
+  - **Total named story milestones / event groups documented**: **78 distinct milestones** across Expel, Energy Nede, Lacour Front Line, and post-game Cave of Trials.
+
 ## Located accesses whose meanings remain unresolved
 
 These are examined leads, **excluded from the 494-byte increase**.
