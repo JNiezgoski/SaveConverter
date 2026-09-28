@@ -1,9 +1,9 @@
 {
   "total_bytes": 7048,
   "tier_totals": {
-    "mapped": 3271,
-    "unknown": 2602,
-    "partial": 147,
+    "mapped": 4092,
+    "unknown": 1765,
+    "partial": 163,
     "runtime": 1028
   },
   "regions": [
@@ -13,10 +13,10 @@
       "end": 416,
       "size": 416,
       "tiers": {
-        "mapped": 42,
+        "mapped": 371,
         "partial": 0,
         "runtime": 0,
-        "unknown": 374
+        "unknown": 45
       }
     },
     {
@@ -61,10 +61,10 @@
       "end": 7048,
       "size": 1088,
       "tiers": {
-        "mapped": 45,
-        "partial": 51,
+        "mapped": 537,
+        "partial": 67,
         "runtime": 0,
-        "unknown": 992
+        "unknown": 484
       }
     }
   ],
@@ -78,10 +78,17 @@
     },
     {
       "start": 16,
+      "end": 20,
+      "label": "Clock-derived word (menu clock/60, save-preview time-style)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 20,
       "end": 24,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Event counter (script-adjustable, zero-floored)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 24,
@@ -92,6 +99,34 @@
     },
     {
       "start": 28,
+      "end": 32,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 32,
+      "end": 36,
+      "label": "Menu-operation counter (increments on save-menu completion)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 36,
+      "end": 40,
+      "label": "Save-preparation counter",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 40,
+      "end": 44,
+      "label": "Companion conditional menu-operation counter",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 44,
       "end": 48,
       "label": "unmapped",
       "tier": "unknown",
@@ -106,10 +141,24 @@
     },
     {
       "start": 64,
-      "end": 68,
+      "end": 66,
       "label": "unmapped",
       "tier": "unknown",
       "note": ""
+    },
+    {
+      "start": 66,
+      "end": 67,
+      "label": "Non-default lead-name flag, rename selector 0",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 67,
+      "end": 68,
+      "label": "Non-default lead-name flag, rename selector 1",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 68,
@@ -121,9 +170,9 @@
     {
       "start": 69,
       "end": 70,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Route/lead selector",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 70,
@@ -169,10 +218,66 @@
     },
     {
       "start": 77,
-      "end": 416,
+      "end": 84,
       "label": "unmapped",
       "tier": "unknown",
       "note": ""
+    },
+    {
+      "start": 84,
+      "end": 88,
+      "label": "Menu clock-throttle marker",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 88,
+      "end": 232,
+      "label": "Matrix A (Friendship Points): 12x12 character-pair values, 0..15",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 232,
+      "end": 376,
+      "label": "Matrix B (Romance/Affection Points): 12x12 character-pair values, 0..15",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 376,
+      "end": 378,
+      "label": "Signed completion/result code (script-consumed)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 378,
+      "end": 388,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 388,
+      "end": 392,
+      "label": "Two signed percentage stat modifiers",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
+    },
+    {
+      "start": 392,
+      "end": 408,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 408,
+      "end": 416,
+      "label": "Two saved save-menu selection words",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK1-MAPPING.md"
     },
     {
       "start": 416,
@@ -925,6 +1030,20 @@
     },
     {
       "start": 5956,
+      "end": 5960,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 5960,
+      "end": 5964,
+      "label": "Route-initialized word combined with success counter by save overlay; visible result not identified",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 5964,
       "end": 5968,
       "label": "unmapped",
       "tier": "unknown",
@@ -960,6 +1079,20 @@
     },
     {
       "start": 5988,
+      "end": 5990,
+      "label": "Resource/sequence selector, -1 sentinel (audio-track interpretation plausible, unresolved)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 5990,
+      "end": 5992,
+      "label": "Saved scene-view parameter (angle/axis name unresolved)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 5992,
       "end": 5993,
       "label": "unmapped",
       "tier": "unknown",
@@ -988,10 +1121,17 @@
     },
     {
       "start": 5997,
-      "end": 6240,
+      "end": 6000,
       "label": "unmapped",
       "tier": "unknown",
       "note": ""
+    },
+    {
+      "start": 6000,
+      "end": 6240,
+      "label": "12 character-name slots, 20 bytes each",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6240,
@@ -1016,10 +1156,87 @@
     },
     {
       "start": 6273,
-      "end": 6580,
+      "end": 6344,
       "label": "unmapped",
       "tier": "unknown",
       "note": ""
+    },
+    {
+      "start": 6344,
+      "end": 6536,
+      "label": "48 saved clock-snapshot words",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6536,
+      "end": 6540,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6540,
+      "end": 6544,
+      "label": "Completion counter (u32)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6544,
+      "end": 6546,
+      "label": "Script-additive counter (u16)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6546,
+      "end": 6548,
+      "label": "Attempt counter for script RNG test (u16)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6548,
+      "end": 6550,
+      "label": "Success counter for script RNG test (u16)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6550,
+      "end": 6552,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6552,
+      "end": 6572,
+      "label": "Ten packed pending delivery entries (item ID + quantity)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6572,
+      "end": 6574,
+      "label": "Menu return request code",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6574,
+      "end": 6576,
+      "label": "Two signed menu modifiers (exact setting unresolved)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6576,
+      "end": 6580,
+      "label": "Object-14 saved X",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6580,
@@ -1051,10 +1268,45 @@
     },
     {
       "start": 6596,
-      "end": 6612,
+      "end": 6598,
+      "label": "Psynard parking drawing-order companion (bank A)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6598,
+      "end": 6600,
+      "label": "Psynard parking drawing-order companion (bank B)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6600,
+      "end": 6608,
+      "label": "Eight saved absolute character IDs (party-slot order)",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6608,
+      "end": 6609,
+      "label": "Menu-selected delivery variant byte",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6609,
+      "end": 6610,
       "label": "unmapped",
       "tier": "unknown",
       "note": ""
+    },
+    {
+      "start": 6610,
+      "end": 6612,
+      "label": "Object-14 saved orientation parameter",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6612,
@@ -1072,10 +1324,24 @@
     },
     {
       "start": 6620,
+      "end": 6624,
+      "label": "Deferred delivery clock marker",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6624,
+      "end": 6628,
+      "label": "Object-14 saved Y",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6628,
       "end": 6632,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Object-14 saved Z",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6632,
@@ -1086,6 +1352,20 @@
     },
     {
       "start": 6633,
+      "end": 6634,
+      "label": "Global flags byte: independent travel/state bits (not a single enum)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6634,
+      "end": 6635,
+      "label": "Global flags byte: object-14/overlay-state bits",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6635,
       "end": 6719,
       "label": "unmapped",
       "tier": "unknown",
@@ -1114,6 +1394,13 @@
     },
     {
       "start": 6726,
+      "end": 6727,
+      "label": "Global flags byte tested by two text/UI readers; assignment unresolved",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6727,
       "end": 7000,
       "label": "unmapped",
       "tier": "unknown",

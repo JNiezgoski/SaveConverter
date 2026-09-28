@@ -38,6 +38,22 @@ RANGES = [
     (0x4B, 0x4C, "Combat motion mode", "mapped", "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"),
     (0x4C, 0x4D, "Required disc (0=Disc1, 1=Disc2)", "mapped", "docs/SO2-DISC-AND-PSYNARD-CHECK.md"),
 
+    # ---- chunk 1, 2026-09-27 pass: 329 new bytes, chiefly two 12x12 matrices ----
+    (0x10, 0x14, "Clock-derived word (menu clock/60, save-preview time-style)", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x14, 0x18, "Event counter (script-adjustable, zero-floored)", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x20, 0x24, "Menu-operation counter (increments on save-menu completion)", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x24, 0x28, "Save-preparation counter", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x28, 0x2C, "Companion conditional menu-operation counter", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x42, 0x43, "Non-default lead-name flag, rename selector 0", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x43, 0x44, "Non-default lead-name flag, rename selector 1", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x45, 0x46, "Route/lead selector", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x54, 0x58, "Menu clock-throttle marker", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x58, 0xE8, "Matrix A (Friendship Points): 12x12 character-pair values, 0..15", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0xE8, 0x178, "Matrix B (Romance/Affection Points): 12x12 character-pair values, 0..15", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x178, 0x17A, "Signed completion/result code (script-consumed)", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x184, 0x188, "Two signed percentage stat modifiers", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+    (0x198, 0x1A0, "Two saved save-menu selection words", "mapped", "docs/SO2-CHUNK1-MAPPING.md"),
+
     # ---- party primary array (0x1A0-0x4A0): 8 slots x 0x60, per-slot map is a stated aggregate ----
     # 66/96 bytes named, 12 bytes two unnamed halfword triplets, 18 bytes opaque - per slot,
     # expressed here as three aggregate sub-ranges per slot rather than exact named byte
@@ -83,6 +99,32 @@ RANGES = [
     (0x1A3F, 0x1A41, "Specialty unlock bitmask (12 tiers, Knowledge/Sensibility/Technique/Combat x3)", "mapped", "docs/SO2-SPECIALTY-INVESTIGATION.md"),
     (0x1A45, 0x1A46, "Byte next to the specialty bitmask that changes on area entry; role unexplained", "partial", "docs/SO2-MAP-LOCATION-CHECK.md"),
     (0x1B58, 0x1B88, "48-byte region proven required for cross-area teleport; internal structure not decoded", "partial", "docs/SO2-MAP-LOCATION-CHECK.md"),
+
+    # ---- chunk 5, 2026-09-27 pass: 494 new bytes, names/clocks/deliveries/object-14/global bitmap ----
+    (0x1748, 0x174C, "Route-initialized word combined with success counter by save overlay; visible result not identified", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1764, 0x1766, "Resource/sequence selector, -1 sentinel (audio-track interpretation plausible, unresolved)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1766, 0x1768, "Saved scene-view parameter (angle/axis name unresolved)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1770, 0x1860, "12 character-name slots, 20 bytes each", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x18C8, 0x1988, "48 saved clock-snapshot words", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x198C, 0x1990, "Completion counter (u32)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1990, 0x1992, "Script-additive counter (u16)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1992, 0x1994, "Attempt counter for script RNG test (u16)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1994, 0x1996, "Success counter for script RNG test (u16)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1998, 0x19AC, "Ten packed pending delivery entries (item ID + quantity)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19AC, 0x19AE, "Menu return request code", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19AE, 0x19B0, "Two signed menu modifiers (exact setting unresolved)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19B0, 0x19B4, "Object-14 saved X", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19C4, 0x19C6, "Psynard parking drawing-order companion (bank A)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19C6, 0x19C8, "Psynard parking drawing-order companion (bank B)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19C8, 0x19D0, "Eight saved absolute character IDs (party-slot order)", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19D0, 0x19D1, "Menu-selected delivery variant byte", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19D2, 0x19D4, "Object-14 saved orientation parameter", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19DC, 0x19E0, "Deferred delivery clock marker", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19E0, 0x19E4, "Object-14 saved Y", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19E4, 0x19E8, "Object-14 saved Z", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19E9, 0x19EA, "Global flags byte: independent travel/state bits (not a single enum)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19EA, 0x19EB, "Global flags byte: object-14/overlay-state bits", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A46, 0x1A47, "Global flags byte tested by two text/UI readers; assignment unresolved", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
 ]
 
 
