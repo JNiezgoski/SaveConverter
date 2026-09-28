@@ -3,9 +3,12 @@
 See docs/SO2-FOL-INVESTIGATION.md for game-code evidence and limitations.
 """
 import argparse
+import os
+import sys
 from pathlib import Path
 import struct
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import saveconv
 
 STREAM = 0x380

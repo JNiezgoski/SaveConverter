@@ -312,7 +312,7 @@ The prior save reader still emits its unrelated unclosed-file ResourceWarning.
 
 ```powershell
 # NEW output filename required. Source snapshot is already inside the workspace.
-python so2_inventory.py artifacts/so2-inventory/source-live-card-20260926.mcd --save S15 --id 364 --count 20 --out artifacts/so2-inventory/seraphic-garb-20-another-copy.mcd
+python scripts/so2_inventory.py artifacts/so2-inventory/source-live-card-20260926.mcd --save S15 --id 364 --count 20 --out artifacts/so2-inventory/seraphic-garb-20-another-copy.mcd
 
 # Regenerate evidence and verify the existing candidate. Requires capstone.
 python tools/so2_inventory_evidence.py --source artifacts/so2-inventory/source-live-card-20260926.mcd --candidate artifacts/so2-inventory/seraphic-garb-20-S15-candidate.mcd

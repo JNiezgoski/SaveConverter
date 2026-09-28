@@ -272,7 +272,7 @@ python tools/verify_so2_fol.py artifacts/so2-fol/disc-code/code-2998-lba-36213.b
 python -m unittest discover -s tests -v
 
 # Choose a NEW output name; existing files are deliberately refused.
-python so2_fol.py "C:\CodeTesting\StarOcean2\SaveGames\cards\_backup\card1-before-fol-fix4-20260925-011239.mcd" --save S13 --fol 5000 --out artifacts/so2-fol/fol-5000-another-copy.mcd
+python scripts/so2_fol.py "C:\CodeTesting\StarOcean2\SaveGames\cards\_backup\card1-before-fol-fix4-20260925-011239.mcd" --save S13 --fol 5000 --out artifacts/so2-fol/fol-5000-another-copy.mcd
 
 # Optional RAM extraction; output must not already exist. Requires zstandard.
 python tools/extract_so2_ram.py "C:\CodeTesting\StarOcean2\SaveGames\SCUS-94421_resume.sav" "C:\CodeTesting\StarOcean2\disc\Star Ocean - The Second Story (USA) (Disc 1).bin" artifacts/so2-fol/new-resume-ram.bin

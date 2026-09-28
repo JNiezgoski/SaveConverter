@@ -2,11 +2,13 @@
 
 Status codes:  S standard PS1 memory-card format   V verified in the game (writes proven)   R decoded/read, write not proven
                U unknown - not understood            N noise/padding (ignored by the game)
-Usage:  python so2_anatomy.py [box 1|2]     (default box 1 of Slot 1)   -> C:\\Users\\Josh\\Desktop\\StarOcean2-Save-Anatomy-Map.txt
+Usage:  python scripts/so2_anatomy.py [box 1|2]     (default box 1 of Slot 1)   -> C:\\Users\\Josh\\Desktop\\StarOcean2-Save-Anatomy-Map.txt
 Regenerate it whenever we learn something: move the byte range from U to V/R in the LAYERS code below."""
 import glob, os, re, struct, sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _here)
+sys.path.insert(0, os.path.dirname(_here))
 import saveconv as s
 import so2_refill_sp as r
 

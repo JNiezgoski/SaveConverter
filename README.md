@@ -93,18 +93,33 @@ Genuinely unresolved work — fully resolved items live in "What's solved" above
 | Inventory word's bit-15 flag meaning | Pending | Disassembly (trace more callers) + minor in-game confirmation | Present on every add call; purpose not established |
 | Party primary array — full byte-by-byte map | 69% mapped | Disassembly (done for now) | All 96 bytes covered; 66 named (ID/EXP/HP/MP/level/STR/CON/AGL/DEX/INT/GUTS), 12 are two unnamed stat triplets, 18 unresolved. Generic-accessor lead (selectors 1-17) and a whole-binary reader/writer scan both checked and ruled out for these bytes — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27). Revisit later to name the rest |
 
+## Layout
+
+```
+saveconv.py, saveconv.bat    core library + launcher (double-click opens savemanager)
+area_data.json                map/location database (so2_location.py's data)
+scripts/                      every other user-facing tool (see table below)
+tools/                        disassembly/evidence scripts behind each investigation doc
+tests/                        unit tests (python -m pytest, from the repo root)
+docs/                         investigation write-ups and the byte-level reference
+```
+
 ## Tools
+
+All of these live in `scripts/` and are run from the repo root, e.g. `python scripts/so2_fol.py ...`.
 
 | File | What it does |
 |---|---|
-| `saveconv.py` | Core library (checksums, card format detection/conversion) + a CLI: `convert`, `list`, `extract`, `import`. No arguments opens a small picker window. |
-| `savemanager.py` | Two-card-side-by-side GUI: copy/move/rename/delete saves, import/export single saves, combine cards, convert formats, install as DuckStation's card 1/2. `python savemanager.py` |
-| `so2_refill_sp.py` | Sets every character's SP to max, handling every internal encoding form. `python so2_refill_sp.py <slot> <box1> [box2]` — e.g. `python so2_refill_sp.py 1 1 2` |
-| `so2_equip.py` | View/edit equipment. `python so2_equip.py show [box]` or `python so2_equip.py set <box> <Character> <slot> "<Item>"` |
-| `so2_anatomy.py` | Labels every byte of one save block by confidence (verified/decoded/unknown) and writes a full map to disk. `python so2_anatomy.py [box]` |
-| `so2_fol.py` | Sets Fol (money) through the real zero-run codec — decodes the compressed state, edits the value, re-encodes, re-signs. `python so2_fol.py <card> --save S13 --fol 5000 --out <new card>` (writes a new card file; never overwrites the source) |
-| `so2_party.py` | Adds/recruits a party member into a genuinely empty slot pair by executing the game's own initializer code (both the primary and secondary arrays, correctly paired). `python so2_party.py <card> --save S15 --id 9 --out <new card>` (id is the character ID, 1-12; writes a new card file) |
-| `so2_inventory.py` | Gives a character an item type they've never owned before (or tops up one they have) by executing the game's actual add-item routine — the only correct way to create a brand-new inventory entry. `python so2_inventory.py <card> --save S15 --id 364 --count 20 --out <new card>` (count is an increment; writes a new card file) |
+| `saveconv.py` *(repo root)* | Core library (checksums, card format detection/conversion) + a CLI: `convert`, `list`, `extract`, `import`. No arguments opens `scripts/savemanager.py`'s picker window. |
+| `savemanager.py` | Two-card-side-by-side GUI: copy/move/rename/delete saves, import/export single saves, combine cards, convert formats, install as DuckStation's card 1/2. `python scripts/savemanager.py` |
+| `so2_refill_sp.py` | Sets every character's SP to max, handling every internal encoding form. `python scripts/so2_refill_sp.py <slot> <box1> [box2]` — e.g. `python scripts/so2_refill_sp.py 1 1 2` |
+| `so2_equip.py` | View/edit equipment. `python scripts/so2_equip.py show [box]` or `python scripts/so2_equip.py set <box> <Character> <slot> "<Item>"` |
+| `so2_anatomy.py` | Labels every byte of one save block by confidence (verified/decoded/unknown) and writes a full map to disk. `python scripts/so2_anatomy.py [box]` |
+| `so2_coverage.py` | Static knowledge map of the decoded save state — what fraction is mapped/partial/runtime/unknown, region by region. `python scripts/so2_coverage.py` |
+| `so2_fol.py` | Sets Fol (money) through the real zero-run codec — decodes the compressed state, edits the value, re-encodes, re-signs. `python scripts/so2_fol.py <card> --save S13 --fol 5000 --out <new card>` (writes a new card file; never overwrites the source) |
+| `so2_party.py` | Adds/recruits a party member into a genuinely empty slot pair by executing the game's own initializer code (both the primary and secondary arrays, correctly paired). `python scripts/so2_party.py <card> --save S15 --id 9 --out <new card>` (id is the character ID, 1-12; writes a new card file) |
+| `so2_inventory.py` | Gives a character an item type they've never owned before (or tops up one they have) by executing the game's actual add-item routine — the only correct way to create a brand-new inventory entry. `python scripts/so2_inventory.py <card> --save S15 --id 364 --count 20 --out <new card>` (count is an increment; writes a new card file) |
+| `so2_location.py` | Reads/records/names map locations and teleports between recorded ones. `python scripts/so2_location.py show [box]`, `name`, `list`, `map`, `map-html`, `teleport` — see the script's own docstring for full usage. |
 
 ## Usage notes
 

@@ -13,6 +13,7 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import saveconv as s
 
 try:
@@ -208,7 +209,7 @@ class Panel:
             tmp = os.path.join(tempfile.gettempdir(), "ps1sm_" + os.path.basename(path))
             open(tmp, "wb").write(data)
             exe = sys.executable.replace("python.exe", "pythonw.exe")
-            subprocess.Popen([exe, os.path.join(os.path.dirname(os.path.abspath(__file__)), "saveconv.py"), "apply-pending", tmp, path])
+            subprocess.Popen([exe, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "saveconv.py"), "apply-pending", tmp, path])
             self.dirty = False
             self.refresh()
             return messagebox.showinfo("Queued", "Saved changes are waiting. They will be written (with a backup) as soon as DuckStation closes.")

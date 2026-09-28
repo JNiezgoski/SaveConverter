@@ -10,6 +10,7 @@ import struct
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import saveconv
 import so2_fol
 from tools.so2_party_mips import Machine

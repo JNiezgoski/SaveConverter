@@ -1,15 +1,18 @@
 """Regression checks against extracted game instructions, not a live load test."""
 from pathlib import Path
+import os
 import struct
+import sys
 import unittest
 
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "scripts"))
 import saveconv
 import so2_fol
 import so2_party
 from tools.so2_party_mips import Machine, initial_records
 from tools.verify_so2_fol import run_codec
-
-ROOT = Path(__file__).resolve().parents[1]
 
 
 class PartyTests(unittest.TestCase):

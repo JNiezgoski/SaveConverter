@@ -3,9 +3,14 @@
 See docs/SO2-INVENTORY-ADD-INVESTIGATION.md. Counts are increments, not totals.
 """
 import argparse
+import os
+import sys
 from pathlib import Path
 import struct
 
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _here)
+sys.path.insert(0, os.path.dirname(_here))
 import saveconv
 import so2_fol
 from tools.so2_party_mips import Machine
@@ -13,7 +18,7 @@ from tools.so2_party_mips import Machine
 BASE, SIZE, SLOTS = 0xb20, 0xc28, 0x400
 RECENT, CACHE, FLAG = 0x800, 0x824, 0xc24
 RAM = 0x80100000
-DEFAULT_CODE = Path(__file__).resolve().parent / 'artifacts/so2-fol/disc-code/code-2576-lba-30736.bin'
+DEFAULT_CODE = Path(__file__).resolve().parent.parent / 'artifacts/so2-fol/disc-code/code-2576-lba-30736.bin'
 
 
 def integrity(word, slot, random_nibble):
@@ -122,7 +127,7 @@ def main():
     p.add_argument('--out', required=True, type=Path)
     args = p.parse_args()
     # Keep every tool-generated candidate inside this investigation directory.
-    root = Path(__file__).resolve().parent / 'artifacts/so2-inventory'
+    root = Path(__file__).resolve().parent.parent / 'artifacts/so2-inventory'
     if not args.out.resolve().is_relative_to(root.resolve()):
         p.error('output must be a new file under artifacts/so2-inventory/')
     _, card = saveconv.load_card(args.source)

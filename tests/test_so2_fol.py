@@ -1,7 +1,12 @@
+import os
 import random
 import struct
+import sys
 import unittest
 
+_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, _root)
+sys.path.insert(0, os.path.join(_root, "scripts"))
 import saveconv
 import so2_fol as fol
 

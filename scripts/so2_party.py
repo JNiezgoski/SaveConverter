@@ -4,16 +4,21 @@ Writes both saved character records into a genuinely unused slot. No story
 events are simulated. See docs/SO2-PARTY-MEMBER-INVESTIGATION.md before use.
 """
 import argparse
+import os
+import sys
 from pathlib import Path
 import struct
 
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _here)
+sys.path.insert(0, os.path.dirname(_here))
 import saveconv
 import so2_fol
 from tools.so2_party_mips import initial_records
 
 PRIMARY, PRIMARY_SIZE = 0x1a0, 0x60
 SECONDARY, SECONDARY_SIZE = 0x4a0, 0xd0
-DEFAULT_CODE = Path(__file__).resolve().parent / 'artifacts/so2-fol/disc-code/code-2576-lba-30736.bin'
+DEFAULT_CODE = Path(__file__).resolve().parent.parent / 'artifacts/so2-fol/disc-code/code-2576-lba-30736.bin'
 
 
 def add_member(block, character_id, code, slot=None, seed=0):

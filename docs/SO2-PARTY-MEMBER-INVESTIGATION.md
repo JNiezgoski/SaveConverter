@@ -968,7 +968,7 @@ python tools/so2_party_evidence.py
 python -m unittest discover -s tests -v
 
 # Choose a NEW candidate filename; exclusive creation refuses existing files.
-python so2_party.py "C:/CodeTesting/StarOcean2/SaveGames/cards/_backup/card1-before-fol-fix4-20260925-011239.mcd" --save S13 --id 9 --seed 0 --out artifacts/so2-party/opera-slot2-another-copy.mcd
+python scripts/so2_party.py "C:/CodeTesting/StarOcean2/SaveGames/cards/_backup/card1-before-fol-fix4-20260925-011239.mcd" --save S13 --id 9 --seed 0 --out artifacts/so2-party/opera-slot2-another-copy.mcd
 ```
 
 No file under `C:/CodeTesting/StarOcean2/SaveGames` was modified. All scripts,

@@ -4,12 +4,14 @@ Equipment = 7 u16 item IDs stored right after each character's STM triple (weapo
 Item ID = CodeBreaker list code - 0x5000 (see C:\\CodeTesting\\StarOcean2\\item_ids.txt).
 
 Usage:
-  python so2_equip.py show   [box]                       list every character's equipment (default box 1)
-  python so2_equip.py set    box Character slot "Item"   e.g. so2_equip.py set 3 Claude weapon "Eternal Sphere"   (DuckStation must be closed)
+  python scripts/so2_equip.py show   [box]                       list every character's equipment (default box 1)
+  python scripts/so2_equip.py set    box Character slot "Item"   e.g. so2_equip.py set 3 Claude weapon "Eternal Sphere"   (DuckStation must be closed)
 Slots: weapon armor shield helmet greaves acc1 acc2. Character names are the strings stored in the save (Claude is "Crawd")."""
 import os, re, shutil, struct, sys, time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _here)
+sys.path.insert(0, os.path.dirname(_here))
 import saveconv as s
 import so2_refill_sp as r
 

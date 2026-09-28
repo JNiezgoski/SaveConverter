@@ -30,15 +30,15 @@ the full byte ranges confirmed necessary for a working cross-area teleport
 investigation doc) - and `name` lets you attach a real name once you know
 it. Once an area has a recorded reference, `teleport` can send any other
 save there, verified in-game to work correctly and to touch nothing else in
-the save. Data lives in area_data.json next to this file.
+the save. Data lives in area_data.json at the repo root.
 
 Usage:
-  python so2_location.py show [box]                      print + record every save's location (default box 1)
-  python so2_location.py name <area_id> "<Name>"         record a name for an area ID
-  python so2_location.py list                             print every named area so far
-  python so2_location.py map                              dump every recorded area+sub-index, named or not
-  python so2_location.py map-html [out.html]              write a small-multiples HTML visualization
-  python so2_location.py teleport <box> <save> <area_id> --sub N --out <new card>
+  python scripts/so2_location.py show [box]                      print + record every save's location (default box 1)
+  python scripts/so2_location.py name <area_id> "<Name>"         record a name for an area ID
+  python scripts/so2_location.py list                             print every named area so far
+  python scripts/so2_location.py map                              dump every recorded area+sub-index, named or not
+  python scripts/so2_location.py map-html [out.html]              write a small-multiples HTML visualization
+  python scripts/so2_location.py teleport <box> <save> <area_id> --sub N --out <new card>
                                                             warp <save> (by name suffix) to a recorded area
 """
 import argparse
@@ -48,7 +48,10 @@ import struct
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_here = os.path.dirname(os.path.abspath(__file__))
+_root = os.path.dirname(_here)
+sys.path.insert(0, _here)
+sys.path.insert(0, _root)
 import saveconv as s
 import so2_fol as fol
 
@@ -63,7 +66,7 @@ SUB_INDEX = 0x176C
 # on as extra context on every sighting so real data can settle which field (or
 # combination) actually distinguishes places - not yet used as a database key.
 SCENE = 0x1762
-DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "area_data.json")
+DATA_FILE = os.path.join(_root, "area_data.json")
 
 # Confirmed by a full-decoded-state diff of a real area transition (outside Linga
 # -> inside Linga, 2026-09-27): copying exactly these ranges from a real save of

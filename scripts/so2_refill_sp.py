@@ -3,7 +3,7 @@
 Only SP is written, then both checksums are recomputed. Backs up the card first and refuses to run while DuckStation is open
 (DuckStation rewrites its memory cards on exit).
 
-Usage:  python so2_refill_sp.py [card 1|2] [box ...]      e.g.  python so2_refill_sp.py 1 1 2      (default: card 1, boxes 1 2)
+Usage:  python scripts/so2_refill_sp.py [card 1|2] [box ...]      e.g.  python scripts/so2_refill_sp.py 1 1 2      (default: card 1, boxes 1 2)
 
 SP is stored in a block just before each character's talent mask (verified against game-written saves; see the desktop notes):
       [SP bytes][00 00][marker]      SP 0: no SP bytes, marker = 04/08/0B (character specific)     SP 1..255: 1 byte, marker 03
@@ -12,7 +12,7 @@ SP is stored in a block just before each character's talent mask (verified again
   shifting the rest of the block and growing C (0x21A). Entries it cannot recognise are left alone and reported."""
 import os, re, shutil, struct, sys, time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import saveconv as s
 
 SP_MAX = 999

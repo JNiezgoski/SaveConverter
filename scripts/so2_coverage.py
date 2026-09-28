@@ -20,6 +20,7 @@ Total decoded body: 0x1B88 = 7,048 bytes, assembled from 5 chunks with distinct
 live-RAM sources (see docs/SAVE-FORMAT.md and SO2-MAP-LOCATION-CHECK.md).
 """
 import json
+import os
 
 TOTAL = 0x1B88
 
@@ -149,7 +150,7 @@ def main():
         "runs": [{"start": a, "end": b, "label": name, "tier": tier, "note": note}
                  for a, b, (name, tier, note) in runs(lab)],
     }
-    out_path = "so2_coverage.json"
+    out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "so2_coverage.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out_json, f, indent=2)
     print(f"\nwrote {out_path}")

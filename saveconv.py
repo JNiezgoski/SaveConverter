@@ -444,7 +444,7 @@ def main():
     except AttributeError:
         pass
     if len(sys.argv) == 1:
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts"))
         import savemanager
         return savemanager.run()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)

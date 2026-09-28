@@ -3,7 +3,7 @@
    2) move every save from live card 2 onto card 1, leaving card 2 empty.
 Cards are backed up first; a log is written next to the backups."""
 import os, shutil, sys, time
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import saveconv as s
 
 DIR = s.DEFAULT_CARD_DIR
