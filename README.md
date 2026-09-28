@@ -62,7 +62,7 @@ Full byte-level reference, including every offset and the exact SP/equipment enc
 **[docs/SAVE-FORMAT.md](docs/SAVE-FORMAT.md)**
 
 **Game-mechanic reference docs** (fan-sourced, cross-validated against real saves/equip attempts
-where noted — see each doc's own Status section): item restrictions
+where noted — see each doc's own Status section): [master item database](docs/SO2-ITEM-DATABASE.md), item restrictions
 ([weapons/armor/accessories](docs/SO2-ITEM-RESTRICTIONS.md)), [Skills](docs/SO2-SKILLS-FULL.md) and
 their derived [Specialties](docs/SO2-SKILL-SPECIALTIES.md)/[Super Specialties](docs/SO2-SUPER-SPECIALTIES.md),
 [Talents](docs/SO2-TALENTS.md), [Private Actions](docs/SO2-PRIVATE-ACTIONS.md),
