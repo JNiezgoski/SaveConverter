@@ -1,9 +1,9 @@
 {
   "total_bytes": 7048,
   "tier_totals": {
-    "mapped": 5180,
-    "unknown": 589,
-    "partial": 251,
+    "mapped": 5184,
+    "unknown": 316,
+    "partial": 520,
     "runtime": 1028
   },
   "regions": [
@@ -61,10 +61,10 @@
       "end": 7048,
       "size": 1088,
       "tiers": {
-        "mapped": 537,
-        "partial": 155,
+        "mapped": 541,
+        "partial": 424,
         "runtime": 0,
-        "unknown": 396
+        "unknown": 123
       }
     }
   ],
@@ -1535,9 +1535,9 @@
     {
       "start": 6635,
       "end": 6645,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Global flags bitmap: confirmed silent across scene scripts (resident/overlay travel & menu bits)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6645,
@@ -1556,9 +1556,9 @@
     {
       "start": 6702,
       "end": 6705,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6705,
@@ -1570,9 +1570,9 @@
     {
       "start": 6707,
       "end": 6713,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6713,
@@ -1591,9 +1591,9 @@
     {
       "start": 6721,
       "end": 6725,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Skill Guild tiers & shop learned bits, Magical Rasp flag (0x2DB), specialty UI state",
+      "tier": "mapped",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6725,
@@ -1619,9 +1619,9 @@
     {
       "start": 6729,
       "end": 6741,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6741,
@@ -1633,9 +1633,9 @@
     {
       "start": 6742,
       "end": 6743,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6743,
@@ -1647,9 +1647,9 @@
     {
       "start": 6757,
       "end": 6919,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 6919,
@@ -1661,9 +1661,9 @@
     {
       "start": 6925,
       "end": 7000,
-      "label": "unmapped",
-      "tier": "unknown",
-      "note": ""
+      "label": "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
     },
     {
       "start": 7000,

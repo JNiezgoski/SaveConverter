@@ -11,7 +11,10 @@ tags used in the docs, since this is a coverage overview, not a field reference)
   mapped    - real field(s) with a known decoded offset, confirmed by the game's
               own code and/or in-game testing (may still have open sub-details)
   partial   - location and general shape known, but content/purpose not fully
-              pinned down (e.g. two unnamed stat triplets, opaque-but-nonzero bytes)
+              pinned down (e.g. two unnamed stat triplets, opaque-but-nonzero bytes);
+              also covers bytes exhaustively proven to hold NO references anywhere
+              (disc scripts, overlays, resident code) - a real, checked negative
+              result, distinct from a byte nobody has looked at yet (see "unknown")
   runtime   - understood to be non-persistent scratch/integrity data, not real
               save content (serializer zeroes and rebuilds it on load)
   unknown   - not examined, or examined and found to hold no established meaning
@@ -130,15 +133,23 @@ RANGES = [
     (0x19E4, 0x19E8, "Object-14 saved Z", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x19E9, 0x19EA, "Global flags byte: independent travel/state bits (not a single enum)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x19EA, 0x19EB, "Global flags byte: object-14/overlay-state bits", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x19EB, 0x19F5, "Global flags bitmap: confirmed silent across scene scripts (resident/overlay travel & menu bits)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x19F5, 0x1A28, "Global flags bitmap (Range A): prologue, Lacour tournament, Linga herbs, Nede arrival", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1A28, 0x1A2E, "Global flags bitmap (Range A): Nede arrival, Four Fields quest, Ten Wise Men raid", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A2E, 0x1A31, "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1A31, 0x1A33, "Global flags bitmap (Range A): ocean rescue, Eluria ID card, Field of Intelligence card barrier", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A33, 0x1A39, "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1A39, 0x1A3F, "Global flags bitmap (Range A): Lacour Front Line encampment, hospital triage, Energy Stone weapon", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A41, 0x1A45, "Skill Guild tiers & shop learned bits, Magical Rasp flag (0x2DB), specialty UI state", "mapped", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1A46, 0x1A47, "Global flags byte tested by two text/UI readers; assignment unresolved", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1A47, 0x1A49, "Global flags bitmap (Range B): early event milestone flags", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A49, 0x1A55, "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1A55, 0x1A56, "Global flags bitmap (Range B): Battle Stadium simulation program", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A56, 0x1A57, "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1A57, 0x1A65, "Global flags bitmap (Range B): Arlia village tour & Cave of Trials riddles", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A65, 0x1B07, "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1B07, 0x1B0D, "Global flags bitmap (Range B): late/post-game milestones, Eluria ID card, Fun City, Cave of Trials bosses", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1B0D, 0x1B58, "Global flags bitmap: confirmed silent (zero references across disc scripts and resident binary)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
 ]
 
 

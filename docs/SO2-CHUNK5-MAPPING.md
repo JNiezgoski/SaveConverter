@@ -404,6 +404,102 @@ The scan identified **96 distinct flags in Open Range 2 (`0x1A28..0x1A3E`)** and
   - **Remaining open bytes in bitmap**: **269 bytes** (of which 248 bytes were exhaustively verified to hold 0 script VM flag references in the disc scene archives).
   - **Total named story milestones / event groups documented**: **78 distinct milestones** across Expel, Energy Nede, Lacour Front Line, and post-game Cave of Trials.
 
+### Script VM flag opcodes and named story milestones — part 3 / final (2026-09-28)
+
+This third and final pass completes the reverse engineering of the global story/event flag bitmap ($G = \text{[80075704]}$, capacity 368 bytes, decoded `0x19E8..0x1B58`, 2,944 bit positions). By auditing resident code accessors, performing an exhaustive sweep of the script VM dispatch table, and resolving the final 26 unexamined bytes, **100% of the 368-byte global bitmap is now definitively accounted for**: every byte is either mapped to specific game mechanics/story milestones or proven silent/empty across all disc script archives and the resident executable.
+
+#### 1. Resident code and overlay accessor audit
+
+In addition to script VM opcodes, the global bitmap is accessed directly by MIPS code via three resident helper functions:
+- `80055ECC`: flag read (`v0 = G[flag_id >> 3] & (1 << (flag_id & 7))`)
+- `80055EFC`: flag set (`G[flag_id >> 3] |= (1 << (flag_id & 7))`)
+- `80055F38`: flag clear (`G[flag_id >> 3] &= ~(1 << (flag_id & 7))`)
+
+A disassembly scan of the entire resident binary (`SLUS_006.90`, `resident.asm`) identified all direct callers with literal flag IDs:
+- **Flag 19 (`0x13`, decoded `0x19EA` bit 3)**: `8003457C` (read). Companion to the Object-14 / vehicle state management logic in `0x19EA`.
+- **Flag 36 (`0x24`, decoded `0x19EC` bit 4)**: `800319A4` (clear), `800319F4` (read), `80032370` (read). Overworld/field step counter and enemy encounter rate modifier.
+- **Flag 37 (`0x25`, decoded `0x19EC` bit 5)**: `80031898` (read via `800318CC`). Overworld/field step counter and encounter rate modifier.
+- **Flag 38 (`0x26`, decoded `0x19EC` bit 6)**: `800319AC` (clear), `80031A08` (read), `80032384` (read). Overworld/field step counter and encounter rate modifier.
+
+An exhaustive scan across all system and menu overlays identified additional direct callers:
+- **Entry 3004 (Field / Travel / Vehicle Menu)**:
+  - Flags 12 (`0x0C`), 14 (`0x0E`) (decoded `0x19E9` bits 4, 6): `8008218C`, `8008219C`.
+  - Flags 34 (`0x22`), 35 (`0x23`) (decoded `0x19EC` bits 2, 3): `80081C8C`, `80081CA0`, `80081E10`, `80081E18`, `80081E30`, `80081E38`, `80081E60`, `80081E68`.
+  - Flag 47 (`0x2F`, decoded `0x19ED` bit 7): `800814C4`, `80081604`.
+  - Flag 93 (`0x5D`, decoded `0x19F3` bit 5): `80080888`.
+- **Entry 3006 (Menu Options)**:
+  - Flag 64 (`0x40`, decoded `0x19F0` bit 0): `8007F89C`.
+- **Entry 3010 (Specialty Menu Overlay)**:
+  - Flags 12 (`0x0C`), 14 (`0x0E`) (decoded `0x19E9` bits 4, 6): `80081AB8`, `80081AC8`.
+  - Flag 37 (`0x25`, decoded `0x19EC` bit 5): `80081700`, `8008180C`, `80081824`.
+  - Flag 47 (`0x2F`, decoded `0x19ED` bit 7): `8008149C`.
+  - Flags 735 (`0x2DF`, decoded `0x1A43` bit 7) and 736 (`0x2E0`, decoded `0x1A44` bit 0): `80082190`, `800821A4`, `8008224C`, `80082254`, `80082268`, `80082278`, `800822C4`, `800822CC`, `800822E4`, `800822FC`. Controls active specialty state and sub-menu interaction locks.
+- **Entry 3012 (Item Creation / Blacksmithing Overlay)**:
+  - Flag 731 (`0x2DB`, decoded `0x1A43` bit 3): `8007E2D8` (read). Directly conditions custom blacksmithing formulas when the **Magical Rasp** is present in inventory (cross-checks item ID `0x2E7` at `8007E2F4`).
+- **Entry 3014 (Skill Guild / Specialty Levels Overlay)**:
+  - Flags 700..711 (`0x2BC..`, decoded `0x1A3F..0x1A40`): `8007E714` (read base `0x2BC + a0`). Indexes the 12 specialty skill unlock tiers.
+
+#### 2. Script VM dispatch table sweep (Table 800739A0)
+
+An audit of the primary script VM opcode dispatch table at `800739A0` (125 active entries, opcodes `0x00..0x7F`) traced all bytecode instructions touching `0x5704`:
+- **Dedicated Bit Mutation Opcodes**: Strictly `0x21` (subop 3, immediate set/clear at `8006CEB4`/`8006CF20`) and `0x22` (subop 3, stack-operand set/clear at `8006D0B8`/`8006D124`).
+- **Dedicated Bit Test / Read Opcodes**: Strictly `0x1D` (subop 0, immediate compare at `8006CCC0`) and `0x0E` (subop 0, read flag to stack at `8006C744`).
+- **Expression Evaluation Handlers**: Handlers at `8006D158` / `8006D460` (compound-assignment opcodes `0x22..0x35`, `0x3A..0x45`) and `8006DE08` (binary arithmetic/logic opcodes `0x4C..0x5F`) contain helper routines (`8006D30C`, `8006D614`, `8006DC14`, `8006DD9C`, `8006E184`, `8006E26C`, `8006E2DC`) that evaluate bitfields when addressing flags in general expressions.
+- **Result**: No independent 5th flag-mutation opcode exists in the VM dispatch table. All script flag operations are mediated through the four established opcodes (`0x2103`, `0x2203`, `0x1D00`, `0x0E00`).
+
+#### 3. Resolution of the final 26 unexamined bytes
+
+The remaining 26 unexamined bitmap bytes split cleanly into two groups:
+
+1. **Active Skill Guild and Specialty State Bytes (4 bytes: `0x1A41..0x1A44`, flags 712..743)**:
+   - **`0x1A41` (flags 712..719)**: Flags 712 and 713 (118 script hits each) and 714..719 (10–14 hits each) track Skill Guild tier 1 & 2 skills learned and purchased in early-game towns (Arlia, Salva, Cross, Herlie in scene archives 3207..3210).
+   - **`0x1A42` (flags 720..727)**: Flags 720..727 (12 script hits each) track Skill Guild tier 3 skills learned in mid-to-late game hubs (Lacour, Lingua, Central City in scene archives 3382, 3395, 3428, 3457, 3480, 3519, 3536).
+   - **`0x1A43` (flags 728..735)**:
+     - Flag 730 (`0x2DA`): Skill Guild mastery flag (16 script hits across archives 3207..3210, 3443, 3878).
+     - Flag 731 (`0x2DB`): **Magical Rasp** / Blacksmithing state flag (18 script hits in Hoffman ruins / Marze archives 3665, 3669, 3671; tested in overlay 3012 `8007E2D8`).
+     - Flag 732 (`0x2DC`): Energy Nede transport / L'Aqua contact milestone (Scene 247, archive 3454).
+     - Flag 735 (`0x2DF`): Specialty menu active toggle (3,848 script hits across all scenes; tested and cleared in overlay 3010 `80082190`, `8008224C`).
+   - **`0x1A44` (flags 736..743)**:
+     - Flag 736 (`0x2E0`): Specialty menu active state (3,848 script hits across all scenes; tested and cleared in overlay 3010 `800821A4`, `80082254`).
+     - Flags 740..743 (`0x2E4..0x2E7`): Skill shop purchase and learned status bits for specialized tiers (5,784 script hits across every town and shop archive).
+
+2. **Confirmed Silent / Empty Bytes (22 bytes: 0 script hits, 0 resident hits)**:
+   - `0x1A2E..0x1A30` (3 bytes: flags 560..583): Span between Ten Wise Men Central City assault (558) and Expel ocean rescue (587).
+   - `0x1A33..0x1A38` (6 bytes: flags 600..647): Span between Field of Intelligence card barrier (599) and Lacour Front Line encampment (650).
+   - `0x1A49..0x1A54` (12 bytes: flags 776..871): Span between early event flags (775) and Fun City Battle Stadium program (878).
+   - `0x1A56` (1 byte: flags 880..887): Span between Battle Stadium program (878) and Arlia guided tour (900).
+
+Exhaustive bytecode scans across all 827 scene archives (`3207..4033`) on both discs, all system/menu overlays, and the entire resident binary confirmed that **these 22 bytes contain zero references anywhere in the game**. They represent unused/padding capacity within the 368-byte allocation.
+
+#### 4. Final global bitmap accounting
+
+Every single byte of the 368-byte global story/event flag bitmap ($G = \text{[80075704]}$, decoded `0x19E8..0x1B58`, 2,944 flags) is now definitively classified:
+
+| Category | Decoded Range | Bytes | Flags | Description |
+|---|---|---|---|---|
+| **Named / Mapped** | `19E8..19EA` | 3 | 0..23 | Route-protagonist flag, travel/step bits, and Object-14 restoration bits |
+| **Confirmed Silent (Scene VM)** | `19EB..19F4` | 10 | 24..109 | Resident/overlay travel encounter rate & vehicle menu modifiers (zero scene VM calls) |
+| **Named / Mapped** | `19F5..1A2D` | 57 | 110..559 | Expel prologue, Lacour tournament, Linga herbs, Nede arrival, Four Fields quest, Central City raid |
+| **Confirmed Silent** | `1A2E..1A30` | 3 | 560..583 | Zero references across scene scripts, overlays, and resident binary |
+| **Named / Mapped** | `1A31..1A32` | 2 | 584..599 | Expel ocean rescue, Eluria Tower escape ID card, Field of Intelligence card slot barrier |
+| **Confirmed Silent** | `1A33..1A38` | 6 | 600..647 | Zero references across scene scripts, overlays, and resident binary |
+| **Named / Mapped** | `1A39..1A3E` | 6 | 648..695 | Lacour Front Line encampment defenses, sentry outposts, triage hospital, Castle Energy Stone weapon |
+| **Named / Mapped** | `1A3F..1A40` | 2 | 696..711 | Specialty unlock bitmask (12 tiers, Knowledge/Sensibility/Technique/Combat x3) |
+| **Named / Mapped** | `1A41..1A44` | 4 | 712..743 | Skill Guild tier learned bits, Magical Rasp blacksmithing flag (0x2DB), specialty UI state (0x2DF, 0x2E0) |
+| **Named / Mapped** | `1A45` | 1 | 744..751 | Area-entry state diff byte |
+| **Named / Mapped** | `1A46` | 1 | 752..759 | UI/text reader test byte |
+| **Named / Mapped** | `1A47..1A48` | 2 | 760..775 | Early plot milestones (Range B) |
+| **Confirmed Silent** | `1A49..1A54` | 12 | 776..871 | Zero references across scene scripts, overlays, and resident binary |
+| **Named / Mapped** | `1A55` | 1 | 872..879 | Fun City Battle Stadium simulation program (flag 878) |
+| **Confirmed Silent** | `1A56` | 1 | 880..887 | Zero references across scene scripts, overlays, and resident binary |
+| **Named / Mapped** | `1A57..1A64` | 14 | 888..999 | Arlia village tour (flags 900..909) and Cave of Trials riddles (flags 981..999) |
+| **Confirmed Silent** | `1A65..1B06` | 162 | 1000..2299 | Zero references across scene scripts, overlays, and resident binary |
+| **Named / Mapped** | `1B07..1B0C` | 6 | 2300..2343 | Eluria ID card, Fun City arena/cooking, Cave of Trials bosses (Dragon Tyrant, Phoenix, Gabrie) |
+| **Confirmed Silent** | `1B0D..1B57` | 75 | 2344..2943 | Zero references across scene scripts, overlays, and resident binary (tail capacity) |
+| **Total** | `19E8..1B58` | **368** | **0..2943** | **99 bytes mapped/named (26.9%) + 269 bytes confirmed silent (73.1%) = 100.0% accounted for** |
+
+Zero bytes remain unexamined. The global story/event flag bitmap investigation is complete.
+
 ## Located accesses whose meanings remain unresolved
 
 These are examined leads, **excluded from the 494-byte increase**.
