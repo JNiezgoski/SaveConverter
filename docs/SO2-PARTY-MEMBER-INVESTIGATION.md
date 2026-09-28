@@ -874,6 +874,145 @@ decompressed overlay itself). No new interpreter/harness run was added this
 pass — this was static tracing plus the existing `Machine` harness's established
 resident-code binary; no card was read, edited, or written.
 
+### 2026-09-27 third follow-up: graphics-selection consumer found; 12-character selector space solved; save-edit forced leader ruled out
+
+**Resolved.** Following up on the second follow-up above, the entire downstream path
+from entity construction to sprite rendering was traced, all resident read sites of
+`F[0x24]` (decoded `0x176C`) were audited and categorized, the real graphics-selection
+routine was located and executed in MIPS emulation against actual PS1 RAM dumps, the
+underlying sprite archive system was decoded across Disc 1, and the question of whether
+the walking sprite can be forced to a third character (e.g. Dias) via save editing
+is answered definitively:
+
+1. **All resident `F[0x24]` read sites ruled out as graphics consumers [Disassembly-only / Verified (executed)].**
+   The eight resident read sites specifically enumerated (`8004B4B8`, `8004C380`, `8004C880`,
+   `8004D11C`, `8004EB90`, `8004F05C`, `8004F188`, `8004F524`) plus roughly 50 additional
+   accesses across `resident.asm` were traced. None of them chooses a graphic or model ID:
+   - **`8004B47C / 8004B4B8`**: Entity movement manager state reset (`80042cc4(player, -1)`,
+     clearing flag bit `0x80` in `obj->0x4c` via `80042d3c`, and resetting inactive slots 0..11).
+   - **`8004C380`**: Field loop interaction trigger proximity check (`80041310` compares player
+     coords against zone trigger `[80075560]` and triggers sound effect `0xC` on entry).
+   - **`8004C880 / 8004C888`**: Random encounter step counter and countdown timer (`800319c4`,
+     decrementing/resetting step countdown word `0x6314`).
+   - **`8004D11C`**: Camera targeting and sightline projection (`80070a94` heading calculation,
+     feeding sine/cosine projection `8006e498 / 8006e404` based on player coordinates).
+   - **`8004EB90 / 8004EBD4`**: Mount transition handler (removes walking entity via `8004541c`,
+     swaps parked mount pointer `80075394` into player slot `table[F[0x24]]`).
+   - **`8004F05C`**: Psynard flight controller (initializes takeoff physics, zeroes velocities
+     `0x428..0x430`, sets flying flag `0x6176 = 1`).
+   - **`8004F188`**: Dismount sequence (moves mount pointer back to slot 13, invokes `80043890`
+     to reconstruct on-foot entity in `table[F[0x24]]`).
+   - **`8004F524`**: Pad input routing for mounting actions (`80018f04` button check).
+   - **Why none of these selects graphics:** `F[0x24]` is strictly the **slot index in active entity
+     table `80075360`** (`table[0]` or `table[1]`). It is never read as a graphics resource ID.
+
+2. **The real graphics/animation consumer: `8003F518` calling `80042E4C` [Verified (executed)].**
+   The raw selector passed during construction is stored at object offset `+0x16` via
+   `8003D854 sh $t5, 0x16($t0)` (in base constructor `8003D750`, called by town constructor
+   `8007E540` and overworld constructor `80082E5C`). During the active field render loop,
+   both overlays call resident dispatcher `8003F518` every frame:
+   - Town/dungeon overlay: `8007E7BC jal 0x8003f518`
+   - Overworld overlay: `80083618 jal 0x8003f518`
+   Inside `8003F518`:
+   ```text
+   8003F5F0 jal   80043018       ; lookup object's slot index in table 80075360
+   8003F5F4 move  a0,s0          ; delay slot: entity object
+   8003F5F8 addiu v1,zero,0x15   ; slot 21 = NPC special handler
+   8003F5FC bne   v0,v1,8003F6D4 ; player object (slot 0 or 1) branches directly here!
+   ...
+   8003F6D4 lh    a0,0x3ea(s0)   ; animation/action state ID (idle=13, walk, run, etc.)
+   8003F6D8 lh    a1,0x16(s0)    ; the raw selector stored at construction!
+   8003F6DC jal   80042E4C       ; real graphics/animation resolution routine
+   8003F6E4 sw    v0,0x2d0(s0)   ; stores returned animation subblock pointer
+   ```
+   Routine `80042E4C` searches the loaded animation resource table at `8007585C` (16 slots,
+   each 12 bytes: buffer pointer, archive ID, flags):
+   ```text
+   80042E80 addiu t0,v0,4        ; subblock offset table in archive header
+   80042E9C addu  v1,v1,v0       ; v1 = subblock pointer
+   80042EA0 lw    v0,0(v1)       ; record count in subblock
+   80042EB4 move  a2,v1          ; record pointer
+   80042EB8 lw    v0,4(a2)       ; record->selector
+   80042EC0 bne   v0,a1,80042EF8 ; MATCHES obj->0x16 AGAINST record->selector!
+   80042EC8 lw    v0,8(a2)       ; anim_min
+   80042ED0 sltu  v0,a0,v0       ; state >= anim_min check
+   80042ED4 bnez  v0,80042EF8
+   80042EDC lw    v0,0xc(a2)     ; anim_max
+   80042EE4 sltu  v0,v0,a0       ; state <= anim_max check
+   80042EE8 bnez  v0,80042EFC
+   80042EF4 move  v0,v1          ; returns matching subblock pointer
+   ```
+   `8003F518` then unpacks the sprite/frame tables from that subblock into `obj+0x2F4`,
+   `+0x2F8`, `+0x2FC`, `+0x304`, `+0x308`, `+0x30C`, and `+0x310`. The overlay drawing
+   code (`8007E7F8..` / `80083654..`) renders the on-screen walking sprite directly
+   from those unpacked pointers.
+
+3. **The selector space supports all 12 playable characters (`0..11`) [Verified (executed)].**
+   The selector checked by `80042EC0` is **NOT** a 2-valued boolean. A comprehensive scan
+   of all 51 SLZ1-compressed character animation archives on Disc 1 (entries 3111 to 3206)
+   shows records keyed by exactly 12 selector values:
+   `selector = Character_ID - 1` (0 through 11):
+   - `0`: Claude (ID 1)
+   - `1`: Rena (ID 2)
+   - `2`: Celine (ID 3)
+   - `3`: Bowman (ID 4)
+   - `4`: **Dias (ID 5)** — full field walking and animation sprite tables exist on disc!
+   - `5`: Precis (ID 6)
+   - `6`: Ashton (ID 7)
+   - `7`: Leon (ID 8)
+   - `8`: Opera (ID 9)
+   - `9`: Ernest (ID 10)
+   - `10`: Noel (ID 11)
+   - `11`: Chisato (ID 12)
+   *(Plus sentinel `32767 = 0x7FFF` used for unlit/special entities).*
+
+4. **Party animation archive streaming: `80061888` and `80061BD0` [Verified (executed)].**
+   How do these character sprites reach memory? During scene transitions, `80061888`
+   invokes `80061BD0`. `80061BD0` scans the eight primary party slots (`primary[0..7].id`
+   at `80061BFC`), building a 12-bit recruited party mask: `mask |= 1 << (ID - 1)`.
+   `8006195C..80061B14` then splits this mask to select disc archive entries:
+   - **Group 1 (bits 2..6: Celine, Bowman, Dias, Precis, Ashton):**
+     `Entry = 3111 + 2 * ((mask >> 2) & 0x1F)` (entries 3111..3173).
+     If Dias is in the party, bit 4 is set (`(mask >> 2) & 0x1F` has bit 2 set), so the game
+     automatically loads an archive containing Dias's sprite set (e.g. entry 3119, 3125, etc.).
+   - **Group 2 (bits 7..11: Leon, Opera, Ernest, Noel, Chisato):**
+     `Entry = 3175 + ((mask >> 7) & 0x1F)` (entries 3175..3206).
+   The selected archives are loaded into `8007585C` (Slot 0 and Slot 1).
+   Executing `80042E4C` in `Machine` with Disc 2 RAM (where Entry 3125 is loaded in Slot 0):
+   - Selector 0 (Claude) -> `0x800e5ac8`
+   - Selector 1 (Rena) -> `0x800ef014`
+   - Selector 2 (Celine) -> `0x800f87d4`
+   - Selector 3 (Bowman) -> `0x800fbb60`
+   - **Selector 4 (Dias) -> `0x800fed6c`** (successfully resolves to Dias's animation subblock!)
+   - Selector 5 (Precis, absent from 3125) -> `0x00000000` (NULL).
+
+5. **Can the walking sprite be forced to Dias via save editing? [Disassembly-only / Verified].**
+   **No — it is structurally impossible via save editing alone.**
+   To make Dias the walking leader, four hard structural barriers prevent any save-only solution:
+   - **Single-bit route flag:** The save format only stores the story route at decoded `0x19E8`
+     (`G[0]` bit 1), which is a 1-bit boolean (0=Rena, 1=Claude).
+   - **Unconditional overwrite on map load:** Resident scene setup `800540B4..80054108` executes
+     on every map load, teleport, and save reload, unconditionally recomputing `F[0x24]` (decoded `0x176C`):
+     `F[0x24] = 1 - ((decoded[0x19E8] >> 1) & 1)`
+     Any direct edit to `0x176C` in the save file is immediately overwritten with `0` or `1`.
+   - **Object table slot coupling:** When `80043890` constructs the entity, it takes `a1 = a2 = F[0x24]`.
+     `a1` is the active object table slot: `table[a1] = obj` at `80075360 + 4*a1`. Slots 0 and 1
+     are reserved for the player avatar; slots 2+ are used for map NPCs. If `F[0x24]` were 4,
+     the player entity would be placed in slot 4, causing severe collision with scene NPCs.
+   - **Complete lack of party-leader lookup:** The on-foot construction path (`80055540..80055568`)
+     never consults party slot `0x41` or any `primary[slot].id`.
+   - **What would be required:** Forcing Dias as the walking leader requires a code modification /
+     patch (e.g. hooking `80055544 move a2, s0` to pass `a2 = 4` while keeping `a1 = s0`, or
+     mapping `primary[S[41]].id - 1` into `a2`). When so patched, the game engine's existing
+     sprite resolution (`80042E4C`) and archive streaming (`80061888`) will successfully
+     display and animate Dias on foot without graphical glitches. In the unmodded game,
+     no save edit can accomplish this.
+
+Executed evidence: `tools/so2_field_leader_evidence.py` (executes `80042E4C` on Disc 1 & Disc 2 RAM,
+resolves Dias pointer `0x800fed6c`, verifies party streaming formula across five scenarios),
+`tests/test_so2_field_leader.py` (unit tests pass), `artifacts/so2-field-control/graphics-consumer.asm`
+(disassembly listing of all audited sites), and `artifacts/so2-field-control/graphics-consumer-report.json`.
+
 ## Why the two experiments were insufficient
 
 Unused-slot clone: secondary data does not make `primary[slot].id` positive.
