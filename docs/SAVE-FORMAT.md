@@ -56,6 +56,29 @@ Implemented as `so2_sign()` in `saveconv.py`. Confirmed from the game's MIPS che
 writer and validators on 2026-09-25; see [investigation and evidence](SO2-CHECKSUM-INVESTIGATION.md).
 The older `[0x206, 0x281)` rule was an accidental match when byte `0x280` was `0xFF`.
 
+## Decoded chunk 1 update (2026-09-27)
+
+[Chunk-1 mapping and instruction evidence](SO2-CHUNK1-MAPPING.md) establishes
+329 new bytes of storage/operational roles: **371/416 bytes (89.18%)** including
+the 42-byte Options/Fol/disc baseline; 45 bytes remain unresolved. The real
+save serializer copies exactly `0x1A0` bytes from **S=[80075270] (resource 2)**
+to decoded offset zero. This source was traced independently of chunk 5.
+
+Two 12x12 byte matrices occupy `0x58..0xE8` and `0xE8..0x178`, indexed as
+`base + 12*row + column`. Script adjustment clamps each value to 0..15;
+character-pair indexing is tied to primary party IDs by a separate reader.
+All 288 cells' adjustment paths passed bounded execution, as did serializer
+argument/direction setup. These are not in-game save/reload tests. Friendship
+versus affection labels and named PA/ending callers remain unverified.
+
+Other disassembly-only findings include the clock-derived word at `0x10`,
+operational counters at `0x14/0x20/0x24/0x28`, non-default-name booleans at
+`0x42/0x43`, route selector `0x45`, clock throttle `0x54`, completion code
+`0x178`, two percentage modifiers `0x184/0x186`, and save-menu selection words
+`0x198/0x19C`. `0x24` increments during save preparation; the old suggestion
+that it counts specialty purchases is superseded. No new story bitmap was
+established in this chunk. The source catalog is bounded, not exhaustive.
+
 ## Decoded chunk 5 update (2026-09-27)
 
 [Chunk-5 mapping and evidence](SO2-CHUNK5-MAPPING.md) adds 494 bytes of
@@ -350,7 +373,7 @@ over every raw-byte diff attempted earlier this session (100–200+ changed byte
 compression re-tokenization noise, not real signal).
 
 Of those 8 bytes: Fol dropped by exactly 400 (confirms the transaction), a byte at `0x24` incremented
-by 1 (likely a specialties-purchased counter), a handful of bytes near Claude's character entry shifted
+by 1 (now traced to a save-preparation counter; see chunk-1 update), a handful of bytes near Claude's character entry shifted
 by small amounts (likely a computed/derived stat recalculating, not the flag itself), and — the real
 find — **the byte at decoded offset `0x1A3F` changed `0x30` → `0x70`: exactly one bit set (bit 6,
 `0x40`), in an otherwise all-zero region.** That's the classic shape of a bitmask flag.
@@ -467,7 +490,9 @@ once re-expressed in decoded-state offsets rather than the old (compression-conf
   effects remain untested; combat motion icon rendering has an explicit limit.
   See [Options evidence](SO2-OPTIONS-MENU-INVESTIGATION.md). No further blind diffing
   or separate-global-config hypothesis is needed.
-- **Private Actions / emotion levels, item-creation recipes** — not located.
+- **Private Actions / emotion levels, item-creation recipes** — two character-pair value matrices
+  are now located at decoded `0x58` and `0xE8`; precise emotion labels, named PA/ending
+  callers and recipe storage remain unresolved. See [chunk-1 evidence](SO2-CHUNK1-MAPPING.md).
 - **Field-leader / walking sprite: resident connection resolved negatively, overlay lookup still open (2026-09-27):** decoded `0x41` is a validated primary-party slot, but the traced on-foot constructor argument does not derive from its selected ID. Resident setup `800540B4..80054108` sets decoded `0x176C` (`F+24`) to `1 - ((decoded[0x19E8] >> 1) & 1)`. Field entry `80055568` and dismount `8004F234` pass that index to `80043890`, which calls an overlay constructor and stores its returned pointer at `80075360 + 4*F[24]`. Forty-eight real-instruction trials on archived S01/S02/S15, varying valid `0x41` selections, flag bit, and mode, confirm this independence through the resident wrapper. The sharper open question is whether overlay constructors `80082E5C` / `8007E540` resolve 0/1 directly to fixed graphics or perform another party lookup; their rendering instructions were not executed. `0x41`'s ultimate purpose remains unresolved; no safe leader edit is claimed. See [instruction evidence and execution limits](SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-27-controlled-object-follow-up-negative-resident-connection).
 - The reported 9-slot "Special Attack/Magic Max" cheat list was **checked; its save correspondence remains inconclusive**. The actual assignment UI uses four one-byte ability IDs at decoded `0x56C..0x56F + slot*0xD0` (secondary `+CC..CF`), with 32 candidate availability bytes at `+3C..5B`; extracted candidate/read/write instructions were executed on S01/S02/S15. This does not identify the historical nine cheat addresses. See [special-attack list check](SO2-SPECIAL-ATTACK-LIST-CHECK.md).
 - The early-save checksum-A discrepancy is resolved; see the checksum investigation linked above.
