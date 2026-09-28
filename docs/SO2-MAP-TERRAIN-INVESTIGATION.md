@@ -1,12 +1,6 @@
 # SO2 map terrain / collision: real record format found, per-area archive entry still open
 
-**Latest: see the fourth-pass subsection below.** Scene-to-archive selection and
-fresh/cache loading are now traced; real field triangles are extracted. The
-overworld's real "type 3" format was traced to a 9-slot streaming cache backed
-by what looks like a quadtree spatial structure, distinct from the dungeon's
-triangle array — but its node layout and height/collision output were not
-fully decoded, so the overworld cross-check still remains open. The third pass
-also corrects the historical area-byte and coordinate claims.
+**Latest: see the fifth-pass subsection below.** The overworld spatial format is solved: a 4×4 sub-cell mesh (not a recursive quadtree) evaluated via PS1 GTE hardware outer-product containment and continuous 3D plane interpolation, with the long-standing Area-0 height cross-check closed by an exact integer match against real disc assets. Scene-to-archive selection and fresh/cache loading were previously traced in pass 4; real field triangles were extracted in pass 3.
 
 Investigation: **2026-09-27**. US PS1 BASCUS-94421/SCUS-94421 (Disc 1). Continues
 from the field-leader follow-up's side finding (see

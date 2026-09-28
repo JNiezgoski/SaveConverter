@@ -11,17 +11,17 @@ the actual PS1 code that reads and writes it.
 | Area | Status |
 |---|---|
 | Checksums, party list, character ID swaps | ✅ Verified |
-| Level, HP, MP, STR/CON/AGL/DEX/INT | ✅ Verified (999 safe; 9999 unproven) |
+| Level, HP, MP, STR/CON/AGL/DEX/INT | ✅ Mapped & resident-verified — decoded `0x1A0 + slot*0x60`, 3-stage stat triplets (base, intermediate, final) via resident accessors `80033218`/`800332F8`; stat recalculation rules mapped in code, in-game write safety uncapped — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27) |
 | All 46 skill levels **and** all 46 skill names/order | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x5D..0x8A` (slot 0 `0x4FD..0x52A`), 1 byte per skill (IDs 1..46), resident getter/setter `80033CB4`/`80033CE0` — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
 | SP (skill points) — every internal form, all 12 characters | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x1A` (slot 0 `0x4BA..0x4BB`), u16 clamped 0..999, script opcode `0xFE0A` / `0xFE8A` and level-up UI in Overlay 3014 — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
 | Talents (all 10) | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x20` (slot 0 `0x4C0..0x4C3`), 32-bit u32 word, bits 0..11 — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
 | Item ID table, inventory counts for items already owned (max 20) | ✅ Verified |
-| Giving a character an item type they've **never** owned before | ✅ Verified in-game (via `so2_inventory.py`) — Seraphic Garb 0→20 confirmed equipped and usable on save 15 — [details](docs/SO2-INVENTORY-ADD-INVESTIGATION.md) |
+| Giving a character an item type they've **never** owned before | ✅ Mapped and disassembly-verified (via `so2_inventory.py`) — Seraphic Garb 0→20 candidate for save 15 reproduces the real add routine and serializer exactly under bounded MIPS execution; **not yet booted in an emulator** — [details](docs/SO2-INVENTORY-ADD-INVESTIGATION.md) |
 | Equipment — full 7-slot characters (incl. Noel, Chisato) | ✅ Verified |
 | Equipment — compressed 6-slot (missing one accessory) | ✅ Verified |
 | Fol (money) | ✅ Verified in-game (via `so2_fol.py` — see below) |
 | Specialties (shop-bought Skill Shop tiers: Knowledge/Sensibility/Technique/Combat ×3 levels) | ✅ Verified — mechanism explained and full 12-tier bit table (`0x1A3F`/`0x1A40`) confirmed by executing the real purchase code; one clean live purchase would close out the last loose end — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
-| Adding/recruiting a party member | ✅ Verified in-game (via `so2_party.py`) — two parallel per-slot arrays, identity is a numeric ID not the name string — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md) |
+| Adding/recruiting a party member | ✅ Mapped and disassembly-verified (via `so2_party.py`) — two parallel per-slot arrays, identity is a numeric ID not the name string; real initializer code executed under bounded MIPS execution, **not yet booted in an emulator** — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md) |
 | Battle-ability quick-assignment slots (4 per character) | ✅ Mapped and disassembly-verified — decoded `0x56C-0x56F` per character, real candidate/read/write code executed against real saves — [details](docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md) |
 | Map position (X/Y/Z, facing, area ID + real scene selector) and area/scene → name lookup | ✅ Verified in-game — tool: `so2_location.py`. 8 areas / 24 sightings recorded, including all 13 floors of Cave of Trials plus 2 in-cave escape points — [details](docs/SO2-MAP-LOCATION-CHECK.md) |
 | Same-area repositioning (teleport within your current area) | ✅ Verified in-game — first successful save-edit teleport in this project |
