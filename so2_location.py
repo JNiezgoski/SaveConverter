@@ -11,14 +11,18 @@ There is no complete area-ID -> name/coordinate table extractable from the
 disc (see the investigation doc for what was tried and ruled out) - the
 game itself only populates this data in RAM as areas are actually visited.
 
-CAVEAT (2026-09-27, docs/SO2-MAP-TERRAIN-INVESTIGATION.md pass 3): decoded
-area_id (0x1769) is NOT proven to be a unique location key - real saves show
-the same area_id value with clearly different underlying scenes. Every
-sighting now also records a "scene" value (decoded 0x1762) as extra context;
-area_id remains the database's grouping key for now since re-keying on an
-unconfirmed hypothesis would be premature, but don't treat two sightings
-under the same area_id as definitely the same place until scene is checked
-too.
+CAVEAT (2026-09-27, docs/SO2-MAP-LOCATION-CHECK.md "0x1769 is saved drawing
+order, not an area ID"): decoded area_id (0x1769) is NOT a location key at
+all - it's a saved sprite drawing-order value, snapshotted from the
+controlled object's own rendering property whenever the menu opens. Its
+range is small and its value can legitimately repeat across totally
+unrelated places, or stay unchanged across a scene transition when a region
+lookup misses. The real location selector is "scene" (decoded 0x1762),
+written directly by the scene-transition code for archive selection. Kept
+as "area_id" here only for historical/naming continuity with earlier
+recordings and the teleport tooling; every sighting records "scene" too and
+sightings are keyed on (sub_index, scene), not on area_id alone - two
+sightings sharing an area_id are NOT expected to be the same place.
 So this tool builds a real database organically: every time you run `show`,
 whatever area/sub-index that save is sitting at gets recorded - including
 the full byte ranges confirmed necessary for a working cross-area teleport
