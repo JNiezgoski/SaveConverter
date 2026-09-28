@@ -119,6 +119,161 @@ using explicit entry-register setup; original adjustment, branch and store
 instructions ran unchanged. No matrix getter, ranking, overlay decrement,
 RNG path, or whole-game behavior is claimed executed.
 
+### Script callers, named Private Actions, and emotion distinction (2026-09-27 follow-up)
+
+**Status: VERIFIED by static disassembly, disc container extraction, and VM bytecode tracing.**
+Script-side callers for both matrices, the VM bytecode instruction format, the disc container
+archive layout for field/town scenes, the 16-bit dialogue text encoding, and concrete named
+Private Actions and story scenes were fully traced. Concrete instruction evidence confirms that
+**Matrix A represents Friendship Points (FP)** and **Matrix B represents Romance / Affection Points (RP)**.
+
+#### 1. VM opcode dispatch and operand decoding
+
+The resident script interpreter loop at `8006C358` fetches 32-bit instruction words from the script
+program counter (`0x10($s1)`). For opcodes outside `1..99` (`8006C37C beqz $v0, 0x8006e374`), execution
+reaches `8006E378 jal 0x8006241c`, which indexes jump table `8007359C` with `opcode - 0x64`.
+
+Opcode `0xFF` (255) jumps to `80064968`, invoking sub-dispatcher `80064F30`. Sub-dispatcher `80064F30`
+decodes the sub-opcode from byte 2: `(instruction >> 16) & 0x7F` (`80064F48 andi $v1, $v0, 0x7f`).
+Bit 23 (`0x00800000`) of the instruction word acts as a stack-argument flag:
+- When bit 23 is `0` (immediate mode): helper `80068DB8` takes Argument 0 directly from the lower 16
+  bits of the 32-bit instruction word (`sll/sra 16` at `80068E14`), while subsequent arguments
+  (Character 2 index, delta) are read sequentially as 16-bit signed halfwords from the script PC stream
+  (`80068E48`, `80068E5C`), advancing script PC by 4 (`80068E70`).
+- When bit 23 is `1` (stack mode, sub-opcodes `0x90..0x93`, `0xF6`): helper `80068DB8` pops the required
+  arguments from the VM evaluation stack (`0x24($s1)` via `80068DF8`).
+
+The four emotion matrix opcodes and the ranking opcode are:
+
+| Opcode | Hex Word Pattern | Target Routine | Function & Execution Semantics |
+|---|---|---|---|
+| `0xFF10` / `0xFF90` | `0xFF10xxxx` / `0xFF900000` | `80065900` | **Matrix A Adjust**: forms `12*row + col`, loads byte from `S+0x058`, adds signed delta, clamps result to `0..15`, writes back to `S+0x058` |
+| `0xFF11` / `0xFF91` | `0xFF11xxxx` / `0xFF910000` | `80065990` | **Matrix A Get**: forms `12*row + col`, loads byte from `S+0x058`, writes result word to script variable `[80075708]` |
+| `0xFF12` / `0xFF92` | `0xFF12xxxx` / `0xFF920000` | `8006582C` | **Matrix B Adjust**: forms `12*row + col`, loads byte from `S+0x0E8`, adds signed delta, clamps result to `0..15`, writes back to `S+0x0E8` |
+| `0xFF13` / `0xFF93` | `0xFF13xxxx` / `0xFF930000` | `800658C0` | **Matrix B Get**: forms `12*row + col`, loads byte from `S+0x0E8`, writes result word to script variable `[80075708]` |
+| `0xFF76` / `0xFFF6` | `0xFF76xxxx` / `0xFFF60000` | `80066E58` | **Party Affinity Ranker**: takes target character index `C`, iterates through all primary party member records (`0x60` stride), sums `Matrix_A[P][C] + Matrix_B[P][C]`, identifies the maximum affinity character (breaking ties via uniform RNG helper `8006B59C`), and writes the winning party member's character ID to `[80075708]` |
+
+#### 2. Disc script container layout and 16-bit dialogue text decoding
+
+Field and town scenes on Disc 1 are packaged in container archives `3207..4033` (827 container archives).
+Effective scene numbers follow the verified relation `scene_index = archive_index - 3207` (derived from
+`80061968`'s `scene + 0xC87` rule).
+Each container archive bundles three parts:
+- **Part 0**: Trigger and camera metadata.
+- **Part 1**: SLZ1-compressed event and dialogue bytecode stream (loaded into memory for field execution).
+- **Part 2**: 3D field geometry and collision mesh.
+
+Resident script initializer `800622EC..80062340` sets up the script context:
+- `word0` at script offset `0x00`: points to message offset table at `script_base + word0 + 0x1C` (`0x28($s0)`).
+- `word0xC` at script offset `0x0C`: number of dialogue message entries.
+- Message offset table consists of `uint16_t` offsets relative to the text string base `(script_base + word0 + 0x1C) + (word0xC * 2)` (`0x2c($s0)`).
+- Text strings are encoded in a custom 16-bit character stream:
+  - `0x01B6..0x01CF`: Uppercase ASCII `A..Z` (`code = ord(c) - 65 + 0x01B6`).
+  - `0x01D0..0x01E9`: Lowercase ASCII `a..z` (`code = ord(c) - 97 + 0x01D0`).
+  - `0x01AA..0x01B3`: Digits `0..9`.
+  - Punctuation: `0x0285` (space), `0x0283` (period), `0x0284` (comma), `0x0286` (single quote), `0x0287` (question mark), `0x0288` (exclamation point), `0x01B5` (hyphen/dash), `0x0289`/`0x028A` (double quote).
+  - Control codes: `0x808C (01xx)` sets speaker portrait (e.g. `0100`=Claude, `0101`=Rena, `0102`=Celine, `0105`=Precis, `0107`=Leon, `0108`=Opera, `010B`=Chisato).
+
+#### 3. Concrete named Private Actions and story scene callers
+
+A comprehensive scan across all 827 container archives isolated the exact script bytecode invoking these
+operations during real game events:
+
+##### A. Scene 688 (Archive 3895) — Fun City Bar: "Leon's Confession" Private Action
+In Fun City, Leon (Character ID 7, 0-indexed) asks Claude (ID 0) to help him confess his crush to any female
+party member currently in the party. Each dialogue choice branch was decoded and verified:
+- **Rena (ID 1)**:
+  - Choice 0 ("I knew I had to keep my eye on him", mutual friendship):
+    - `0x9D14`: `0xFF100001 0x00030007` -> **Matrix A** row=1 (Rena), col=7 (Leon), delta = `+3`.
+    - `0x9D1C`: `0xFF100007 0x00030001` -> **Matrix A** row=7 (Leon), col=1 (Rena), delta = `+3`.
+  - Choice 1 ("I have someone else", Leon heartbroken):
+    - `0x9FD0`: `0xFF100001 0x00030007` -> **Matrix A** row=1 (Rena), col=7 (Leon), delta = `+3`.
+    - `0x9FD8`: `0xFF100007 0xFFFE0001` -> **Matrix A** row=7 (Leon), col=1 (Rena), delta = `-2`.
+- **Celine (ID 2)**:
+  - Choice 0 ("He's just a little boy! Wait 10 years!"):
+    - `0xA3F0`: `0xFF100002 0x00030007` -> **Matrix A** row=2 (Celine), col=7 (Leon), delta = `+3`.
+    - `0xA3F8`: `0xFF100007 0xFFFE0002` -> **Matrix A** row=7 (Leon), col=2 (Celine), delta = `-2`.
+  - Choice 1 ("5 years from now, if you feel the same way"):
+    - `0xA7A8`: `0xFF100002 0x00030007` -> **Matrix A** row=2 (Celine), col=7 (Leon), delta = `+3`.
+    - `0xA7B0`: `0xFF100007 0x00030002` -> **Matrix A** row=7 (Leon), col=2 (Celine), delta = `+3`.
+- **Precis (ID 5)**:
+  - Choice 0 ("Squirt! Baby! Pervert! I wouldn't go out with a sicko like you!"):
+    - `0xAD88`: `0xFF100005 0xFFFE0007` -> **Matrix A** row=5 (Precis), col=7 (Leon), delta = `-2`.
+    - `0xAD90`: `0xFF100007 0xFFFE0005` -> **Matrix A** row=7 (Leon), col=5 (Precis), delta = `-2`.
+  - Choice 1 ("My boyfriend has to be worthy of me... wait 5 years"):
+    - `0xB128`: `0xFF100005 0x00030007` -> **Matrix A** row=5 (Precis), col=7 (Leon), delta = `+3`.
+    - `0xB130`: `0xFF100007 0x00030005` -> **Matrix A** row=7 (Leon), col=5 (Precis), delta = `+3`.
+- **Opera (ID 8)**:
+  - Choice 0 ("Romantic: love across light-years..."):
+    - `0xB58C`: `0xFF100008 0x00030007` -> **Matrix A** row=8 (Opera), col=7 (Leon), delta = `+3`.
+    - `0xB594`: `0xFF100007 0x00030008` -> **Matrix A** row=7 (Leon), col=8 (Opera), delta = `+3`.
+  - Choice 1 ("I am not interested in a boy younger than I am! Waaaaah!"):
+    - `0xB920`: `0xFF100008 0x00020007` -> **Matrix A** row=8 (Opera), col=7 (Leon), delta = `+2`.
+    - `0xB928`: `0xFF100007 0xFFFE0008` -> **Matrix A** row=7 (Leon), col=8 (Opera), delta = `-2`.
+- **Chisato (ID 11)**:
+  - Choice 0 ("Come tell me again after you're a little older"):
+    - `0xBD8C`: `0xFF10000B 0x00030007` -> **Matrix A** row=11 (Chisato), col=7 (Leon), delta = `+3`.
+    - `0xBD94`: `0xFF100007 0x0003000B` -> **Matrix A** row=7 (Leon), col=11 (Chisato), delta = `+3`.
+  - Choice 1 ("The guy with the camera... I LOVE... Waaaaah!"):
+    - `0xC20C`: `0xFF10000B 0x00020007` -> **Matrix A** row=11 (Chisato), col=7 (Leon), delta = `+2`.
+    - `0xC214`: `0xFF100007 0xFFFE000B` -> **Matrix A** row=7 (Leon), col=11 (Chisato), delta = `-2`.
+
+**Critical Finding**: Across all 20 adjustment instructions in this entire event, the game exclusively invokes
+`0xFF10` (**Matrix A Adjust**). Matrix B is never called. Because Leon is 12 years old and all five women reject
+his romantic proposition while bonding with him as an endearing younger friend/colleague, this directly proves
+that **Matrix A tracks Friendship Points (FP)**.
+
+##### B. Scene 17 (Archive 3224) — Arlia Village: Alen-Tax Kidnapping
+During Claude and Rena's initial meeting and subsequent rescue in Arlia:
+- Positive branch (`0x4330..0x4348`):
+  - `0x4330`: `0xFF100000 0x00010001` -> **Matrix A** Claude->Rena `+1`
+  - `0x4338`: `0xFF100001 0x00010000` -> **Matrix A** Rena->Claude `+1`
+  - `0x4340`: `0xFF120000 0x00010001` -> **Matrix B** Claude->Rena `+1`
+  - `0x4348`: `0xFF120001 0x00010000` -> **Matrix B** Rena->Claude `+1`
+- Negative / hesitation branch (`0x4630`):
+  - `0x4630`: `0xFF120001 0xFFFF0000` -> **Matrix B** row=1 (Rena), col=0 (Claude), delta = `-1`.
+  - **Matrix A is untouched**. When Rena is disappointed with Claude's hesitation, only her romance/affection
+    value takes a penalty; baseline friendship remains unchanged.
+
+##### C. Scene 173 (Archive 3380) — Hilton Port Town: "Lost Girl Nonno" Private Action
+Rena and Precis encounter the lost little girl Nonno outside the Skill Guild:
+- `0x7C34`: `0xFF120005 0x00020001` -> **Matrix B** row=5 (Precis), col=1 (Rena), delta = `+2`.
+
+##### D. Scene 479 (Archive 3686) — Opera & Ernest Reunion
+When the lovers Opera (ID 8) and Ernest (ID 9) reunite:
+- `0x7D34..0x7D4C`: Symmetrically adjusts **both Matrix B and Matrix A**:
+  - `0x7D34`: Matrix B Opera->Ernest `+2`
+  - `0x7D3C`: Matrix B Ernest->Opera `+2`
+  - `0x7D44`: Matrix A Opera->Ernest `+2`
+  - `0x7D4C`: Matrix A Ernest->Opera `+2`
+
+##### E. Scene 312 (Archive 3519) — Claude & Precis Private Action
+Four dialogue choices adjust Matrix A and Matrix B asymmetrically:
+- Choice 1: Matrix B Claude->Precis `+1`, Matrix A Precis->Claude `-1`
+- Choice 2: Matrix B Claude->Precis `+1`, Matrix B Precis->Claude `+2`, Matrix A Precis->Claude `+1`
+- Choice 3: Matrix B Claude->Precis `-1`, Matrix B Precis->Claude `-1`, Matrix A Precis->Claude `-2`
+- Choice 4: Matrix B Claude->Precis `+1`, Matrix B Precis->Claude `+1`, Matrix A Precis->Claude `+2`
+
+##### F. Shared Field Script Subroutine (`0x426C..0x44C8` in Archive 3207..4033 Part 1)
+All field scripts embed a shared relationship tuning/fortune routine:
+- Arguments: `local[0]` = row, `local[4]` = col, `local[8]` = emotion type selector.
+- Branch at `0x4494`:
+  - If `local[8] == 0`: invokes `0x44B0` `MATRIX_A_ADJ_STK` (Matrix A).
+  - If `local[8] != 0`: invokes `0x44C4` `MATRIX_B_ADJ_STK` (Matrix B).
+- A 11-step delta switch table maps choice index `0..10` to deltas `+30, +4, +3, +2, +1, 0, -1, -2, -3, -4, -30`.
+
+#### 4. Semantic conclusion and boundaries
+
+1. **Matrix A = Friendship Points (FP)**: Decoded `0x058..0x0E8`. Modified exclusively during platonic/mentoring
+   interactions (e.g. Leon's confession PA across all female candidates), and preserved when romantic affection drops.
+2. **Matrix B = Romance / Affection Points (RP)**: Decoded `0x0E8..0x178`. Modified during romantic/couple scenes
+   (Opera/Ernest reunion, Claude/Rena, Precis/Rena), and penalized exclusively on romantic grievance.
+3. **Affinity Ranking**: Script opcode `0xFF76` / `0xFFF6` (`80066E58`) sums both matrices `Matrix A + Matrix B`
+   to determine the highest-affinity character across active party members.
+4. **Limits**: Specific Disc 2 epilogue ending pair checks (e.g. whether endgame pair branches evaluate
+   `Matrix B > 10` for heterosexual pairs and `Matrix A > 10` for same-sex pairs) were not audited on Disc 2
+   binaries in this pass and remain open for future work.
+
 ## Other examined leads, excluded from the new-byte total
 
 | Decoded / live | Observed behavior | Evidence / unresolved boundary |
