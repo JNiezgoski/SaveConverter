@@ -1,0 +1,1130 @@
+{
+  "total_bytes": 7048,
+  "tier_totals": {
+    "mapped": 3271,
+    "unknown": 2602,
+    "partial": 147,
+    "runtime": 1028
+  },
+  "regions": [
+    {
+      "label": "Chunk 1 (options/misc)",
+      "start": 0,
+      "end": 416,
+      "size": 416,
+      "tiers": {
+        "mapped": 42,
+        "partial": 0,
+        "runtime": 0,
+        "unknown": 374
+      }
+    },
+    {
+      "label": "Party primary array (8 slots)",
+      "start": 416,
+      "end": 1184,
+      "size": 768,
+      "tiers": {
+        "mapped": 528,
+        "partial": 96,
+        "runtime": 0,
+        "unknown": 144
+      }
+    },
+    {
+      "label": "Party secondary array (8 slots)",
+      "start": 1184,
+      "end": 2848,
+      "size": 1664,
+      "tiers": {
+        "mapped": 576,
+        "partial": 0,
+        "runtime": 0,
+        "unknown": 1088
+      }
+    },
+    {
+      "label": "Inventory + bookkeeping",
+      "start": 2848,
+      "end": 5956,
+      "size": 3108,
+      "tiers": {
+        "mapped": 2080,
+        "partial": 0,
+        "runtime": 1028,
+        "unknown": 0
+      }
+    },
+    {
+      "label": "Chunk 5 (map/state/misc)",
+      "start": 5960,
+      "end": 7048,
+      "size": 1088,
+      "tiers": {
+        "mapped": 45,
+        "partial": 51,
+        "runtime": 0,
+        "unknown": 992
+      }
+    }
+  ],
+  "runs": [
+    {
+      "start": 0,
+      "end": 16,
+      "label": "Key customization: 8x u16 button masks",
+      "tier": "mapped",
+      "note": "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"
+    },
+    {
+      "start": 16,
+      "end": 24,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 24,
+      "end": 28,
+      "label": "Fol (money), u32",
+      "tier": "mapped",
+      "note": "docs/SO2-FOL-INVESTIGATION.md"
+    },
+    {
+      "start": 28,
+      "end": 48,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 48,
+      "end": 64,
+      "label": "Message window corner colors, 4x u32 0x00BBGGRR",
+      "tier": "mapped",
+      "note": "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"
+    },
+    {
+      "start": 64,
+      "end": 68,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 68,
+      "end": 69,
+      "label": "Sound output (Surround/Stereo/Monaural)",
+      "tier": "mapped",
+      "note": "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"
+    },
+    {
+      "start": 69,
+      "end": 70,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 70,
+      "end": 71,
+      "label": "Vibration on/off",
+      "tier": "mapped",
+      "note": "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"
+    },
+    {
+      "start": 71,
+      "end": 73,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 73,
+      "end": 74,
+      "label": "Targeting mode",
+      "tier": "mapped",
+      "note": "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"
+    },
+    {
+      "start": 74,
+      "end": 75,
+      "label": "Camera work",
+      "tier": "mapped",
+      "note": "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"
+    },
+    {
+      "start": 75,
+      "end": 76,
+      "label": "Combat motion mode",
+      "tier": "mapped",
+      "note": "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"
+    },
+    {
+      "start": 76,
+      "end": 77,
+      "label": "Required disc (0=Disc1, 1=Disc2)",
+      "tier": "mapped",
+      "note": "docs/SO2-DISC-AND-PSYNARD-CHECK.md"
+    },
+    {
+      "start": 77,
+      "end": 416,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 416,
+      "end": 482,
+      "label": "Party primary slot 0: named fields (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/GUTS)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 482,
+      "end": 494,
+      "label": "Party primary slot 0: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)",
+      "tier": "partial",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 494,
+      "end": 512,
+      "label": "Party primary slot 0: opaque bytes (nonzero, no established meaning)",
+      "tier": "unknown",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 512,
+      "end": 578,
+      "label": "Party primary slot 1: named fields (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/GUTS)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 578,
+      "end": 590,
+      "label": "Party primary slot 1: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)",
+      "tier": "partial",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 590,
+      "end": 608,
+      "label": "Party primary slot 1: opaque bytes (nonzero, no established meaning)",
+      "tier": "unknown",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 608,
+      "end": 674,
+      "label": "Party primary slot 2: named fields (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/GUTS)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 674,
+      "end": 686,
+      "label": "Party primary slot 2: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)",
+      "tier": "partial",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 686,
+      "end": 704,
+      "label": "Party primary slot 2: opaque bytes (nonzero, no established meaning)",
+      "tier": "unknown",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 704,
+      "end": 770,
+      "label": "Party primary slot 3: named fields (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/GUTS)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 770,
+      "end": 782,
+      "label": "Party primary slot 3: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)",
+      "tier": "partial",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 782,
+      "end": 800,
+      "label": "Party primary slot 3: opaque bytes (nonzero, no established meaning)",
+      "tier": "unknown",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 800,
+      "end": 866,
+      "label": "Party primary slot 4: named fields (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/GUTS)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 866,
+      "end": 878,
+      "label": "Party primary slot 4: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)",
+      "tier": "partial",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 878,
+      "end": 896,
+      "label": "Party primary slot 4: opaque bytes (nonzero, no established meaning)",
+      "tier": "unknown",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 896,
+      "end": 962,
+      "label": "Party primary slot 5: named fields (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/GUTS)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 962,
+      "end": 974,
+      "label": "Party primary slot 5: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)",
+      "tier": "partial",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 974,
+      "end": 992,
+      "label": "Party primary slot 5: opaque bytes (nonzero, no established meaning)",
+      "tier": "unknown",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 992,
+      "end": 1058,
+      "label": "Party primary slot 6: named fields (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/GUTS)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1058,
+      "end": 1070,
+      "label": "Party primary slot 6: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)",
+      "tier": "partial",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1070,
+      "end": 1088,
+      "label": "Party primary slot 6: opaque bytes (nonzero, no established meaning)",
+      "tier": "unknown",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1088,
+      "end": 1154,
+      "label": "Party primary slot 7: named fields (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/GUTS)",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1154,
+      "end": 1166,
+      "label": "Party primary slot 7: unnamed stat triplets (+4E/+50/+52, +54/+56/+58 relative)",
+      "tier": "partial",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1166,
+      "end": 1184,
+      "label": "Party primary slot 7: opaque bytes (nonzero, no established meaning)",
+      "tier": "unknown",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1184,
+      "end": 1196,
+      "label": "Party secondary slot 0: LUC/STM triplets",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1196,
+      "end": 1210,
+      "label": "Party secondary slot 0: 7x equipment u16",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1210,
+      "end": 1216,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1216,
+      "end": 1218,
+      "label": "Party secondary slot 0: talent mask u16",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1218,
+      "end": 1220,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1220,
+      "end": 1228,
+      "label": "Party secondary slot 0: name (8 bytes ASCII)",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1228,
+      "end": 1244,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1244,
+      "end": 1276,
+      "label": "Party secondary slot 0: 32 battle-ability availability bytes",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 1276,
+      "end": 1388,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1388,
+      "end": 1392,
+      "label": "Party secondary slot 0: battle-ability quick-assign (4 IDs)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 1392,
+      "end": 1404,
+      "label": "Party secondary slot 1: LUC/STM triplets",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1404,
+      "end": 1418,
+      "label": "Party secondary slot 1: 7x equipment u16",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1418,
+      "end": 1424,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1424,
+      "end": 1426,
+      "label": "Party secondary slot 1: talent mask u16",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1426,
+      "end": 1428,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1428,
+      "end": 1436,
+      "label": "Party secondary slot 1: name (8 bytes ASCII)",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1436,
+      "end": 1452,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1452,
+      "end": 1484,
+      "label": "Party secondary slot 1: 32 battle-ability availability bytes",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 1484,
+      "end": 1596,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1596,
+      "end": 1600,
+      "label": "Party secondary slot 1: battle-ability quick-assign (4 IDs)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 1600,
+      "end": 1612,
+      "label": "Party secondary slot 2: LUC/STM triplets",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1612,
+      "end": 1626,
+      "label": "Party secondary slot 2: 7x equipment u16",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1626,
+      "end": 1632,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1632,
+      "end": 1634,
+      "label": "Party secondary slot 2: talent mask u16",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1634,
+      "end": 1636,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1636,
+      "end": 1644,
+      "label": "Party secondary slot 2: name (8 bytes ASCII)",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1644,
+      "end": 1660,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1660,
+      "end": 1692,
+      "label": "Party secondary slot 2: 32 battle-ability availability bytes",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 1692,
+      "end": 1804,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1804,
+      "end": 1808,
+      "label": "Party secondary slot 2: battle-ability quick-assign (4 IDs)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 1808,
+      "end": 1820,
+      "label": "Party secondary slot 3: LUC/STM triplets",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1820,
+      "end": 1834,
+      "label": "Party secondary slot 3: 7x equipment u16",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 1834,
+      "end": 1840,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1840,
+      "end": 1842,
+      "label": "Party secondary slot 3: talent mask u16",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1842,
+      "end": 1844,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1844,
+      "end": 1852,
+      "label": "Party secondary slot 3: name (8 bytes ASCII)",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 1852,
+      "end": 1868,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 1868,
+      "end": 1900,
+      "label": "Party secondary slot 3: 32 battle-ability availability bytes",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 1900,
+      "end": 2012,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2012,
+      "end": 2016,
+      "label": "Party secondary slot 3: battle-ability quick-assign (4 IDs)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2016,
+      "end": 2028,
+      "label": "Party secondary slot 4: LUC/STM triplets",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2028,
+      "end": 2042,
+      "label": "Party secondary slot 4: 7x equipment u16",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2042,
+      "end": 2048,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2048,
+      "end": 2050,
+      "label": "Party secondary slot 4: talent mask u16",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2050,
+      "end": 2052,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2052,
+      "end": 2060,
+      "label": "Party secondary slot 4: name (8 bytes ASCII)",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2060,
+      "end": 2076,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2076,
+      "end": 2108,
+      "label": "Party secondary slot 4: 32 battle-ability availability bytes",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2108,
+      "end": 2220,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2220,
+      "end": 2224,
+      "label": "Party secondary slot 4: battle-ability quick-assign (4 IDs)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2224,
+      "end": 2236,
+      "label": "Party secondary slot 5: LUC/STM triplets",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2236,
+      "end": 2250,
+      "label": "Party secondary slot 5: 7x equipment u16",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2250,
+      "end": 2256,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2256,
+      "end": 2258,
+      "label": "Party secondary slot 5: talent mask u16",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2258,
+      "end": 2260,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2260,
+      "end": 2268,
+      "label": "Party secondary slot 5: name (8 bytes ASCII)",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2268,
+      "end": 2284,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2284,
+      "end": 2316,
+      "label": "Party secondary slot 5: 32 battle-ability availability bytes",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2316,
+      "end": 2428,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2428,
+      "end": 2432,
+      "label": "Party secondary slot 5: battle-ability quick-assign (4 IDs)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2432,
+      "end": 2444,
+      "label": "Party secondary slot 6: LUC/STM triplets",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2444,
+      "end": 2458,
+      "label": "Party secondary slot 6: 7x equipment u16",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2458,
+      "end": 2464,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2464,
+      "end": 2466,
+      "label": "Party secondary slot 6: talent mask u16",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2466,
+      "end": 2468,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2468,
+      "end": 2476,
+      "label": "Party secondary slot 6: name (8 bytes ASCII)",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2476,
+      "end": 2492,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2492,
+      "end": 2524,
+      "label": "Party secondary slot 6: 32 battle-ability availability bytes",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2524,
+      "end": 2636,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2636,
+      "end": 2640,
+      "label": "Party secondary slot 6: battle-ability quick-assign (4 IDs)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2640,
+      "end": 2652,
+      "label": "Party secondary slot 7: LUC/STM triplets",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2652,
+      "end": 2666,
+      "label": "Party secondary slot 7: 7x equipment u16",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 2666,
+      "end": 2672,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2672,
+      "end": 2674,
+      "label": "Party secondary slot 7: talent mask u16",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2674,
+      "end": 2676,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2676,
+      "end": 2684,
+      "label": "Party secondary slot 7: name (8 bytes ASCII)",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 2684,
+      "end": 2700,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2700,
+      "end": 2732,
+      "label": "Party secondary slot 7: 32 battle-ability availability bytes",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2732,
+      "end": 2844,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 2844,
+      "end": 2848,
+      "label": "Party secondary slot 7: battle-ability quick-assign (4 IDs)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md"
+    },
+    {
+      "start": 2848,
+      "end": 4896,
+      "label": "Inventory: fixed 1,024-slot u16 array",
+      "tier": "mapped",
+      "note": "docs/SO2-INVENTORY-ADD-INVESTIGATION.md"
+    },
+    {
+      "start": 4896,
+      "end": 4928,
+      "label": "16 recently-touched inventory IDs",
+      "tier": "mapped",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 4928,
+      "end": 5956,
+      "label": "Runtime integrity bytes - zeroed by serializer, rebuilt on load (not persistent save content)",
+      "tier": "runtime",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 5956,
+      "end": 5968,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 5968,
+      "end": 5980,
+      "label": "Player position X/Y/Z, signed i32 20.12 fixed-point",
+      "tier": "mapped",
+      "note": "docs/SO2-MAP-LOCATION-CHECK.md"
+    },
+    {
+      "start": 5980,
+      "end": 5984,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 5984,
+      "end": 5986,
+      "label": "Facing, signed i16",
+      "tier": "mapped",
+      "note": "docs/SO2-MAP-LOCATION-CHECK.md"
+    },
+    {
+      "start": 5986,
+      "end": 5988,
+      "label": "Scene selector (the real location/archive-selection key)",
+      "tier": "mapped",
+      "note": "docs/SO2-MAP-TERRAIN-INVESTIGATION.md"
+    },
+    {
+      "start": 5988,
+      "end": 5993,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 5993,
+      "end": 5994,
+      "label": "Saved sprite drawing-order value (formerly miscalled 'area ID')",
+      "tier": "mapped",
+      "note": "docs/SO2-MAP-LOCATION-CHECK.md"
+    },
+    {
+      "start": 5994,
+      "end": 5996,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 5996,
+      "end": 5997,
+      "label": "Controlled-object table index",
+      "tier": "mapped",
+      "note": "docs/SO2-PARTY-MEMBER-INVESTIGATION.md"
+    },
+    {
+      "start": 5997,
+      "end": 6240,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6240,
+      "end": 6241,
+      "label": "Message speed",
+      "tier": "mapped",
+      "note": "docs/SO2-OPTIONS-MENU-INVESTIGATION.md"
+    },
+    {
+      "start": 6241,
+      "end": 6272,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6272,
+      "end": 6273,
+      "label": "Byte that changes on real area-entry transitions; role unexplained",
+      "tier": "partial",
+      "note": "docs/SO2-MAP-LOCATION-CHECK.md"
+    },
+    {
+      "start": 6273,
+      "end": 6580,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6580,
+      "end": 6584,
+      "label": "Psynard parking bank A: X",
+      "tier": "mapped",
+      "note": "docs/SO2-DISC-AND-PSYNARD-CHECK.md"
+    },
+    {
+      "start": 6584,
+      "end": 6588,
+      "label": "Psynard parking bank A: Z",
+      "tier": "mapped",
+      "note": "docs/SO2-DISC-AND-PSYNARD-CHECK.md"
+    },
+    {
+      "start": 6588,
+      "end": 6592,
+      "label": "Psynard parking bank B: X",
+      "tier": "mapped",
+      "note": "docs/SO2-DISC-AND-PSYNARD-CHECK.md"
+    },
+    {
+      "start": 6592,
+      "end": 6596,
+      "label": "Psynard parking bank B: Z",
+      "tier": "mapped",
+      "note": "docs/SO2-DISC-AND-PSYNARD-CHECK.md"
+    },
+    {
+      "start": 6596,
+      "end": 6612,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6612,
+      "end": 6616,
+      "label": "Psynard parking bank A: Y",
+      "tier": "mapped",
+      "note": "docs/SO2-DISC-AND-PSYNARD-CHECK.md"
+    },
+    {
+      "start": 6616,
+      "end": 6620,
+      "label": "Psynard parking bank B: Y",
+      "tier": "mapped",
+      "note": "docs/SO2-DISC-AND-PSYNARD-CHECK.md"
+    },
+    {
+      "start": 6620,
+      "end": 6632,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6632,
+      "end": 6633,
+      "label": "Global flags region start - located, contents unexplored",
+      "tier": "partial",
+      "note": "docs/SAVE-FORMAT.md"
+    },
+    {
+      "start": 6633,
+      "end": 6719,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6719,
+      "end": 6721,
+      "label": "Specialty unlock bitmask (12 tiers, Knowledge/Sensibility/Technique/Combat x3)",
+      "tier": "mapped",
+      "note": "docs/SO2-SPECIALTY-INVESTIGATION.md"
+    },
+    {
+      "start": 6721,
+      "end": 6725,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6725,
+      "end": 6726,
+      "label": "Byte next to the specialty bitmask that changes on area entry; role unexplained",
+      "tier": "partial",
+      "note": "docs/SO2-MAP-LOCATION-CHECK.md"
+    },
+    {
+      "start": 6726,
+      "end": 7000,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 7000,
+      "end": 7048,
+      "label": "48-byte region proven required for cross-area teleport; internal structure not decoded",
+      "tier": "partial",
+      "note": "docs/SO2-MAP-LOCATION-CHECK.md"
+    }
+  ]
+}
