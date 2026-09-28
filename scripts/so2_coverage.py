@@ -131,6 +131,12 @@ RANGES = [
     (0x19E9, 0x19EA, "Global flags byte: independent travel/state bits (not a single enum)", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x19EA, 0x19EB, "Global flags byte: object-14/overlay-state bits", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
     (0x1A46, 0x1A47, "Global flags byte tested by two text/UI readers; assignment unresolved", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+
+    # ---- chunk 5, 2026-09-28 pass: 73 new bytes in global flag bitmap (story/event milestones) ----
+    (0x19F5, 0x1A28, "Global flags bitmap (Range A): prologue, Lacour tournament, Linga herbs, Nede arrival", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A47, 0x1A49, "Global flags bitmap (Range B): early event milestone flags", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1A57, 0x1A65, "Global flags bitmap (Range B): Arlia village tour & Cave of Trials riddles", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
+    (0x1B07, 0x1B0D, "Global flags bitmap (Range B): late/post-game milestones, Eluria ID card, Fun City, Cave of Trials bosses", "partial", "docs/SO2-CHUNK5-MAPPING.md"),
 ]
 
 

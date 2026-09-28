@@ -2,8 +2,8 @@
   "total_bytes": 7048,
   "tier_totals": {
     "mapped": 5180,
-    "unknown": 677,
-    "partial": 163,
+    "unknown": 604,
+    "partial": 236,
     "runtime": 1028
   },
   "regions": [
@@ -62,9 +62,9 @@
       "size": 1088,
       "tiers": {
         "mapped": 537,
-        "partial": 67,
+        "partial": 140,
         "runtime": 0,
-        "unknown": 484
+        "unknown": 411
       }
     }
   ],
@@ -1534,6 +1534,20 @@
     },
     {
       "start": 6635,
+      "end": 6645,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6645,
+      "end": 6696,
+      "label": "Global flags bitmap (Range A): prologue, Lacour tournament, Linga herbs, Nede arrival",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6696,
       "end": 6719,
       "label": "unmapped",
       "tier": "unknown",
@@ -1569,6 +1583,41 @@
     },
     {
       "start": 6727,
+      "end": 6729,
+      "label": "Global flags bitmap (Range B): early event milestone flags",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6729,
+      "end": 6743,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6743,
+      "end": 6757,
+      "label": "Global flags bitmap (Range B): Arlia village tour & Cave of Trials riddles",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6757,
+      "end": 6919,
+      "label": "unmapped",
+      "tier": "unknown",
+      "note": ""
+    },
+    {
+      "start": 6919,
+      "end": 6925,
+      "label": "Global flags bitmap (Range B): late/post-game milestones, Eluria ID card, Fun City, Cave of Trials bosses",
+      "tier": "partial",
+      "note": "docs/SO2-CHUNK5-MAPPING.md"
+    },
+    {
+      "start": 6925,
       "end": 7000,
       "label": "unmapped",
       "tier": "unknown",

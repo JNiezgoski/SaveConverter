@@ -141,6 +141,178 @@ travel state. It is a strong target for story/event flags, but **no new named
 plot milestone** was identified in this pass. Generic bit operations alone do
 not turn the whole bitmap into a story-progress map. README queue item 4 stays open.
 
+### Script VM flag opcodes and named story milestones (2026-09-28)
+
+The script VM's direct accesses to the global bitmap $G = \text{[80075704]}$ (capacity 368 bytes, decoded `0x19E8..0x1B58`, 2,944 bit positions) have been mapped to specific bytecode opcodes, their operand encodings decoded, and their disc-script callers tied to named story events and plot milestones.
+
+#### 1. VM opcode identification and operand encoding
+
+The main bytecode interpreter loop at `8006C358` fetches each 32-bit instruction word, shifts right by 24 bits (`srl $v0, $s0, 0x18`), decrements by 1 (`addiu $v1, $v0, -1`), and indexes the primary jump table at `800739A0`. Four opcodes directly manipulate or inspect the global flag bitmap:
+
+- **Opcode `0x21` Sub-opcode `0x03` (`0x2103xxxx`) — Flag Set/Clear (Immediate Operand)**:
+  Dispatches through table entry `0x20` at `8006CD48`, then sub-table `80073B30` entry 3 at `8006CE54`.
+  - **Word 0 (`0x2103xxxx`)**:
+    - Bits 31..24: Opcode `0x21`.
+    - Bit 23 (`0x00800000`): Addressing Mode flag. If `0`, targets global bitmap $G$; if `1`, targets local stack frame flags at `-1 + 0x1C($s1)`.
+    - Bits 22..16: Sub-opcode `0x03` (flag/bit boolean mode).
+    - Bits 15..0: Flag ID $n \in [0, 2943]$.
+  - **Word 1 (Next script PC word)**: Immediate value `0x00000001` for SET (`G[n >> 3] |= (1 << (n & 7))`), `0x00000000` for CLEAR (`G[n >> 3] &= ~(1 << (n & 7))`). Script PC advances by 4 (`8006CF50`).
+
+- **Opcode `0x22` Sub-opcode `0x03` (`0x2203xxxx`) — Flag Set/Clear (Stack Operand)**:
+  Dispatches through table entry `0x21` at `8006CF64`, then sub-table `80073B60` entry 3 at `8006D068`.
+  Pops value from the VM evaluation stack: if nonzero, executes the SET arm (`8006D06C`); if zero, branches to the CLEAR arm (`8006D0D8`).
+
+- **Opcode `0x1D` (`0x1D00xxxx`) — Flag Compare Immediate**:
+  Dispatches through table entry `0x1C` at `8006CC48`.
+  - **Word 0 (`0x1D00xxxx`)**: Bits 15..0 = flag ID $n$, bit 23 = mode flag (`0` = global bitmap).
+  - **Word 1**: Expected boolean value (`0` or `1`). Tests `((G[n >> 3] >> (n & 7)) & 1) == Word 1` and pushes boolean result (`1` or `0`) onto the VM stack at `8006CCEC`. Script PC advances by 4.
+
+- **Opcode `0x0E` (`0x0E00xxxx`) — Flag Read / Push to Stack**:
+  Dispatches through table entry `0x0D` at `8006C6C8`.
+  Reads bit $n$ from global bitmap (`lbu $v0, ($v0)` at `8006C750`), shifts right by `n & 7`, masks with 1, and pushes the bit value (`0` or `1`) onto the VM stack at `8006C764`.
+
+#### Disassembly evidence (resident code)
+
+**Opcode `0x2103` Set/Clear handler (`8006CE54..8006CF40`)**:
+```mips
+8006CE54: lw    $v0, 0x10($s1)       ; Load script PC
+8006CE5C: lw    $v0, ($v0)           ; Load Word 1 (immediate value: 0 or 1)
+8006CE64: beqz  $v0, 0x8006ced4      ; If 0, branch to CLEAR arm
+8006CE68: and   $v0, $s0, $s4        ; Test bit 23 (s4 = 0x00800000)
+8006CE6C: beqz  $v0, 0x8006cea4      ; If 0, target global bitmap G
+...
+; Global SET arm:
+8006CEB4: lw    $a0, 0x5704($a0)     ; a0 = G = [80075704]
+8006CEB8: sra   $v0, $v0, 3          ; byte offset = flag_id >> 3
+8006CEBC: addu  $a0, $a0, $v0        ; a0 = &G[flag_id >> 3]
+8006CEC0: andi  $v0, $s0, 7          ; bit index = flag_id & 7
+8006CEC4: lbu   $v1, ($a0)           ; v1 = current byte
+8006CEC8: sllv  $v0, $s7, $v0        ; mask = 1 << bit index (s7 = 1)
+8006CECC: j     0x8006cf40
+8006CED0: or    $v1, $v1, $v0        ; v1 |= mask
+...
+; Global CLEAR arm:
+8006CF20: lw    $a0, 0x5704($a0)     ; a0 = G = [80075704]
+8006CF24: sra   $v0, $v0, 3          ; byte offset = flag_id >> 3
+8006CF28: addu  $a0, $a0, $v0        ; a0 = &G[flag_id >> 3]
+8006CF2C: andi  $v0, $s0, 7          ; bit index = flag_id & 7
+8006CF30: sllv  $v0, $s7, $v0        ; mask = 1 << bit index
+8006CF34: lbu   $v1, ($a0)           ; v1 = current byte
+8006CF38: nor   $v0, $zero, $v0      ; ~mask
+8006CF3C: and   $v1, $v1, $v0        ; v1 &= ~mask
+8006CF40: sb    $v1, ($a0)           ; Store updated byte to G
+8006CF44: lw    $a0, 0x10($s1)       ; Advance script PC past Word 1
+8006CF50: addiu $v0, $a0, 4; sw $v0, 0x10($s1)
+```
+
+**Opcode `0x1D00` Compare Immediate handler (`8006CC48..8006CCEC`)**:
+```mips
+8006CC48: lw    $v1, 0x24($s1)       ; VM stack pointer
+8006CC4C: lw    $a0, 0x10($s1)       ; Script PC
+8006CC50: addiu $v0, $v1, 4; sw $v0, 0x24($s1) ; stack_ptr += 4
+8006CC58: addiu $v0, $a0, 4; sw $v0, 0x10($s1) ; script_pc += 4
+8006CC60: and   $v0, $s0, $s4        ; Test bit 23
+8006CC64: lw    $a0, ($a0)           ; Load expected comparison value (Word 1)
+8006CC68: beqz  $v0, 0x8006ccac      ; If 0, target global bitmap G
+...
+8006CCC0: lw    $v0, 0x5704($v0)     ; v0 = G = [80075704]
+8006CCC4: sra   $v1, $v1, 3          ; flag_id >> 3
+8006CCC8: addu  $v0, $v0, $v1        ; &G[flag_id >> 3]
+8006CCCC: lbu   $v0, ($v0)           ; Read byte
+8006CCD0: andi  $v1, $s0, 7          ; flag_id & 7
+8006CCD4: srav  $v0, $v0, $v1        ; shift right by bit index
+8006CCD8: andi  $v0, $v0, 1          ; bit = (byte >> bit_index) & 1
+8006CCDC: bne   $v0, $a0, 0x8006cce8 ; if bit != expected, push 0
+8006CCE0: move  $v0, $zero
+8006CCE4: addiu $v0, $zero, 1        ; if bit == expected, push 1
+8006CCEC: sw    $v0, ($a1)           ; push result to stack
+```
+
+**Opcode `0x0E00` Read / Push Flag handler (`8006C6C8..8006C764`)**:
+```mips
+8006C704: and   $v0, $s0, $s4        ; Test bit 23
+8006C708: beqz  $v0, 0x8006c734      ; If 0, target global bitmap G
+...
+8006C744: lw    $v0, 0x5704($v0)     ; v0 = G = [80075704]
+8006C748: sra   $v1, $v1, 3          ; flag_id >> 3
+8006C74C: addu  $v0, $v0, $v1        ; &G[flag_id >> 3]
+8006C750: lbu   $v0, ($v0)           ; Read byte
+8006C754: andi  $v1, $s0, 7          ; flag_id & 7
+8006C758: srav  $v0, $v0, $v1        ; shift right
+8006C75C: andi  $v0, $v0, 1          ; extract bit
+8006C764: sw    $v0, ($a0)           ; push bit (0 or 1) to VM stack
+```
+
+#### 2. Disc script archive scan and named story milestones
+
+All 827 container archives (`3207..4033`, `scene_index = archive_index - 3207`) on Disc 1 were decompressed (SLZ tag 1) and scanned for opcodes `0x2103`, `0x2203`, `0x1D00`, and `0x0E00`. A total of **857 milestone occurrences** touching **656 distinct flags** were extracted and correlated with 16-bit decoded scene dialogue text.
+
+Confirmed story milestones span both Range A (`0x1F..0x1FF`, bits 31..511) and Range B (`0x1FF..0xB7F`, bits 512..2943):
+
+| Decoded Byte | Bit | Flag ID | Opcode(s) | Scene (Arch) | Story Event / Dialogue Milestone |
+|---|---|---|---|---|---|
+| `19F5` | 6 | 110 (`0x006E`) | SET | 24 (3231) | **Arlia Prologue**: Newlywed couple's house: *"Don't be woolgathering, or you'll be carried off by Alen"* |
+| `19F6` | 2 | 114 (`0x0072`) | SET | 53, 63 (3260, 3270) | **Salva Drift**: Mine entrance guard: *"We have come to slay the dragon - Is it still off limits?"* |
+| `19F6` | 5 | 117 (`0x0075`) | SET | 355 (3562) | **Cross Continent**: *"The Book of Exorcism says that we should go to the mountain peak... Tears of the King"* |
+| `19F7` | 0 | 120 (`0x0078`) | SET | 135 (3342) | **Cross Cave**: Cave expedition: *"Eglas has regained consciousness... That Master of Heraldry was the real culprit"* |
+| `19F7` | 3 | 123 (`0x007B`) | SET | 23 (3230) | **Arlia Church**: Priest sermon on the *"Warrior of Legend... holy man who uses the Sword of Light"* |
+| `19F7` | 5 | 125 (`0x007D`) | SET | 26 (3233) | **Arlia Hearn's Store**: Medicine discussion: *"This is Mr. Hearn's General Store... That is the smell of herbs"* |
+| `19F7` | 7 | 127 (`0x007F`) | SET | 34 (3241) | **Arlia Mayor Regis**: *"This is the house of the Mayor of Arlia Village... Regis: try going to the town of Cross"* |
+| `19F8` | 5..6 | 133..134 (`0x0085..6`) | SET | 21 (3228) | **Shingo Forest / Arlia**: Alien tech arrival: *"I just knew it had to be him - He had the Alien Raiments and the Sword of Light"* |
+| `19F8` | 7 | 135 (`0x0087`) | SET | 124, 126 (3331, 3333) | **Port Town of Clik**: Clik travels: *"Say, weren't we heading toward Clik... Clik is much further north"* |
+| `1A20` | 2..3 | 450..451 (`0x01C2..3`) | SET | 215 (3422) | **Lacour City**: Tournament festival: *"We're running specials during the tournament"* |
+| `1A21` | 2 | 458 (`0x01CA`) | SET | 216 (3423) | **Lacour City**: Military mobilization: *"The entire town is in a merry festive mood but the military situation is intense"* |
+| `1A21` | 7 | 463 (`0x01CF`) | CLEAR, SET | 477 (3684) | **Lacour Tournament of Arms**: Battle Stadium announcer: *"Ladies and gentlemen! The annual Lacour Tournament of Arms is about to begin"* |
+| `1A22..1A24` | 4..4 | 468..484 (`0x01D4..0x01E4`) | SET | 402..411 (3609..3618) | **Sanctuary of Linga**: Linga herbal collection quest (17 flags): *"This must be a medicinal herb... Now we can finally meet Keith [Bowman]"* |
+| `1A24` | 3 | 483 (`0x01E3`) | SET | 412 (3619) | **Sanctuary of Linga**: Deep sanctuary gate: *"Is this the 'Door to the Netherworld' where monsters come out?"* |
+| `1A24` | 6 | 486 (`0x01E6`) | SET | 583 (3790) | **Nede Defense Force**: *"My name is Marianna Kronik - I am the leader of the Nede Defense Force"* |
+| `1A26` | 4 | 500 (`0x01F4`) | CLEAR, SET | 234 (3441) | **Energy Nede Arrival**: Coastline shipwreck: *"Other than us, have you heard of anyone else washing up on shore?"* |
+| `1A26` | 5 | 501 (`0x01F5`) | SET | 272 (3479) | **Central City**: Director Artis greeting: *"I'm Artis, the Director of this facility - I have already heard all about you"* |
+| `1A26` | 6 | 502 (`0x01F6`) | SET | 266 (3473) | **Central City Information Library**: Password retrieval: *"This is a plastic case containing a paper with the password on it"* |
+| `1A26` | 7 | 503 (`0x01F7`) | SET | 247 (3454) | **Central City Mayor**: Greeting Claude's party: *"My name is Narl - I am the Mayor of Central City"* |
+| `1A27` | 2 | 506 (`0x01FA`) | SET | 277 (3484) | **Central City**: Chisato's house: *"Hey! What are you all doing in my house?"* |
+| `1A27` | 6 | 510 (`0x01FE`) | CLEAR, SET | 279 (3486) | **Fun City Arrival**: Amusement city entrance: *"There's something different about this town... This town looks like fun!"* |
+| `1A45` | 1 | 745 (`0x02E9`) | SET | 80 (3287) | **Alen-Tax Wedding Confrontation**: Executed live in `tools/so2_script_flags_evidence.py` |
+| `1A58` | 4 | 900 (`0x0384`) | SET | 17 (3224) | **Arlia Village Tour**: Village entrance: *"Welcome to Arlia"* |
+| `1A58` | 6 | 902 (`0x0386`) | SET | 23 (3230) | **Arlia Village Tour**: Church: *"This is Arlia's church - This is where they hold weddings in the village"* |
+| `1A58` | 7 | 903 (`0x0387`) | SET | 24 (3231) | **Arlia Village Tour**: Newlywed couple: *"This is the house of a newlywed couple - They are so lovey-dovey..."* |
+| `1A59` | 0 | 904 (`0x0388`) | SET | 26 (3233) | **Arlia Village Tour**: Store: *"This is Mr. Hearn's General Store - They sell lots of useful things"* |
+| `1A59` | 3 | 907 (`0x038B`) | SET | 33 (3240) | **Arlia Village Tour**: Carpenter: *"The man of this house is a carpenter - He is now working on a big job..."* |
+| `1A59` | 5 | 909 (`0x038D`) | SET | 34 (3241) | **Arlia Village Tour**: Mayor Regis: *"This is the house of the Mayor of Arlia Village - He is a very smart man"* |
+| `1A63` | 5 | 989 (`0x03DD`) | CLEAR, SET | 727 (3934) | **Cave of Trials Riddles**: Level riddle solved: *"Good work! You solved the riddle for this level! Here's the LAST TEST... Phew! You win!"* |
+| `1A64` | 4 | 996 (`0x03E4`) | SET | 758 (3965) | **Cave of Trials Puzzle**: Statue: *"Look at this strange stone statue - It says 'Funny Thief' on it... door opening in the distance"* |
+| `1A64` | 5..6 | 997..998 (`0x03E5..6`) | SET | 764 (3971) | **Cave of Trials Puzzle**: Altar tablet: *"Something's written on this stone tablet... Make the offering on the altar whose portal opens"* |
+| `1A64` | 7 | 999 (`0x03E7`) | SET | 737 (3944) | **Cave of Trials Trap**: Miel 32 robot: *"Intruder alert! No ally identification detected - Run expulsion program - Initiate Miel 32"* |
+| `1B07` | 4..5 | 2300..2301 (`0x08FC..D`) | SET | 740 (3947) | **Cave of Trials Level 4**: Spell altar: *"Mistaken Fighting Man has learned the spell Extinction"* |
+| `1B07` | 6 | 2302 (`0x08FE`) | SET | 742 (3949) | **Cave of Trials Door Mechanism**: *"I heard a door closing / opening in the distance"* |
+| `1B08` | 4 | 2308 (`0x0904`) | SET | 791 (3998) | **Cave of Trials Progression**: Floor reached: *"Cave of Trials Level 9"* |
+| `1B08..1B09` | 6..3 | 2310..2315 (`0x0906..B`) | SET | 233 (3440) | **Eluria Tower Escape / ID Card**: Pickup (6 flags): *"When I escaped from Eluria, I picked this up... What is it? It's an ID card"* |
+| `1B09` | 4 | 2316 (`0x090C`) | SET | 807 (4014) | **Cave of Trials Level 11 Boss**: Dragon Tyrant: *"A dragon --- Underground... You have come far to reach this place... Dragon Tyrant"* |
+| `1B09` | 5 | 2317 (`0x090D`) | SET | 809 (4016) | **Cave of Trials Level 12 Boss**: Phoenix: *"What is this--- I live eternal - Nature rules me not... Phoenix"* |
+| `1B0A` | 3 | 2323 (`0x0913`) | SET | 229 (3436) | **Nede Rescue Milestone**: Awakening after Eluria: *"Where am I? I seem to have been saved, but... At that time, we..."* |
+| `1B0A` | 6 | 2326 (`0x0916`) | CLEAR, SET | 688, 689 (3895, 3896) | **Fun City Cooking Master**: Cooking contest: *"You are not permitted to leave in the middle of the contest - Fight to the end! Food God Yarma"* |
+| `1B0A` | 7 | 2327 (`0x0917`) | CLEAR, SET | 297, 298, 305 (3504..12) | **Fun City Battle Stadium**: Arena battles: *"Challenger! Challenger! ... Simulation"* |
+| `1B0C` | 3 | 2339 (`0x0923`) | SET | 688 (3895) | **Fun City Cooking Master**: Contest opponent: *"Food God and Prince of Darkness Yarma / Iona / Loren"* |
+| `1B0C` | 4 | 2340 (`0x0924`) | SET | 809 (4016) | **Cave of Trials Level 12 Boss**: Phoenix defeat flag |
+| `1B0C` | 6 | 2342 (`0x0926`) | SET | 272 (3479) | **Central City**: Artis coordination flag |
+
+#### 3. Verification and byte closure
+
+- **Bounded Execution Verification**:
+  Opcode instruction fetch, sub-opcode decoding, addressing mode bit-23 branching, arithmetic offset calculation, and single-bit bitwise masking were verified via `tools/so2_script_flags_evidence.py`. The runner executes real MIPS instructions from resident `entry-2576.bin` against a synthetic memory space across 16 sample flag positions (including bounds $n=1, 7, 8, 199, 200, 255, 256, 299, 300, 399, 400, 499, 500, 0x2BC, 0x2E9, 2943$), accumulator mode ($n=0$), computed address mode ($0x345$), and literal decompressed script bytecode from archive 3287 offset `0x7614` (`0x210302E9 0x00000001` -> bit `745 & 7 = 1` set at decoded byte `0x19E8 + (745 >> 3) = 0x1A45`).
+- **Accounting against the 357 unmapped bitmap bytes**:
+  - **Range A (`0x19EB..0x1A3F`, 84 unmapped bytes)**:
+    - 51 contiguous bytes from `0x19F5` to `0x1A27` (flags 110..511) are densely referenced by the script VM for named plot milestones (prologue, Salva drift, Cross continent, Clik, Lacour tournament, Linga sanctuary herbs, and Energy Nede arrival). These 51 bytes are promoted to `partial` in `scripts/so2_coverage.py`.
+    - Bytes `0x19EB..0x19F4` (10 bytes, flags 24..109) and `0x1A28..0x1A3E` (23 bytes, flags 512..695) remain open / unmapped.
+  - **Range B (`0x1A47..0x1B58`, 273 unmapped bytes)**:
+    - 22 bytes containing verified named plot milestones have been resolved:
+      - `0x1A47..0x1A48` (2 bytes, flags 760..769)
+      - `0x1A57..0x1A64` (14 bytes, flags 890..999: Rena's Arlia village tour, Cave of Trials riddle puzzles)
+      - `0x1B07..0x1B0C` (6 bytes, flags 2300..2342: Cave of Trials bosses, Eluria ID card, Fun City Cooking Master, Battle Stadium)
+      These 22 bytes are promoted to `partial` in `scripts/so2_coverage.py`.
+    - The remaining 251 bytes in Range B remain open / unmapped.
+  - **Total**: **73 bytes** (20.4%) of the 357 previously unknown bitmap bytes are now accounted for with real named plot milestones and verified VM opcodes. 284 bytes remain open.
+
 ## Located accesses whose meanings remain unresolved
 
 These are examined leads, **excluded from the 494-byte increase**.
