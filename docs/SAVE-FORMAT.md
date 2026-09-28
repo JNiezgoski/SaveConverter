@@ -56,6 +56,23 @@ Implemented as `so2_sign()` in `saveconv.py`. Confirmed from the game's MIPS che
 writer and validators on 2026-09-25; see [investigation and evidence](SO2-CHECKSUM-INVESTIGATION.md).
 The older `[0x206, 0x281)` rule was an accidental match when byte `0x280` was `0xFF`.
 
+## Decoded chunk 5 update (2026-09-27)
+
+[Chunk-5 mapping and evidence](SO2-CHUNK5-MAPPING.md) adds 494 bytes of
+instruction-backed storage roles, bringing internal mapping to 539/1,088 bytes
+(49.54%). New arrays include 12 x 20-byte names at `0x1770`, 48 clock snapshots
+at `0x18C8`, ten pending item-delivery words at `0x1998`, and eight saved party
+IDs at `0x19C8`. These are disassembly findings, with bounded execution only
+where explicitly tagged; no new in-game edit test is claimed.
+
+**Live-pointer correction:** the serialized chunk is resource `0xE`, assembled
+from `F=[80075710]` for its first `0x2A0` bytes and separate `G=[80075704]` for
+its next `0x170` bytes. G maps to decoded `0x19E8..0x1B58`; it is not live
+`F+0x2A0`. The final 48-byte resource-E trailer remains internally unexplained.
+The global bitmap's read/set/clear behavior is confirmed, but most individual
+flag meanings remain open. Older "located but not explored" notes below are
+superseded to that extent; no complete story-flag map is claimed.
+
 ## The 12 character IDs
 
 | ID | Character | ID | Character |

@@ -1,0 +1,573 @@
+source	address	base	offset_expression	access	width	review
+artifacts/so2-options-menu/entry-2998.asm	8007F690	F	0x0	R	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004DB38	F	0x0	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DB8C	F	0x0	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DEF4	F	0x0	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF38	F	0x0	W	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056010	F	0x0	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056064	F	0x0	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005EAF0	F	0x0	W	pair endpoint	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005EB34	F	0x0	W	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005ECA8	F	0x0	W	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005ECF4	F	0x0	W	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-terrain-pass3/overworld.asm	80089048	F	0x0	R	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-terrain-pass3/overworld.asm	8008C9B4	F	0x0	R	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-terrain-pass3/overworld.asm	8008E6D4	F	0x0	R	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004DB34	F	0x3	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DEF0	F	0x3	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005600C	F	0x3	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005EAEC	F	0x3	W	pair endpoint	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004DB40	F	0x4	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DB90	F	0x4	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DEFC	F	0x4	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF3C	F	0x4	W	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056018	F	0x4	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056068	F	0x4	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005EAF8	F	0x4	W	pair endpoint	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005EB38	F	0x4	W	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004DB3C	F	0x7	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DEF8	F	0x7	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056014	F	0x7	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005EAF4	F	0x7	W	pair endpoint	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004C6BC	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C6D8	F	0x8	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C6E4	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C760	F	0x8	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C790	F	0x8	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004DB48	F	0x8	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DB94	F	0x8	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF04	F	0x8	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF40	F	0x8	W	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004E398	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80051B64	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800543E8	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054460	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054470	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054488	F	0x8	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055320	F	0x8	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005583C	F	0x8	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80056020	F	0x8	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005606C	F	0x8	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005EB00	F	0x8	W	pair endpoint	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EB3C	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EC68	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80063A5C	F	0x8	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004DB44	F	0xb	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF00	F	0xb	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005601C	F	0xb	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005EAFC	F	0xb	W	pair endpoint	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004C6C0	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C6E8	F	0xc	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C6F8	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C764	F	0xc	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C794	F	0xc	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004DB50	F	0xc	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DB98	F	0xc	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF0C	F	0xc	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF44	F	0xc	W	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004E39C	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80051B74	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800543F0	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054474	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005532C	F	0xc	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80056028	F	0xc	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056070	F	0xc	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005EB08	F	0xc	W	pair endpoint	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EB40	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EC6C	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80063A60	F	0xc	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004DB4C	F	0xf	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF08	F	0xf	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056024	F	0xf	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005EB04	F	0xf	W	pair endpoint	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004C6C4	F	0x10	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C6DC	F	0x10	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C6F0	F	0x10	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C768	F	0x10	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C798	F	0x10	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004E3A0	F	0x10	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80051B84	F	0x10	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800543F8	F	0x10	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054478	F	0x10	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005448C	F	0x10	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055338	F	0x10	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055840	F	0x10	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EC70	F	0x10	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80063A64	F	0x10	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C6C8	F	0x14	W	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004E3A4	F	0x14	W	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80063A68	F	0x14	W	4	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004C704	F	0x18	W	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004E3B8	F	0x18	W	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80051B90	F	0x18	W	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055344	F	0x18	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EC74	F	0x18	W	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/entry-3001.asm	80082280	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/entry-3001.asm	80082724	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80049D04	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80049D20	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004CE1C	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004D3F8	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004E070	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F288	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054398	F	0x1a	W	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054440	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054BC0	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054F10	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055668	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055C38	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EC7C	F	0x1a	W	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005ECC0	F	0x1a	W	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005ED08	F	0x1a	W	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800664EC	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80066570	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	80083E88	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	80087000	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	800872FC	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	80088FE4	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	80089038	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	800891B0	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	80089580	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B0B4	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B2A0	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B864	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008C94C	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008C9A4	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008D4C0	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008E6C4	F	0x1a	R	2	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004B744	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004CE38	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004DC34	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004DC70	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004DFFC	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004E030	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004E170	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004EFFC	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004F588	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004FA38	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80053D24	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800546C8	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80054768	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800547F0	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80054F24	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80055890	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005EBFC	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005EC24	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005EC3C	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005EC64	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80063508	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8006353C	F	0x1c	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800635C4	F	0x1c	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80054400	F	0x1e	W	2	saved scene-view parameter; exact axis unresolved
+artifacts/so2-options-menu/resident.asm	80055828	F	0x1e	R	2	saved scene-view parameter; exact axis unresolved
+artifacts/so2-options-menu/resident.asm	80063A10	F	0x1e	W	2	saved scene-view parameter; exact axis unresolved
+artifacts/so2-terrain-pass3/overworld.asm	8008AE70	F	0x1e	W	2	saved scene-view parameter; exact axis unresolved
+artifacts/so2-options-menu/resident.asm	8004B448	F	0x20	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-terrain-pass3/overworld.asm	800889A4	F	0x20	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-terrain-pass3/overworld.asm	800889CC	F	0x20	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-terrain-pass3/overworld.asm	800889DC	F	0x20	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004C710	F	0x21	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C76C	F	0x21	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C79C	F	0x21	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004E3C0	F	0x21	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055348	F	0x21	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EC50	F	0x21	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EC60	F	0x22	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004B47C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004B4B8	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004B604	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C380	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C680	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C888	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004CD08	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004CF38	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004D11C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004D810	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004DA24	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004EB90	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004EBD4	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004EBEC	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004EC0C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004ED2C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004EE04	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004EEAC	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004EF24	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F024	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F030	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F05C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F0E0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F12C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F188	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F1D4	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F1F0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F36C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F3E4	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F444	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F4A4	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F524	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F5B0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F5D8	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F5E4	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F610	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F914	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FAE0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FB08	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FB34	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FB64	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FBBC	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FBE0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FC14	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FC4C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FDC0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FEA4	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004FF28	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050000	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050064	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050160	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800501A0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005021C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800502F0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050328	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050580	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050624	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050710	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005075C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050A84	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80050C04	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80051490	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80051B04	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800540D8	F	0x24	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800540F8	F	0x24	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055508	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055658	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055874	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800559C8	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055A3C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055B00	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005ECBC	F	0x24	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005ECFC	F	0x24	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80062644	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8006375C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800637B0	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800637BC	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80064868	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80065F24	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80066A1C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80068838	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80068B58	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80068CD8	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8006A63C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8006AD74	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	80082B8C	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008BA40	F	0x24	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800540E8	F	0x25	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80054108	F	0x25	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005ECB0	F	0x25	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005ED04	F	0x25	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-field-control/field-overlay-full.asm	8008DBB4	F	0x28	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED24	F	0x28	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DBB8	F	0x2c	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED28	F	0x2c	W	2	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED2C	F	0x2e	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DBD4	F	0x3c	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ECE0	F	0x3c	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DBD8	F	0x40	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ECE4	F	0x40	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DBF4	F	0x50	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED54	F	0x50	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DBF8	F	0x54	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED58	F	0x54	W	2	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED5C	F	0x56	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC14	F	0x64	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED78	F	0x64	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC18	F	0x68	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED7C	F	0x68	W	2	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED80	F	0x6a	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC34	F	0x78	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED94	F	0x78	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC38	F	0x7c	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005ED98	F	0x7c	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC54	F	0x8c	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EDB4	F	0x8c	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC58	F	0x90	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EDB8	F	0x90	W	2	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EDBC	F	0x92	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC74	F	0xa0	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EDD8	F	0xa0	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC78	F	0xa4	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EDDC	F	0xa4	W	2	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EDE0	F	0xa6	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC94	F	0xb4	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EDF4	F	0xb4	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DC98	F	0xb8	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EDF8	F	0xb8	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DCB4	F	0xc8	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE0C	F	0xc8	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DCB8	F	0xcc	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE10	F	0xcc	W	2	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DCD4	F	0xdc	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE2C	F	0xdc	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DCD8	F	0xe0	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE30	F	0xe0	W	2	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE34	F	0xe2	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DCF4	F	0xf0	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE48	F	0xf0	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DCF8	F	0xf4	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE4C	F	0xf4	W	1	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DD14	F	0x104	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE60	F	0x104	W	4	character-name storage
+artifacts/so2-field-control/field-overlay-full.asm	8008DD18	F	0x108	W	4	character-name storage
+artifacts/so2-options-menu/resident.asm	8005EE64	F	0x108	W	4	character-name storage
+artifacts/so2-options-menu/entry-3016.asm	8007E320	F	0x118	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/entry-3016.asm	8007E404	F	0x118	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005853C	F	0x118	R	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005EC44	F	0x118	W	1	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80048C30	F	0x244	R	4	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	80048C3C	F	0x244	W	4	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	8006776C	F	0x244	R	4	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	800676A0	F	0x248	R	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	800676B0	F	0x248	W	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	800676C4	F	0x248	R	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	80066604	F	0x24a	R	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	80066614	F	0x24a	W	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	800676E0	F	0x24a	R	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/entry-2998.asm	8007F670	F	0x24c	R	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	80066630	F	0x24c	R	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	80066640	F	0x24c	W	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/resident.asm	800676FC	F	0x24c	R	2	operational counter; player-facing name unresolved
+artifacts/so2-options-menu/entry-2986.asm	8007E848	F	0x250	W	2	deferred item delivery
+artifacts/so2-options-menu/entry-2986.asm	8007E7E0	F	0x262	W	2	deferred item delivery
+artifacts/so2-options-menu/entry-3001.asm	80081DF4	F	0x264	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8003055C	F	0x264	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800305D8	F	0x264	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80032180	F	0x264	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80050D0C	F	0x264	R	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80050D34	F	0x264	W	2	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/entry-3004.asm	80081E2C	F	0x266	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/entry-3004.asm	80081E4C	F	0x266	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/entry-3004.asm	80081E7C	F	0x266	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004D47C	F	0x266	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/entry-3004.asm	80081E5C	F	0x267	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/entry-3004.asm	80081E8C	F	0x267	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004D480	F	0x267	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800557AC	F	0x268	R	4	object-14 constructor parameters
+artifacts/so2-options-menu/resident.asm	80068320	F	0x268	W	4	object-14 constructor parameters
+artifacts/so2-options-menu/resident.asm	8004C770	F	0x26c	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F298	F	0x26c	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054450	F	0x26c	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055678	F	0x26c	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80067B9C	F	0x26c	W	4	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B2B0	F	0x26c	R	4	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B874	F	0x26c	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C778	F	0x270	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F2B0	F	0x270	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054458	F	0x270	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055690	F	0x270	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80067BB4	F	0x270	W	4	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B2C4	F	0x270	R	4	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B878	F	0x270	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C7A0	F	0x274	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F2B4	F	0x274	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054464	F	0x274	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005569C	F	0x274	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80067B64	F	0x274	W	4	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B2D0	F	0x274	R	4	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B884	F	0x274	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C7A8	F	0x278	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F2CC	F	0x278	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8005446C	F	0x278	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800556B4	F	0x278	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80067B7C	F	0x278	W	4	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B2E4	F	0x278	R	4	previously mapped field; see existing investigations
+artifacts/so2-terrain-pass3/overworld.asm	8008B888	F	0x278	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C780	F	0x27c	W	2	mount-bank drawing order
+artifacts/so2-options-menu/resident.asm	80067BC0	F	0x27c	W	2	mount-bank drawing order
+artifacts/so2-options-menu/resident.asm	8004C7AC	F	0x27e	W	2	mount-bank drawing order
+artifacts/so2-options-menu/resident.asm	80067B88	F	0x27e	W	2	mount-bank drawing order
+artifacts/so2-options-menu/entry-3004.asm	8008228C	F	0x288	W	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004CC24	F	0x288	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8004E2B8	F	0x288	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80050280	F	0x288	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	8005038C	F	0x288	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800506A0	F	0x288	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800507B0	F	0x288	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	80050818	F	0x288	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800509A4	F	0x288	R	1	located only; meaning unresolved (see mapping doc)
+artifacts/so2-options-menu/resident.asm	800557D0	F	0x28a	R	2	object-14 constructor parameters
+artifacts/so2-options-menu/resident.asm	80068344	F	0x28a	W	2	object-14 constructor parameters
+artifacts/so2-options-menu/resident.asm	8004C774	F	0x28c	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F2A4	F	0x28c	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054454	F	0x28c	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80055684	F	0x28c	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80067BA8	F	0x28c	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004C7A4	F	0x290	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	8004F2C0	F	0x290	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80054468	F	0x290	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	800556A8	F	0x290	R	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/resident.asm	80067B70	F	0x290	W	4	previously mapped field; see existing investigations
+artifacts/so2-options-menu/entry-2986.asm	8007E8A4	F	0x294	W	4	deferred item delivery
+artifacts/so2-options-menu/entry-3004.asm	80082080	F	0x294	R	4	deferred item delivery
+artifacts/so2-options-menu/entry-3004.asm	8008216C	F	0x294	R	4	deferred item delivery
+artifacts/so2-options-menu/resident.asm	80030570	F	0x294	R	4	deferred item delivery
+artifacts/so2-options-menu/resident.asm	80030580	F	0x294	W	4	deferred item delivery
+artifacts/so2-options-menu/resident.asm	8004CBE4	F	0x294	R	4	deferred item delivery
+artifacts/so2-options-menu/resident.asm	8004CC04	F	0x294	R	4	deferred item delivery
+artifacts/so2-options-menu/resident.asm	80050C20	F	0x294	W	4	deferred item delivery
+artifacts/so2-options-menu/resident.asm	800557B8	F	0x298	R	4	object-14 constructor parameters
+artifacts/so2-options-menu/resident.asm	8006832C	F	0x298	W	4	object-14 constructor parameters
+artifacts/so2-options-menu/resident.asm	800557C4	F	0x29c	R	4	object-14 constructor parameters
+artifacts/so2-options-menu/resident.asm	80068338	F	0x29c	W	4	object-14 constructor parameters
+artifacts/so2-options-menu/resident.asm	8005CBAC	F	0x0+unknown_index	R	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	8005CBC0	F	0x0+unknown_index	R	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	8005D4A8	F	0x0+unknown_index	R	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	8005E864	F	0x0+unknown_index	R	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	8005CBD0	F	0x1+unknown_index	R	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	8005D4D0	F	0x1+unknown_index	R	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	8005E88C	F	0x1+unknown_index	R	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1B8	F	0x28+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1B4	F	0x2b+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1C0	F	0x2c+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1BC	F	0x2f+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1C8	F	0x30+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1C4	F	0x33+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1D0	F	0x34+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1CC	F	0x37+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1E4	F	0x38+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/entry-3022.asm	8007E1E0	F	0x3b+unknown_index	W	pair endpoint	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	80064D48	F	0x180+unknown_index	R	4	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	80064D9C	F	0x180+unknown_index	W	4	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	80050A1C	F	0x250+unknown_index	R	2	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	80067AA4	F	0x280+unknown_index	W	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	80067AD8	F	0x280+unknown_index	R	1	indexed candidate; see manual array bounds and limitations in mapping doc
+artifacts/so2-options-menu/resident.asm	8004DBD8	G	0x0	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DC38	G	0x0	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF94	G	0x0	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DFD4	G	0x0	W	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	800540B4	G	0x0	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	800560B0	G	0x0	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056100	G	0x0	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80063928	G	0x0	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80068BE0	G	0x0	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80068C34	G	0x0	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80068C44	G	0x0	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006A7E8	G	0x0	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006BDDC	G	0x0	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-field-control/field-overlay-full.asm	80082910	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-field-control/field-overlay-full.asm	80082AC0	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004C4A0	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004C720	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004CBA8	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004CC6C	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004CE6C	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004D0A0	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004D3AC	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004D3B8	G	0x1	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004E318	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004ED38	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004ED44	G	0x1	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004FA74	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004FA80	G	0x1	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004FDCC	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004FDD8	G	0x1	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	800505B8	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	800505C8	G	0x1	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80050C4C	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80050C5C	G	0x1	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80050E00	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80050F9C	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80053F00	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80054410	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	800547CC	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80054BE0	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80054C20	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80054EAC	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055520	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055628	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055720	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055B60	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80068990	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006BE94	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	80083E64	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	80084A3C	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	80084BE0	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	800858F8	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	8008652C	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	80086574	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	800865AC	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	80087560	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	80088B04	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	8008B264	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	8008B830	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	8008C654	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	8008D560	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	8008D9A4	G	0x1	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004C58C	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004CBC0	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80054C60	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055778	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006844C	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006845C	G	0x2	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006848C	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80068498	G	0x2	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	800684A8	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	800684B8	G	0x2	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	800684C8	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	800684D8	G	0x2	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-terrain-pass3/overworld.asm	8008BA10	G	0x2	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8004DBD4	G	0x3	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF90	G	0x3	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	800560AC	G	0x3	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DBE0	G	0x4	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DC3C	G	0x4	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF9C	G	0x4	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DFD8	G	0x4	W	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	800560B8	G	0x4	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056104	G	0x4	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DBDC	G	0x7	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DF98	G	0x7	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	800560B4	G	0x7	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DBE8	G	0x8	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DC40	G	0x8	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DFA4	G	0x8	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DFDC	G	0x8	W	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	800560C0	G	0x8	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	80056108	G	0x8	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DBE4	G	0xb	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DFA0	G	0xb	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	800560BC	G	0xb	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DBF0	G	0xc	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DC44	G	0xc	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DFAC	G	0xc	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DFE0	G	0xc	W	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	800560C8	G	0xc	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005610C	G	0xc	R	4	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DBEC	G	0xf	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8004DFA8	G	0xf	W	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	800560C4	G	0xf	R	pair endpoint	bulk snapshot/restore; first iteration only; no semantic coverage credit
+artifacts/so2-options-menu/resident.asm	8005A15C	G	0x5e	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8005A6E8	G	0x5e	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80053E54	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055EE8	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055F24	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055F34	G	0x0+unknown_index	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055F64	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80055F74	G	0x0+unknown_index	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	80066CE8	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006C750	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006C8B0	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006CCCC	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006CEC4	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006CF34	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006CF40	G	0x0+unknown_index	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006D0C8	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006D138	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006D144	G	0x0+unknown_index	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006D318	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006D620	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006DC20	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006DDA8	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006E190	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006E27C	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006E28C	G	0x0+unknown_index	W	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006E2F0	G	0x0+unknown_index	R	1	bitmap access; individual bit meanings mostly unresolved
+artifacts/so2-options-menu/resident.asm	8006E300	G	0x0+unknown_index	W	1	bitmap access; individual bit meanings mostly unresolved
