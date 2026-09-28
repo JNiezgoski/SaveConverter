@@ -396,6 +396,198 @@ Subsequent blocks in Overlay 2990 define:
 - **Blacksmith**: Verified item `0x2E7` (Magical Rasp) conditional lookup gate in `8007E2F4`.
 - **Cooking / Compounding**: Material pairing matrices mapping pairs of ingredient IDs (`0x00D0..0x0180`) to finished dishes and medicine items.
 
+---
+
+### 2026-09-28 follow-up: Special-Case Ending Pairs, Art, & Cooking/Compounding Recipes [Disassembly-only / Verified]
+
+This section resolves the two remaining loose ends from the 2026-09-28 item-creation and ending-selection investigation:
+1. **Exhaustive enumeration of all special plot-flag ending pairs** in Disc 2 Archive 3788 (auditing whether any pairs beyond the initial 3 exist).
+2. **Entry-by-entry decoding of the Art, Cooking, and Compounding specialty synthesis engines**, identifying real archive containers, table layouts, skill-level probability matrices, and output item mappings.
+
+---
+
+#### Part 0: Special-Case Ending-Pair Enumeration (Disc 2 Archive 3788)
+
+In the standard candidate generation engine (`0xBEF0..0xC078`), pairs of active party members are evaluated against the mutual emotion threshold (`>= 10` in Matrix A or Matrix B). An audit of the candidate insertion block (`0xC07C..0xC17C`) was conducted across all 84,868 bytes of Disc 2 Archive 3788 bytecode.
+
+**Result of Exhaustive Census**: The earlier notation citing three "examples" was misleading. There are **strictly and exactly THREE special-case candidate additions** hardcoded into Star Ocean 2's ending-selection engine. No other character pairs or plot flags exist for candidate selection in Archive 3788:
+
+| # | Pair / Characters | Bytecode Address | Required Conditions | Event / Sidequest Context | Score |
+|---|---|---|---|---|:---:|
+| 1 | **Celine Jules + Prince Chris of Krosse** (`charA = 2, charB = 12`) | `0xC07C..0xC0CC` | `op=0xB1 char=2` (Celine active)<br>`op=0x0E flag=0x01AB` (427) | **Cross Castle Marriage Proposal Private Action**: Celine visits Prince Chris in Krosse Castle (Archive 3285 Scene 78 `0x6A54`: *"if I became a princess, I wouldn't be able to go on any more adventures, would I?"*). If accepted, flag `0x1AB` is set. | **26** (`0x1A`) |
+| 2 | **Ashton Anchors + Eleanor of Herlie** (`charA = 6, charB = 13`) | `0xC0D0..0xC120` | `op=0xB1 char=6` (Ashton active)<br>`op=0x0E flag=0x0163` (355) | **Eleanor Illness Sidequest in Herlie**: Ashton visits Eleanor's house and obtains the Tears of the King / Metox cure (Archive 3363 Scene 156 `0x59E8`: *"Please take care of Eleanor... Eleanor began moaning in pain..."*). Flag `0x163` confirms recovery. | **20** (`0x14`) |
+| 3 | **Opera Vectra + Ernest Ravresso** (`charA = 8, charB = 14`) | `0xC124..0xC17C` | `op=0xB1 char=8` (Opera active)<br>`op=0xB1 char=9` (Ernest active) | **Couple Priority Epilogue**: Both Opera and Ernest are recruited and present in the final party. Overrides standard matrix sorting to guarantee their paired spaceflight epilogue. | **24** (`0x18`) |
+
+##### Bytecode Mechanics:
+1. **Prince Chris (`charB = 12`)**:
+   - `0xC07C`: `CHECK_PARTY char=2` (Celine). If not active, branches to `0xC0B4`.
+   - `0xC088`: `TEST_FLAG flag=0x01AB` (Story flag 427, save byte `0x1A1D` bit 3). If unset, branches to `0xC0B4`.
+   - `0xC090..0xC0C4`: Stores `charA = 2`, `charB = 12`, and assigns fixed `score = 26` (`0x1A`) into candidate list index `local[120]`, then increments candidate count.
+2. **Eleanor (`charB = 13`)**:
+   - `0xC0D0`: `CHECK_PARTY char=6` (Ashton). If not active, branches to `0xC108`.
+   - `0xC0DC`: `TEST_FLAG flag=0x0163` (Story flag 355, save byte `0x1A14` bit 3). If unset, branches to `0xC108`.
+   - `0xC0E4..0xC118`: Stores `charA = 6`, `charB = 13`, and assigns fixed `score = 20` (`0x14`) into candidate list, then increments candidate count.
+3. **Opera & Ernest Romantic Epilogue (`charB = 14`)**:
+   - `0xC124`: `CHECK_PARTY char=8` (Opera). If not active, branches to `0xC164`.
+   - `0xC130`: `CHECK_PARTY char=9` (Ernest). If not active, branches to `0xC164`.
+   - `0xC140..0xC174`: Stores `charA = 8`, `charB = 14`, and assigns fixed `score = 24` (`0x18`) into candidate list, then increments candidate count.
+4. **Sorting & Resolution**: At `0xC180`, the engine transitions immediately to the Bubble Sort. Because their hardcoded scores (20, 24, 26) are competitive with high mutual emotion levels (10 + 10 = 20), these special pairings naturally sort to the top of the greedy queue.
+
+---
+
+#### Part 1: Cooking & Master Cooking Recipe Tables (Disc Archive 2990)
+
+Analysis of `code-2990-lba-36156.bin` (RAM `0x8007E000`, 19,496 bytes `0x4C28`) proves that Cooking does **not** use an N×N ingredient pair matrix. Instead, it is governed by a 16-group ingredient-classification engine dispatched at `0x8008129C` and executed at `0x800812EC`:
+- **Standard Cooking (Groups 0..5)**: Consumes one food category ingredient (`0x0117..0x011C`).
+- **Master Cooking (Groups 6..15)**: Consumes luxury ingredients (`0x030E..0x0316`, plus all-purpose `0x0336`).
+
+##### A. Engine Mechanics and Probability Formula
+Disassembly of `0x8008139C..0x800814FC` reveals the exact recipe selection algorithm:
+1. **Master Pointer Array**: Pointers at `0x4B64` (Successful outputs), `0x4BA4` (Failure outputs), and `0x4BE4` (Metadata bytes).
+2. **Metadata Byte Format**:
+   - Bits 0..3 (`byte & 0x0F`): Difficulty divisor $a1.
+   - Bit 4 (`0x10`): Requires Cooking skill level $\ge 4$ (checked at `0x80081468`).
+   - Bit 5 (`0x20`): Requires Cooking skill level $\ge 7$ (checked at `0x8008147C`).
+3. **Success Rate Formula**:
+   $$\text{Base \%} = \min\left(90, \frac{\text{Skill Level} \times 10 + 50}{\text{Divisor}}\right) + \text{Bonus}$$
+   Where bonus includes Chef talents (Sense of Taste) and tools.
+4. **Group 2 (Grain) Specialization**: At `0x800813D8..0x80081414`, characters Ashton (6), Claude (0), Rena (1), Celine (2), and Opera (8) branch away from the default tea table at `0x48AC` to a specialized Grain Meals table at `0x48E8`.
+5. **Master Cooking Iron Chef Scoring Gauge**: At `0x80081564`, tables at `0x4A54..0x4AB4` supply `min1, max1, min2, max2` random score modifiers added to/subtracted from the Chef's battle score gauge (`lw 0x38($v1)`) upon dish completion. *(Note: This corrects the prior assumption that `0x4A54` was an Art portrait table).*
+
+##### B. Decoded Cooking Recipe Tables (108 Successful Dishes + 7 Failures)
+
+###### Standard Cooking (Groups 0..5)
+
+| Group | Input Ingredient Category | Successful Dish Outputs | Failure Item(s) |
+|---|---|---|---|
+| **0** | **Seafood** (`0x0117`) | **Level 1+**: Toro Tuna (`0x0151`, div 1), Shu-mai (`0x0154`, div 1), Seaweed Miso Soup (`0x0153`, div 2)<br>**Level 4+**: Broth (`0x0125`, div 2), Shrimp au Gratin (`0x0158`, div 2), Big Tuna (`0x0159`, div 3)<br>**Level 7+**: Shark Fin Soup (`0x0123`, div 3), Sole & Fruit Sauce (`0x0135`, div 3), Salmon Omlet (`0x015A`, div 3), Shrimp Pilaf (`0x015B`, div 4) | Rotten Sashimi (`0x0152`) |
+| **1** | **Fruit** (`0x0118`) | **Level 1+**: Orangeade (`0x0129`, div 1), Berry Juice (`0x0170`, div 1), Orange Sherbet (`0x0172`, div 2), Banana Crepes (`0x0173`, div 2)<br>**Level 4+**: Apple Cider (`0x0174`, div 4), Pickled Plum (`0x0175`, div 2), Strawberry Mousse (`0x0176`, div 3), Apple Crepes (`0x0177`, div 3)<br>**Level 7+**: Peach Ice Cream (`0x0178`, div 3), Aged Berry Juice (`0x0179`, div 8), Orange Au Gratin (`0x017A`, div 3) | Bitter Juice (`0x014E`) |
+| **2a** | **Grain (Default / Teas)** (`0x0119`) | **Level 1+**: Sweet Dumpling (`0x0164`, div 1), Daikon Miso Soup (`0x0166`, div 1), Gruel (`0x0167`, div 2)<br>**Level 4+**: Root Beer (`0x015D`, div 1), 'Ishidaya' Tea (`0x015E`, div 1), Yukiyucho Tea (`0x015F`, div 2), Hassaku Tea (`0x0160`, div 2), Yaegaki Tea (`0x0161`, div 3), 'Usunigori' Tea (`0x0162`, div 3), Rice Cakes (`0x0168`, div 2), Pancakes (`0x0169`, div 2), Soy Milk (`0x02FD`, div 3)<br>**Level 7+**: Fried Rice (`0x0137`, div 3), Shrimp Doria (`0x016D`, div 3), Rice Omlet (`0x016E`, div 3), Rice Croquettes (`0x02FC`, div 3) | Sambai Tea (`0x0163`),<br>Smelly Rice Cakes (`0x02FE`) |
+| **2b** | **Grain (Meals at `0x48E8`)**<br>*(Ashton, Claude, Rena, Celine, Opera)* | **Level 1+**: Sweet Dumpling (`0x0164`, div 1), Daikon Miso Soup (`0x0166`, div 1), Gruel (`0x0167`, div 2)<br>**Level 4+**: Rice Cakes (`0x0168`, div 2), Pancakes (`0x0169`, div 2), Soy Milk (`0x02FD`, div 3)<br>**Level 7+**: Fried Rice (`0x0137`, div 3), Shrimp Doria (`0x016D`, div 3), Rice Omlet (`0x016E`, div 3), Rice Croquettes (`0x02FC`, div 3) | Smelly Rice Cakes (`0x02FE`) |
+| **3** | **Meat** (`0x011A`) | **Level 1+**: Meat Dumpling (`0x017C`, div 1), Potstickers (`0x017D`, div 1), Beef Croquettes (`0x017E`, div 2), Chicken Skewers (`0x017F`, div 2)<br>**Level 4+**: Jambalaya (`0x0180`, div 2), Chicken Doria (`0x0182`, div 2), Steak (`0x0183`, div 3)<br>**Level 7+**: Hamburger (`0x013F`, div 4), Baby Rabbit Risotto (`0x0184`, div 4), Ground Lamb Steak (`0x0185`, div 3) | Bad Tasting Stew (`0x0187`) |
+| **4** | **Vegetables** (`0x011B`) | **Level 1+**: Squash Croquettes (`0x018A`, div 1), Corn Potage (`0x018B`, div 1), Quick Pickles (`0x02FF`, div 2)<br>**Level 4+**: Spring Roll (`0x018D`, div 2), Carrot Juice (`0x018E`, div 2), Cabbage Roll (`0x018F`, div 2), Rice-bran Pickles (`0x0300`, div 3)<br>**Level 7+**: Squash Spring Rolls (`0x0190`, div 3), Vegetable Juice (`0x0191`, div 3), Green Potage (`0x0192`, div 3), Carrot Ice Cream (`0x0301`, div 3) | Wilted Salad (`0x0193`) |
+| **5** | **Egg / Dairy** (`0x011C`) | **Level 1+**: Fried Eggs (`0x0194`, div 1), Fruit Smoothie (`0x0196`, div 2), Yogurt (`0x0197`, div 1), Egg Sandwich (`0x0198`, div 1)<br>**Level 4+**: Chocolate Crepes (`0x0199`, div 3), Bacon & Eggs (`0x019A`, div 2), Vanilla Ice Cream (`0x019B`, div 2)<br>**Level 7+**: Shortcake (`0x019C`, div 3), Custard Pudding (`0x019D`, div 3), Macaroni Au Gratin (`0x019E`, div 4) | Spicy Cake (`0x019F`),<br>Raw Milk (`0x01A0`) |
+
+###### Master Cooking (Groups 6..15)
+
+All Master Cooking recipes unlock at Master Chef Level 1+; dishes are selected via weighted random draw against divisor $a1:
+
+| Group | Luxury Ingredient | 4 Distinct Output Dishes (Item ID, Divisor) |
+|:---:|---|---|
+| **6** | **Purity Leaf** (`0x030E`) | Milky Potage (`0x0317`, div 3), Special Stir-fry (`0x0318`, div 3), Magical Salad (`0x0319`, div 4), Golden Stew (`0x031A`, div 5) |
+| **7** | **Juicy Beef** (`0x030F`) | Fine Saute (`0x031B`, div 3), Exciting Tenderloin (`0x031C`, div 4), Prime Sirloin (`0x031D`, div 5), Inviting Filet (`0x031E`, div 5) |
+| **8** | **Prime Tuna** (`0x0310`) | Tuna Skewers (`0x031F`, div 3), Prime Tuna Steak (`0x0320`, div 3), Fish of Happiness (`0x0321`, div 4), Special Tuna (`0x0322`, div 5) |
+| **9** | **Ganze Sea Urchin** (`0x0311`) | Ichigoni (`0x0323`, div 3), Ichigoni Supreme (`0x0324`, div 4), Prince's Zoni Stew (`0x0325`, div 5), Sea Urchin on Rice (`0x0326`, div 7) |
+| **10** | **Magical Rice** (`0x0312`) | Deluxe Doria (`0x0327`, div 3), Miracle Fried Rice (`0x0328`, div 3), Risotto Ecstasy (`0x0329`, div 4), Heavenly Doria (`0x032A`, div 5) |
+| **11** | **Creamy Cheese** (`0x0313`) | Au Gratin Climax (`0x032B`, div 3), Cheese Pizza (`0x032C`, div 3), Assorted Cheeses (`0x032D`, div 4), Gorgonzola (`0x032E`, div 5) |
+| **12** | **Sweet Fruit** (`0x0314`) | Gateau Marjolaine (`0x032F`, div 3), 1-up Pudding (`0x0330`, div 4), Beautiful Ice Cream (`0x0331`, div 5), Ginger Ale (`0x0332`, div 8) |
+| **13** | **Slippery Slime** (`0x0315`) | Soda-Pop (`0x016B`, div 3), Amoeba Soup (`0x0155`, div 3), Slime Jelly (`0x0195`, div 8), Gelatin Steak (`0x0186`, div 8) |
+| **14** | **Jiggly Slime** (`0x0316`) | Soda-Pop (`0x016B`, div 2), Amoeba Soup (`0x0155`, div 2), Slime Jelly (`0x0195`, div 4), Gelatin Steak (`0x0186`, div 4) |
+| **15** | **Special Ingredient** (`0x0336`) | Genie's Veggie Soup (`0x0333`, div 6), Genie's Steak (`0x0334`, div 6), Energy Drink (`0x0335`, div 6), Seltzer (`0x0171`, div 6) |
+
+---
+
+#### Part 2: Art Specialty Recipe Engine (Disc Archive 3008)
+
+The actual Art execution engine is located in **Disc Archive 3008** (`code-3008-lba-36265.bin`, RAM `0x8007E000`, 24,980 bytes `0x6194`, executed at `0x80080F5C..0x80081224`), **not** Archive 2990.
+Art consumes either **Magic Canvas (`0x0001`)** or **Magical Clay (`0x002B`)**.
+
+##### A. Skill Tier Distribution
+The artist's Art skill level (1..10) indexes table `0x80083BB0` (file offset `0x5BB0`) to map to 5 difficulty tiers:
+- **Tier 0** (Levels 1..2), **Tier 1** (Levels 3..4), **Tier 2** (Levels 5..6), **Tier 3** (Levels 7..8), **Tier 4** (Levels 9..10).
+
+Each tier defines an exact percentage distribution across 5 item slot pools (weights sum to 100%):
+- **Magic Canvas Weights (`0x5BBC`)**:
+  - Tier 0 (Lv 1-2): Slot 0: 10%, Slot 1: 5%, Slot 2: 1%, Slot 3: 0%, Slot 4: 84%
+  - Tier 1 (Lv 3-4): Slot 0: 15%, Slot 1: 10%, Slot 2: 5%, Slot 3: 1%, Slot 4: 69%
+  - Tier 2 (Lv 5-6): Slot 0: 20%, Slot 1: 15%, Slot 2: 10%, Slot 3: 5%, Slot 4: 50%
+  - Tier 3 (Lv 7-8): Slot 0: 20%, Slot 1: 20%, Slot 2: 15%, Slot 3: 10%, Slot 4: 35%
+  - Tier 4 (Lv 9-10): Slot 0: 20%, Slot 1: 20%, Slot 2: 20%, Slot 3: 15%, Slot 4: 25%
+- **Magical Clay Weights (`0x5C14`)**:
+  - Tier 0 (Lv 1-2): Slot 0: 83%, Slot 1: 10%, Slot 2: 5%, Slot 3: 1%, Slot 4: 1%
+  - Tier 1 (Lv 3-4): Slot 0: 69%, Slot 1: 15%, Slot 2: 10%, Slot 3: 5%, Slot 4: 1%
+  - Tier 2 (Lv 5-6): Slot 0: 50%, Slot 1: 20%, Slot 2: 15%, Slot 3: 10%, Slot 4: 5%
+  - Tier 3 (Lv 7-8): Slot 0: 35%, Slot 1: 20%, Slot 2: 20%, Slot 3: 15%, Slot 4: 10%
+  - Tier 4 (Lv 9-10): Slot 0: 25%, Slot 1: 20%, Slot 2: 20%, Slot 3: 20%, Slot 4: 15%
+
+##### B. Item Pools & Portrait Character Mapping
+1. **Magic Canvas Pool (`0x5BD8`, 24 Output Items)**:
+   - **Slot 0**: Victorial Card (`0x0013`), Mortalial Card (`0x0014`), Revival Card (`0x0015`)
+   - **Slot 1**: Fol Up Card (`0x0016`), Discovery Card (`0x0017`), Extension Card (`0x0018`)
+   - **Slot 2**: 'Spring' (`0x0002`), Fairies Card (`0x0019`), Fountain Card (`0x001A`)
+   - **Slot 3**: 'The Scream' (`0x0003`), 'Judgment Day' (`0x0004`), 'The Last Supper' (`0x0005`)
+   - **Slot 4 (Portraits A..L)**: When Slot 4 is rolled, subroutine `0x800810D8..0x80081130` compares the artist's character ID against table `0x80083C52` (`0x5C58..0x5C63`) to match the portrait directly to the artist:
+     - `0x0006` **Portrait A** $\rightarrow$ Rena Lanford (`char 1`)
+     - `0x0007` **Portrait B** $\rightarrow$ Celine Jules (`char 2`)
+     - `0x0008` **Portrait C** $\rightarrow$ Bowman Jean (`char 3`)
+     - `0x0009` **Portrait D** $\rightarrow$ Leon D.S. Gehste (`char 7`)
+     - `0x000A` **Portrait E** $\rightarrow$ Ernest Ravresso (`char 9`)
+     - `0x000B` **Portrait F** $\rightarrow$ Dias Flac (`char 4`)
+     - `0x000C` **Portrait G** $\rightarrow$ Ashton Anchors (`char 6`)
+     - `0x000D` **Portrait H** $\rightarrow$ Noel Chandler (`char 10`)
+     - `0x000E` **Portrait I** $\rightarrow$ Opera Vectra (`char 8`)
+     - `0x000F` **Portrait J** $\rightarrow$ Precis F. Neumann (`char 5`)
+     - `0x0010` **Portrait K** $\rightarrow$ Claude C. Kenni (`char 0`)
+     - `0x0011` **Portrait L** $\rightarrow$ Chisato Madison (`char 11`)
+   - **Failure Item**: Scribbles (`0x0012`)
+2. **Magical Clay Pool (`0x5C30`, 15 Output Items)**:
+   - **Slot 0**: Silence Card (`0x001B`), Tri-ball (`0x001F`), Skanda (`0x0027`)
+   - **Slot 1**: Hexagram Card (`0x001C`), Hyperball (`0x0020`), Dummy Doll (`0x0025`)
+   - **Slot 2**: Super Ball (`0x0021`), Angle's Statue (`0x0022`), Mirror of Wisdom (`0x002A`)
+   - **Slot 3**: Magic Rock (`0x001D`), Fairy's Statue (`0x0023`), Jack-in-the-box (`0x0029`)
+   - **Slot 4**: Goddess Statue (`0x0024`), Idol (`0x0026`), Treasure Chest (`0x0028`)
+   - **Failure Item**: Weird Lump (`0x001E`)
+
+---
+
+#### Part 3: Compounding Specialty Recipe Engine (Disc Archive 3008)
+
+Compounding mixes two herbs to create medicinal tinctures and potions. Disassembly of `0x80081AA4..0x80081BE8` in `code-3008-lba-36265.bin` reveals the complete 6×6 symmetric herb lookup matrix:
+- **Herbs**: Mandrake (`0x00DC`), Rose Hips (`0x00DD`), Artemis Leaf (`0x00DE`), Wolfsbane (`0x00DF`), Lavender (`0x00E0`), Aceras (`0x00E1`).
+
+##### A. 6×6 Symmetric Pairing Matrix (`0x80083ECC` / file offset `0x5ECC`)
+Lookup formula at `0x80081B98`: `group_id = matrix[herb1][herb2]`. The matrix is symmetric ($H_1 + H_2 = H_2 + H_1$):
+
+| Herb | Mandrake (`0xDC`) | Rose Hips (`0xDD`) | Artemis Leaf (`0xDE`) | Wolfsbane (`0xDF`) | Lavender (`0xE0`) | Aceras (`0xE1`) |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Mandrake** (`0xDC`) | **Group 1** | Group 2 | Group 3 | Group 4 | Group 5 | Group 6 |
+| **Rose Hips** (`0xDD`) | Group 2 | **Group 7** | Group 8 | Group 9 | Group 10 | Group 11 |
+| **Artemis Leaf** (`0xDE`) | Group 3 | Group 8 | **Group 12** | Group 13 | Group 14 | Group 15 |
+| **Wolfsbane** (`0xDF`) | Group 4 | Group 9 | Group 13 | **Group 16** | Group 17 | Group 18 |
+| **Lavender** (`0xE0`) | Group 5 | Group 10 | Group 14 | Group 17 | **Group 19** | Group 20 |
+| **Aceras** (`0xE1`) | Group 6 | Group 11 | Group 15 | Group 18 | Group 20 | **Group 21** |
+
+##### B. Output Item Variant Table (`0x80083EE8` / file offset `0x5EE8`)
+Each of the 21 groups contains 4 output variants rolled at random `0..3` via `0x80081B4C`. Success rates are governed by table `0x80083EA0` (`0x5EA0`):
+- **Variants 0 & 1 (Common)**: Base success rate scales from 30% (Lv 1) to 60% (Lv 10).
+- **Variants 2 & 3 (Rare)**: Base success rate scales from 2% (Lv 1) to 30% (Lv 10).
+
+| Group | Herb Pair | Variant 0 (Common) | Variant 1 (Common) | Variant 2 (Rare) | Variant 3 (Rare) |
+|:---:|---|---|---|---|---|
+| **1** | Mandrake + Mandrake | Natural High (`0x0105`) | Risky Liquid (`0x00F4`) | Violence Pill (`0x0108`) | Crush Pill (`0x0106`) |
+| **2** | Mandrake + Rose Hips | Attack Vial (`0x00E3`) | Smoke Mist (`0x010F`) | Kamikaze Tonic (`0x00E5`) | Flash Pot (`0x00F8`) |
+| **3** | Mandrake + Artemis Leaf | Danger Pot (`0x00F6`) | Sweet Syrup (`0x00FC`) | Spring Water (`0x0116`) | Sour Syrup (`0x00FB`) |
+| **4** | Mandrake + Wolfsbane | Lilith Tonic (`0x00F5`) | Bubble Lotion (`0x00EB`) | Melting Lotion (`0x00F2`) | Fairy's Cologne (`0x00EF`) |
+| **5** | Mandrake + Lavender | Maple Syrup (`0x00FD`) | Nightmare Pot (`0x00F7`) | Smoke Oil (`0x00E8`) | Merlin Drink (`0x00F0`) |
+| **6** | Mandrake + Aceras | Risky Liquid (`0x00F4`) | Energy Tonic (`0x00E4`) | Hot Syrup (`0x0100`) | Herbal Oil (`0x00EA`) |
+| **7** | Rose Hips + Rose Hips | Cure Poison (`0x0102`) | Cure Paralysis (`0x0103`) | Maple Syrup (`0x00FD`) | Mixed Syrup (`0x0101`) |
+| **8** | Rose Hips + Artemis Leaf | Cure Poison (`0x0102`) | Cure Paralysis (`0x0103`) | Skanda Compress (`0x00E2`) | Marionette Pill (`0x0109`) |
+| **9** | Rose Hips + Wolfsbane | Danger Pot (`0x00F6`) | Nightmare Pot (`0x00F7`) | Paralysis Mist (`0x0110`) | Succubus Cologne (`0x010C`) |
+| **10** | Rose Hips + Lavender | Sweet Syrup (`0x00FC`) | Fresh Syrup (`0x00FF`) | Fruit Syrup (`0x00FE`) | **Holy Mist (`0x0113`)** |
+| **11** | Rose Hips + Aceras | Succubus Cologne (`0x010C`) | Kamikaze Tonic (`0x00E5`) | Mental Pot (`0x00FA`) | Skanda Ointment (`0x010A`) |
+| **12** | Artemis Leaf + Artemis Leaf | Spring Water (`0x0116`) | Care Tablet (`0x0107`) | Spring Water (`0x0116`) | Fairy Glass (`0x00EE`) |
+| **13** | Artemis Leaf + Wolfsbane | Violence Pill (`0x0108`) | Sour Syrup (`0x00FB`) | Fruit Syrup (`0x00FE`) | Hot Syrup (`0x0100`) |
+| **14** | Artemis Leaf + Lavender | Wonder Drug (`0x0104`) | Smelling Salts (`0x00E6`) | Medical Rinse (`0x00F1`) | **Resurrection Mist (`0x00F3`)** |
+| **15** | Artemis Leaf + Aceras | Wonder Drug (`0x0104`) | Flash Pot (`0x00F8`) | Herbal Oil (`0x00EA`) | Spring Water (`0x0116`) |
+| **16** | Wolfsbane + Wolfsbane | Stink Gel (`0x010B`) | Bitter Lotion (`0x00ED`) | Madness Mist (`0x0114`) | Melting Lotion (`0x00F2`) |
+| **17** | Wolfsbane + Lavender | Stink Gel (`0x010B`) | Bitter Lotion (`0x00ED`) | Paralysis Oil (`0x00EC`) | Melting Lotion (`0x00F2`) |
+| **18** | Wolfsbane + Aceras | Lilith Tonic (`0x00F5`) | Bubble Lotion (`0x00EB`) | Pixie Cologne (`0x010E`) | Shock Oil (`0x00E7`) |
+| **19** | Lavender + Lavender | Mixed Syrup (`0x0101`) | Medical Rinse (`0x00F1`) | Herbal Oil (`0x00EA`) | **Resurrection Bottle (`0x0115`)** |
+| **20** | Lavender + Aceras | Energy Tonic (`0x00E4`) | Fresh Syrup (`0x00FF`) | **Resurrection Mist (`0x00F3`)** | **Holy Mist (`0x0113`)** |
+| **21** | Aceras + Aceras | Smelling Salts (`0x00E6`) | Skanda Ointment (`0x010A`) | Fairy Mist (`0x0111`) | **Resurrection Bottle (`0x0115`)** |
+
+---
+
 ## Other examined leads, excluded from the new-byte total
 
 | Decoded / live | Observed behavior | Evidence / unresolved boundary |
