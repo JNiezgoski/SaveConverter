@@ -321,3 +321,177 @@ python -m unittest discover -s tests -v
 
 All writes were confined to `C:/CodeTesting/SaveConverter`. Nothing under
 `C:/CodeTesting/StarOcean2/SaveGames` was modified.
+
+## 2026-09-28 Follow-up Investigation: Meaning and Lifecycle of Inventory Bit 15
+
+Investigation date: 2026-09-28. US PS1 SCUS-94421 / BASCUS-94421.
+
+### Result
+
+**Bit 15 is a transient "New Acquisition / Pending Auto-Equip Evaluation" flag.**
+
+When an item is granted to the player, bit 15 is written as `1` by add routine `8003C594`. When a field item pickup or script event occurs, the engine's field update loop detects the new acquisition, invokes the equipment upgrade evaluator `80030FC8` (which tests `srl $v1, $v0, 0xF; beqz $v1` and **only** considers items with bit 15 = 1), optionally presents the field equip prompt, and then executes mass-clearing routine `80030F84` (`andi $v0, $v1, 0x7FFF; sh $v0`), resetting bit 15 to `0` across all 1,024 inventory slots.
+
+This explains why:
+1. **Every standalone item producer passes `a3 = 1`**: every newly acquired item starts as "unprocessed / new".
+2. **The field restore opcode passes dynamic bit 15**: when restoring confiscated inventory (e.g. Lacour Tournament of Arms), it preserves each item's prior evaluated state.
+3. **The runtime integrity calculation `8003C8A0` masks out bit 15 (`andi $s0, $v0, 0x7FFF`)**: bit 15 is dynamic state that gets bulk-cleared on the field; excluding it from the XOR checksum allows `80030F84` to clear bit 15 across all 1,024 slots with a single `sh` instruction without invalidating or recalculating slot integrity bytes.
+4. **UI menus (camp item menu, shop sell, battle items) do not display or branch on bit 15**: all UI displays mask count with `(word >> 10) & 0x1F` and ID with `word & 0x3FF`. Bit 15 is not a "NEW" icon or sale-restriction flag.
+
+---
+
+### Comprehensive Caller Census for `8003C594`
+
+An exhaustive binary scan for `jal 0x8003C594` (`65 f1 00 0c`) across all 167 binaries in `artifacts/`, the resident binary (`entry-2576.bin`, LBA 30736, RAM `8002F810`), and all archives on Disc 1 and Disc 2 TOC identified **15 real caller sites**:
+
+#### Resident Binary Callers (11 sites in Entry 2576 / LBA 30736)
+
+| Address | Function / Context | `$a3` Argument | Disassembly |
+|---|---|:---:|---|
+| `80033674` | General item add wrapper (`80033640`) | `1` | `addiu $a3, $zero, 1` |
+| `800336A8` | Single-item add wrapper (`8003368C`) | `1` | `addiu $a3, $zero, 1` |
+| `80050A48` | Post-battle spoils / enemy drop processor (`800509E8`) | `1` | `addiu $a3, $zero, 1` |
+| `800669D4` | Script VM item grant opcode handler | `1` | `addiu $a3, $zero, 1` |
+| `80069394` | Unequip weapon return to inventory | `1` | `addiu $a3, $zero, 1` |
+| `800693BC` | Unequip armor return to inventory | `1` | `addiu $a3, $zero, 1` |
+| `800693E4` | Unequip shield return to inventory | `1` | `addiu $a3, $zero, 1` |
+| `8006940C` | Unequip helmet return to inventory | `1` | `addiu $a3, $zero, 1` |
+| `80069434` | Unequip greaves return to inventory | `1` | `addiu $a3, $zero, 1` |
+| `80069464` | Unequip accessory 1 return to inventory | `1` | `addiu $a3, $zero, 1` |
+| `800695B0` | Unequip accessory 2 return to inventory | `1` | `addiu $a3, $zero, 1` |
+
+All 11 resident callers unconditionally pass `addiu $a3, $zero, 1`.
+
+#### Disc Overlay Callers (4 sites across Overlays 2986, 3012, 3101)
+
+| Archive Entry | Overlay Base | Call Site | Context | `$a3` Argument | Disassembly |
+|---|---:|---:|---|:---:|---|
+| `2986` | `8007E000` | `8007E8EC` | Shop item purchase | `1` | `addiu $a3, $zero, 1` |
+| `3012` | `8007E000` | `800802CC` | Customization output | `1` | `addiu $a3, $zero, 1` |
+| `3012` | `8007E000` | `800808E4` | Synthesis output | `1` | `addiu $a3, $zero, 1` |
+| `3101` (and duplicates `3112..3174`) | `8007E000` | `8008EB34` | Confiscated inventory restore (Script Opcode `0x10`) | **Dynamic (`word >> 15`)** | `srl $a3, $a3, 0xf` |
+
+Entry 3100 is an uncompressed duplicate sector image of resident entry 2576. Entries `3112..3174` are identical sector placements of field overlay 3101 placed across the disc to reduce CD-ROM seek latency.
+
+---
+
+### The Dynamic Restore Site (`Entry 3101` `8008EB34`)
+
+Script VM opcodes `0x0F`, `0x10`, and `0x33` manage party inventory confiscation and restoration during events (e.g. Lacour Tournament of Arms, prison sequences):
+
+- **Opcode `0x0F` (`800678D8` $\to$ `8008EA0C`)**: Copies all `0xC28` bytes of live inventory `[0x80075278]` to temporary backup buffer `[0x80076228]`, zeros the live array, regenerates checksums, and sets backup flag `8007622c = 1`.
+- **Opcode `0x10` (`800678E8` $\to$ `8008EAD8`)**: Restores inventory from `[0x80076228]` back into `[0x80075278]`:
+
+```text
+8008EAF4: slti    $v0, $s0, 0x400       ; scan all 1024 slots
+8008EAF8: beqz    $v0, 0x8008eb44
+8008EAFC: sll     $v0, $s0, 1
+8008EB00: lui     $v1, 0x8007
+8008EB04: lw      $v1, 0x6228($v1)      ; backup buffer pointer
+8008EB0C: addu    $v0, $v0, $v1
+8008EB10: lhu     $v0, ($v0)            ; load saved slot word
+8008EB18: andi    $a1, $v0, 0x3ff       ; item_id = word & 0x3FF
+8008EB1C: beqz    $a1, 0x8008eb3c       ; empty slot -> skip
+8008EB20: andi    $a3, $v0, 0xffff      ; entire word
+8008EB24: srl     $a2, $a3, 0xa         ; count = (word >> 10) & 0x1F
+8008EB28: lui     $a0, 0x8007
+8008EB2C: lw      $a0, 0x5278($a0)      ; live inventory pointer
+8008EB30: andi    $a2, $a2, 0x1f
+8008EB34: jal     0x8003c594            ; add_item(inv, id, count, flag)
+8008EB38: srl     $a3, $a3, 0xf         ; flag = word >> 15 (DELAY SLOT)
+8008EB3C: j       0x8008eaf4
+8008EB40: addiu   $s0, $s0, 1
+8008EB44: lui     $at, 0x8007
+8008EB48: sb      $zero, 0x622c($at)    ; clear backup flag
+```
+
+Because `8008EB38` executes `srl $a3, $a3, 0xF`, it passes the slot's original bit 15. If the item was already processed prior to confiscation (bit 15 = 0), it restores with 0; if it was pending evaluation (bit 15 = 1), it restores with 1.
+
+---
+
+### Consumer Analysis: Field Auto-Equip and Batch Clearing
+
+A complete instruction-by-instruction scan of resident code and all disc overlays for shift-15 (`srl/sll/sra ..., 15`) and masks (`0x7FFF`, `0x8000`, `0x83FF`) identified exactly how bit 15 is consumed and cleared:
+
+#### 1. Field Acquisition Trigger (`80048BA4`, `800669E4`, `8004C9F4`)
+
+When a treasure chest is opened in the field (`80048BA4`) or a script opcode gives an item (`800669E4`), the engine sets byte `[0x80076278] = 1`. In the resident field loop:
+
+```text
+8004C9F4: lbu     $v0, 0x6278($v0)      ; check acquisition flag
+8004C9FC: beqz    $v0, 0x8004cb9c       ; no new items -> skip
+8004CA04: jal     0x80030dec            ; setup evaluation buffer
+8004CA40: jal     0x80030d5c            ; evaluate equipment upgrades
+```
+
+If an upgrade candidate is found (`$v0 != 0`), `8004CA58` triggers dialog prompt `0xFC2` ("Equip now?").
+
+#### 2. Auto-Equip Candidate Filter (`80030FC8`)
+
+Routine `80030FC8` iterates across all 1,024 inventory slots to find equipment upgrades:
+
+```text
+80031080: lhu     $v0, ($v1)            ; load inventory slot word
+80031088: andi    $s1, $v0, 0x3ff       ; item_id = word & 0x3FF
+8003108C: beqz    $s1, 0x80031178       ; empty slot -> skip
+80031090: srl     $v1, $v0, 0xf         ; v1 = bit 15 (flag)
+80031094: slti    $v0, $s1, 0x338       ; item_id < 824 (0x338) -> equipment only
+80031098: beqz    $v0, 0x80031178       ; consumables/materials -> skip
+800310A0: beqz    $v1, 0x80031178       ; IF BIT 15 == 0 -> SKIP!
+800310A4: move    $a0, $s2
+800310A8: move    $a1, $s1
+800310AC: jal     0x8003bb2c            ; can character equip item?
+```
+
+`800310A0: beqz $v1, 0x80031178` actively skips any slot where bit 15 is 0. Only items marked with bit 15 = 1 are considered for auto-equip evaluation.
+
+#### 3. Mass-Clearing of Bit 15 (`80030F84`)
+
+Following evaluation across all 8 party members, `80030E6C` unconditionally calls `80030F84` at `80030F54`:
+
+```text
+80030F84: move    $a1, $zero            ; slot index 0..1023
+80030F88: lui     $a0, 0x8007
+80030F8C: lw      $a0, 0x5278($a0)      ; live inventory pointer
+80030F90: slti    $v0, $a1, 0x400
+80030F94: beqz    $v0, 0x80030fc0       ; done all 1024 slots -> return
+80030F9C: lhu     $v1, ($a0)            ; load slot word
+80030FA4: andi    $v0, $v1, 0x3ff       ; item_id
+80030FA8: beqz    $v0, 0x80030fb4       ; empty -> next
+80030FAC: andi    $v0, $v1, 0x7fff      ; CLEAR BIT 15 (word & 0x7FFF)
+80030FB0: sh      $v0, ($a0)            ; WRITE BACK TO INVENTORY
+80030FB4: addiu   $a0, $a0, 2
+80030FB8: j       0x80030f90
+80030FBC: addiu   $a1, $a1, 1
+80030FC0: jr      $ra
+```
+
+This clears bit 15 to `0` across every occupied slot in inventory. Once cleared, those items are never re-evaluated by subsequent field pickup events.
+
+#### 4. The Checksum Exclusion Rationale (`8003C8A0`)
+
+Routine `8003C8A0` generates the per-slot runtime integrity byte:
+
+```text
+8003C8C8: andi    $s0, $v0, 0x7fff      ; w = slot_word & 0x7FFF
+```
+
+Bit 15 is explicitly stripped before computing XOR parity. Because bit 15 does not contribute to the integrity checksum, `80030F84` is able to mass-clear bit 15 across all 1,024 slots with a simple `sh` store loop without invalidating or recalculating runtime integrity bytes.
+
+#### 5. Item Removal Preservation (`8003C798`)
+
+When items are removed/consumed via `8003C798`:
+
+```text
+8003C7D8: andi    $v0, $a1, 0x83ff      ; preserve item_id (0..9) and bit 15
+```
+
+If remaining count > 0, the slot retains its existing bit-15 flag state.
+
+---
+
+### UI Menus and Save Files
+
+- **UI Menus (Camp Menu 2985, Shop Sell 2986, Battle Items 3006)**: An audit of all inventory display loops confirms that UI code only inspects `word & 0x3FF` (item ID) and `(word >> 10) & 0x1F` (count). No UI screen reads bit 15 to display a "NEW" tag, alter text colors, or restrict selling.
+- **Save File Persistence**: The save serializer (`80081AF0..80081C60`) writes all 1,024 words directly to memory card blocks. Any item added to inventory whose bit 15 has not yet been cleared by a field event retains bit 15 = 1 on the card. Save load regenerates integrity bytes via `8003C8A0`, which ignores bit 15. The format is fully bidirectional and safe regardless of whether bit 15 is 0 or 1.
+
