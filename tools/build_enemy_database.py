@@ -56,9 +56,21 @@ def load_item_names() -> Dict[int, str]:
     return {}
 
 
-def scan_disc_enemies(disc_path: Path, disc_num: int, item_names: Dict[int, str]) -> Dict[str, Dict[str, Any]]:
-    """Scan all combat encounter archives on a disc and extract 92-byte enemy records."""
+def scan_disc_enemies(
+    disc_path: Path, disc_num: int, item_names: Dict[int, str]
+) -> tuple[Dict[str, Dict[str, Any]], Dict[int, List[Dict[str, Any]]]]:
+    """Scan all combat encounter archives on a disc and extract 92-byte enemy records.
+
+    Returns (enemies, by_archive):
+    - enemies: name -> single highest-HP entry (legacy behavior, collapses same-named
+      variants across archives - kept for the existing catalog view).
+    - by_archive: archive_id -> list of every entry actually found in that archive, not
+      collapsed by name. Different archives sharing a display name are real, distinct
+      encounters (recolors, leveled variants, etc.) and must not be discarded just
+      because another archive with the same name happened to have higher HP.
+    """
     enemies: Dict[str, Dict[str, Any]] = {}
+    by_archive: Dict[int, List[Dict[str, Any]]] = {}
     with open(disc_path, "rb") as f:
         tbl = dict((idx, (lba, sz)) for idx, lba, sz in archive_table(f))
 
@@ -155,23 +167,29 @@ def scan_disc_enemies(disc_path: Path, disc_num: int, item_names: Dict[int, str]
                 if entry:
                     arc_enemies["Jibril"] = entry
 
-            # Store or keep highest-stat variant
+            # Store or keep highest-stat variant (legacy name-keyed catalog)
             for name_str, entry in arc_enemies.items():
                 if name_str not in enemies or enemies[name_str]["hp"] < entry["hp"]:
                     enemies[name_str] = entry
 
-    return enemies
+            # Preserve every entry found in this archive, uncollapsed - a different
+            # archive with the same monster name is a real, distinct encounter, not
+            # a duplicate to discard.
+            if arc_enemies:
+                by_archive[arc_id] = list(arc_enemies.values())
+
+    return enemies, by_archive
 
 
 def build_database() -> Dict[str, Any]:
     """Scan both discs, compile unified monster catalog, and export files."""
     item_names = load_item_names()
     print("Scanning Disc 1 encounter archives...")
-    e1 = scan_disc_enemies(DISC1_PATH, 1, item_names)
+    e1, arch1 = scan_disc_enemies(DISC1_PATH, 1, item_names)
     print(f"  Found {len(e1)} unique enemies on Disc 1.")
 
     print("Scanning Disc 2 encounter archives...")
-    e2 = scan_disc_enemies(DISC2_PATH, 2, item_names)
+    e2, arch2 = scan_disc_enemies(DISC2_PATH, 2, item_names)
     print(f"  Found {len(e2)} unique enemies on Disc 2.")
 
     all_enemies = {}
@@ -179,6 +197,16 @@ def build_database() -> Dict[str, Any]:
     for k, v in e2.items():
         if k not in all_enemies or all_enemies[k]["hp"] < v["hp"]:
             all_enemies[k] = v
+
+    # Merge per-archive indexes from both discs. Combat archives are shared between
+    # discs (verified bit-identical for the sprite archives earlier this session), so
+    # prefer Disc 1's entry when both discs found something at the same archive ID,
+    # but keep whichever one actually found data if only one did.
+    archive_index: Dict[str, List[Dict[str, Any]]] = {}
+    for aid, entries in arch2.items():
+        archive_index[str(aid)] = entries
+    for aid, entries in arch1.items():
+        archive_index[str(aid)] = entries
 
     sorted_enemies = sorted(all_enemies.values(), key=lambda x: (x["hp"], x["level"]), reverse=True)
 
@@ -215,6 +243,12 @@ def build_database() -> Dict[str, Any]:
     out_json = out_json_dir / "enemies_database.json"
     out_json.write_text(json.dumps(catalog, indent=2), encoding="utf-8")
     print(f"JSON catalog exported to {out_json} ({len(sorted_enemies)} enemies).")
+
+    # Write the uncollapsed archive index separately - this is the real archive_id ->
+    # monster(s) lookup, not filtered down to one name per species like the main catalog.
+    archive_index_out = out_json_dir / "archive_monster_index.json"
+    archive_index_out.write_text(json.dumps(archive_index, indent=2), encoding="utf-8")
+    print(f"Archive index exported to {archive_index_out} ({len(archive_index)} archives with a named entry).")
 
     # Generate Markdown Documentation (Paraphrased & Technical Only)
     generate_markdown_doc(sorted_enemies)
