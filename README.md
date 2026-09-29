@@ -63,13 +63,15 @@ Full byte-level reference, including every offset and the exact SP/equipment enc
 **[docs/SAVE-FORMAT.md](docs/SAVE-FORMAT.md)**
 
 **Game-mechanic reference docs** (fan-sourced, cross-validated against real saves/equip attempts
-where noted — see each doc's own Status section): [master item database](docs/SO2-ITEM-DATABASE.md), item restrictions
+where noted — see each doc's own Status section): [master item architecture overview](docs/SO2-ITEMS.md)
+covering the [full item database](docs/SO2-ITEM-DATABASE.md) and equip restrictions
 ([weapons/armor/accessories](docs/SO2-ITEM-RESTRICTIONS.md)), [Skills](docs/SO2-SKILLS-FULL.md) and
 their derived [Specialties](docs/SO2-SKILL-SPECIALTIES.md)/[Super Specialties](docs/SO2-SUPER-SPECIALTIES.md),
 [Talents](docs/SO2-TALENTS.md), [Private Actions](docs/SO2-PRIVATE-ACTIONS.md),
 [Emotional Levels](docs/SO2-EMOTIONAL-LEVELS.md), [story/precious items](docs/SO2-STORY-ITEMS.md),
-[status ailment sources](docs/SO2-STATUS-AILMENT-SOURCES.md), [spells](docs/SO2-SPELLS.md), and
-[Fun City](docs/SO2-FUN-CITY.md).
+[status ailment sources](docs/SO2-STATUS-AILMENT-SOURCES.md), [spells](docs/SO2-SPELLS.md),
+[Fun City](docs/SO2-FUN-CITY.md), and the [dialogue/story script bytecode engine](docs/SO2-STORY-SCRIPTS.md)
+(scene container format, opcode ISA — in-game text itself is not reproduced).
 
 **2026-09-25 — important structural correction:** part of every save block (starting at `0x0380`) is
 **zero-run compressed**, not raw bytes — `00 00 N` means "N+2 zero bytes." Earlier notes in this repo
@@ -127,6 +129,18 @@ All of these live in `scripts/` and are run from the repo root, e.g. `python scr
 | `so2_inventory.py` | Gives a character an item type they've never owned before (or tops up one they have) by executing the game's actual add-item routine — the only correct way to create a brand-new inventory entry. `python scripts/so2_inventory.py <card> --save S15 --id 364 --count 20 --out <new card>` (count is an increment; writes a new card file) |
 | `so2_location.py` | Reads/records/names map locations and teleports between recorded ones. `python scripts/so2_location.py show [box]`, `name`, `list`, `map`, `map-html`, `teleport` — see the script's own docstring for full usage. |
 | `so2_voice_collection.py` | Audits, merges, and unlocks the Voice Collection (50% Universe mode, 75% Music Test, 100% Master) across memory card save slots, recomputing both checksums via `so2_sign()`. `python tools/so2_voice_collection.py <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]` |
+| `so2_sprite_extract.py` | Decodes the tri-Ace 4bpp combat sprite container (Disc 1 Archives 3111-3207) into cropped, transparent PNG frames. `python tools/so2_sprite_extract.py --archive <id> [--scale N]` (output PNGs are local-only, not committed — see below) |
+
+`saveconv.py` (repo root) also has two built-in Star Ocean 2 subcommands, no `scripts/` prefix needed:
+`python saveconv.py voice <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]` and
+`python saveconv.py so2-edit <card> [--slot N] [--fol N] [--sp N] [--talents] [--skills] [--out <new card>]`
+(Fol/SP/Talents/Skill-Shop-tier editing, built on the verified offsets above).
+
+**Not committed (local-only by design):** the FMV/audio/character-art media-ripping toolchain
+(`so2_audio_extract.py`, `so2_video_convert.py`, `so2_duckstation_pack.py`, `so2_sync_cutscenes.py`,
+`so2_fullbody_extract.py`, `so2_media_extract.py`) and its pipeline doc. These rip actual copyrighted
+game assets via third-party tools (jPSXdec/FFmpeg) and are kept offline rather than pushed to this
+public repo; extracted sprite/media output under `artifacts/` is gitignored for the same reason.
 
 ## Usage notes
 
