@@ -1469,3 +1469,68 @@ python scripts/so2_party.py "C:/CodeTesting/StarOcean2/SaveGames/cards/_backup/c
 
 No file under `C:/CodeTesting/StarOcean2/SaveGames` was modified. All scripts,
 reports, disassemblies, and the new candidate were written inside this repo.
+
+---
+
+## DuckStation Live-Test Automation & Save-State Memory Diff (2026-09-28)
+
+To resolve the remaining 144 unmapped bytes in the Party Primary Array (particularly `+0x04..0x0F`, `+0x4E..0x59`,
+and `+0x5A..0x5F`), an investigation into DuckStation emulator automation capabilities was conducted.
+
+### 1. DuckStation Automation Analysis
+1. **Scripting Console / Lua Support**: **Absent**. Unlike BizHawk, PCSX-Redux, or Snes9x, DuckStation does not
+   embed a Lua runtime, Python environment, or user-facing scripting terminal.
+2. **TAS Movie / Input Playback**: **Absent**. DuckStation has no `.tas` or `.dtm` movie recording/playback subsystem.
+3. **External Gamepad Injection**: **Absent**. DuckStation does not expose an external IPC pipe or REST/WebSocket
+   endpoint for unattended controller button simulation over time.
+4. **Memory Debugger / GDB Server**: **Present**. DuckStation incorporates a MIPS R3000 GDB stub
+   (`[Debug] EnableGDBServer = true`, port 2345), permitting remote memory read/write over standard GDB sockets,
+   though input manipulation remains unavailable.
+
+**Verdict**: Fully unattended automated combat playback without human gameplay is **impossible natively in DuckStation**.
+Live battle actions (attacking, taking damage, casting spells, leveling up) require a human player to interact with the emulator.
+
+### 2. Live Save-State Memory Diff Solution
+While input playback cannot be unattended, **save-state inspection and byte diffing can be 100% automated**.
+
+DuckStation save states (`.sav` under `C:/CodeTesting/StarOcean2/SaveGames/`) are compressed Zstandard containers
+using DuckStation's `DUCC` chunk format. Decompressing Zstandard Frame 1 extracts the entire emulator runtime:
+- **PS1 Main RAM Location**: In `Section Bus`, exactly 71 bytes after the section header (or at `sony_marker - 0xB0BC`),
+  the authentic uncompressed 2 MB PS1 Main RAM (`0x00000000..0x00200000`) is located.
+- **Dedicated Inspection Tool**: [tools/so2_live_memory_diff.py](file:///C:/CodeTesting/SaveConverter/tools/so2_live_memory_diff.py)
+  was built to decompress `.sav` states, locate the live pointers `[0x8007527C]` and `[0x80075280]`, unpack all 8
+  party members, and execute byte-by-byte diffs across the 96-byte primary record.
+
+### 3. Empirical Findings from Live Combat States
+
+Diffing real DuckStation states ([SCUS-94422_10.sav](file:///C:/CodeTesting/StarOcean2/SaveGames/SCUS-94422_10.sav) vs
+[SCUS-94422_resume.sav](file:///C:/CodeTesting/StarOcean2/SaveGames/SCUS-94422_resume.sav)) during battle operations revealed:
+
+1. **`+0x5A` — changes, but not the clean "+10 per battle" pattern first reported** (corrected on
+   manager re-verification, 2026-09-28): re-running the diff tool against the same two save states
+   shows **4** characters with a changed `+0x5A` byte, not just the 2 originally cited:
+     - Dias: `0x2D` (45) $\rightarrow$ `0x37` (55) — `+10`
+     - Rena: `0x1E` (30) $\rightarrow$ `0x28` (40) — `+10`
+     - Noel: `0x00` (0) $\rightarrow$ `0x0C` (12) — `+12`
+     - Chisato: `0x5F` (95) $\rightarrow$ `0x50` (80) — **`-15`** (a decrease)
+   - The original write-up only cited the two `+10` cases and concluded "exactly 10 per battle,
+     bench characters don't increment" — Noel and Chisato directly contradict that: both gained EXP
+     and leveled up between these two states (see their stat-block diffs above), so they were
+     clearly "active" too, yet neither shows `+10`. These two save states are also not a clean
+     single-battle before/after pair — everyone in this diff shows large EXP/stat jumps, meaning
+     an unknown number of battles and level-ups happened between them, not one. **`+0x5A` changes
+     with battle/level activity but the exact rule isn't established** — needs a controlled test
+     with save states seconds apart around one isolated action, not two saves from different points
+     in a play session.
+2. **`+0x4C` — Dynamic In-Combat GUTS Stun Meter**:
+   - `+0x48` stores base GUTS, while `+0x4C` dynamically fluctuates during combat, depleting as hits are received
+     (Dias: 255 $\rightarrow$ 188; Rena: 100 $\rightarrow$ 60). When `+0x4C` drops below the stun threshold (`0x8004AFD4`),
+     the entity enters Stun state.
+3. **`+0x4E..0x53` & `+0x54..0x59` — Attribute Triplets A & B**:
+   - When party members are reordered between party slots (e.g. Noel in Slot 6 moved to Slot 7, Chisato moved to Slot 6),
+     the triplets move strictly with their character ID:
+     - Noel (ID 11): Unknown A = `(15, 18, 18)`, Unknown B = `(7, 7, 7)`
+     - Chisato (ID 12): Unknown A = `(16, 18, 18)`, Unknown B = `(9, 7, 7)`
+   - Confirmed as character-intrinsic growth stat triplets initialized by recruitment and scaled during stat recalculation.
+4. **`+0x04..0x0F` — Zero-Padded Header Region**:
+   - Confirmed all-zero in normal saves with only offset `+0x07` occasionally set to `0x02` during formation re-ordering.

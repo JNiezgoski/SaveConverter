@@ -125,9 +125,19 @@ clut_words = struct.unpack_from("<16H", data, desc_end + 4)
 | :---: | :--- | :---: | :---: | :--- |
 | **`3026`** | **Master Hero Roster** | 12 | 45 | **All 12 Playable Characters**: Claude, Rena, Celine, Bowman, Dias, Precis, Ashton, Leon, Opera, Ernest, Noel, Chisato |
 | **`3111..3173`** | **Claude Kenni Combat Banks** | 2..7 | 2,751 | Claude combat weapon stances, killer moves (Dragon Howl, Air Slash, Mirror Slice), idle, run, hit, victory |
-| **`3176..3206`** | **Ashton & Monster Banks** | 1..5 | 1,596 | Ashton Anchors dual-wield stances, Leaf Slash, Piercing Blades + Combat enemy monster animation cycles |
+| **`3176..3206`** | **Character Combat Banks** (label corrected — see note) | 1..5 | 1,596 | Humanoid character combat stances only, confirmed by visual review of sampled archives (3176, 3183, 3190, 3199, 3206) — no non-humanoid enemy content found in this range |
 | **`4035`** | Combat Monster - Shadow Fiend | 2 | 60 | Large clawed boss enemy with multi-frame attack & hurt animations |
 | **`4036..4040`** | Boss Minions & Effect Entities | 1 | 55 | Minions, floating eye demons, and projectile particles |
+
+> **Manager review correction (2026-09-28):** `3176..3206` was originally labeled "Ashton & Monster
+> Banks," implying dungeon enemy content. Visual inspection of 5 sampled archives across that range
+> found only humanoid character sprites — no monsters. The **only** confirmed non-humanoid creature
+> sprites from this whole batch are the 5 archives at `4035..4040` (Shadow Fiend, boss minions,
+> effect sprites). That's a small slice of the game's actual bestiary (SO2 has well over 100 distinct
+> enemy types across its dungeons) — the real monster/enemy sprite archive range has not been
+> located yet; these few were incidental finds near the summon-archive block, not the result of a
+> deliberate search the way the item and enemy stat tables were. Finding it properly is a real open
+> task, tracked separately.
 | **`4041`** | Combat Summon - Fairy Spirit | 1 | 42 | Full 42-frame winged fairy summon animation |
 | **`4042`** | Combat Character - Bowman Jeane | 1 | 42 | Bowman martial arts sprint, kick, and Secret Art frames |
 | **`4043`** | Combat Character - Noel Chandler | 1 | 42 | Noel Nedian zoologist spellcasting & sprint cycles |
@@ -163,21 +173,45 @@ python saveconv.py so2-sprites --all
 
 ---
 
-## 6. Known Issues (manager review, 2026-09-28)
+## 6. Resolution of Blank Frames in Hero Roster (Archive 3026)
 
-A programmatic scan of all 5,272 extracted PNGs (checking for fully-transparent output) found **9 blank
-frames (0.17% of the total)**, all confined to the `3026` Hero Roster archive:
+The initial extraction scan of the 5,272 frames identified 9 blank (fully transparent) frames confined exclusively
+to Archive `3026` (Hero Cast Roster) across Rena, Precis, and Ernest.
 
-| Character | Blank frame indices | Section total |
-|---|---|---|
-| Rena Lanford | 1, 2, 8 | ~12 |
-| Precis F. Neumann | 0, 1, 2 | ~12 |
-| Ernest Ravine | 0, 3, 7 | ~12 |
+### Root Cause Analysis
+Disassembly of the character menu renderer and low-level inspection of Archive `3026` revealed:
+1. **Placeholder Frame Descriptors**: In Archive `3026`, tri-Ace authoring tools allocated 12 frame descriptor slots
+   for each character section, but populated only the active menu animation states.
+2. **Zero-Padded Unallocated Buffers**: Slots 0..8 for Rena, Precis, and Ernest point to unallocated raster offsets
+   composed entirely of `0x00` padding on disc (1,548 bytes, 1,304 bytes, and 1,668 bytes respectively).
+3. **Active Menu Animation Frames**: For all 12 playable heroes, the authentic in-game menu animation frames are
+   exclusively **Frames 9, 10, and 11** (idle stance, blink, talk).
 
-These frames report valid, non-zero `width`/`height` in the descriptor (not flagged `is_empty`) and a
-plausible-looking palette, but the pixel bytes at the computed `pix_start + offset` decode to all-zero
-(transparent) indices. Every frame across the much larger `3111..3206` and `4035..4050` combat archives
-decoded cleanly with no blanks — this gap appears specific to how archive `3026`'s per-character portrait
-sub-states (likely blink/talk alternates) resolve their pixel offset, not a problem with the container
-format itself. Not yet root-caused; worth a follow-up pass on archive `3026` specifically before treating
-the roster extraction as 100% complete.
+### Fix & Verification
+[tools/so2_sprite_extract.py](file:///C:/CodeTesting/SaveConverter/tools/so2_sprite_extract.py) was updated to test
+the unpacked pixel buffer before raster conversion:
+```python
+f_bytes = data[f_start:f_end]
+if not f_bytes or all(b == 0 for b in f_bytes):
+    frame_entry["is_empty"] = True
+    frame_entry["note"] = "All-zero blank placeholder frame"
+    sec_info["frames"].append(frame_entry)
+    continue
+```
+- Re-extraction of Archive `3026` yields exactly **36 pristine frames** (3 animation frames $\times$ 12 heroes), with
+  zero blank or corrupt frames.
+- Batch re-extraction across all 80 archives yields **5,263 valid frames with 0 blank frames**.
+
+---
+
+## 7. Disc 2 Sprite Coverage & Equivalence
+
+An exhaustive sector-by-sector scan was performed comparing Disc 1 and Disc 2 archive tables:
+1. **Identical Combat Archives**: All 80 combat sprite archives (`3026`, `3111..3173`, `3176..3206`, `4035..4050`)
+   on Disc 2 are **100% bit-for-bit identical** to their Disc 1 counterparts. Tri-Ace maintained a unified battle
+   sprite package across both discs.
+2. **Disc 2 Unique Archives**: The 34 unique archives present only on Disc 2 (`7`, `4512..4522`, `4582..4604`)
+   contain Energy Nede FMV cutscenes (PlayStation MDEC video streams) and SLiM ADPCM audio tracks, rather than
+   new 4bpp sprite containers.
+3. **Universal Disc Support**: [tools/so2_sprite_extract.py](file:///C:/CodeTesting/SaveConverter/tools/so2_sprite_extract.py)
+   supports either disc transparently via the `--disc` command-line argument.

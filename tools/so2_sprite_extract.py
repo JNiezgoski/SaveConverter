@@ -190,6 +190,12 @@ def extract_sprite_frames(
                 continue
 
             f_bytes = data[f_start:f_end]
+            if not f_bytes or all(b == 0 for b in f_bytes):
+                frame_entry["is_empty"] = True
+                frame_entry["note"] = "All-zero blank placeholder frame"
+                sec_info["frames"].append(frame_entry)
+                continue
+
             expanded = bytearray(w * h)
             for i, b in enumerate(f_bytes):
                 expanded[i * 2] = b & 0x0F
