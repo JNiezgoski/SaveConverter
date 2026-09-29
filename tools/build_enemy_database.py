@@ -73,66 +73,92 @@ def scan_disc_enemies(disc_path: Path, disc_num: int, item_names: Dict[int, str]
             except Exception:
                 continue
 
-            if len(data) < 4:
+            if len(data) < 92:
                 continue
 
-            slz_off = struct.unpack_from("<I", data, 0)[0]
-            if not (0x40 <= slz_off < len(data) - 4 and data[slz_off : slz_off + 3] == b"SLZ"):
-                continue
+            limit = min(len(data) - 92, 1024)
+            arc_enemies: Dict[str, Dict[str, Any]] = {}
 
-            for pos in range(0, slz_off - 92, 4):
+            def _parse_entry(name_str: str, stats_pos: int) -> Optional[Dict[str, Any]]:
+                if stats_pos + 76 > len(data):
+                    return None
+                hp, mp, exp, fol = struct.unpack_from("<4I", data, stats_pos)
+                if not (10 <= hp <= 10000000 and 0 <= mp <= 65535 and 0 <= exp <= 5000000 and 0 <= fol <= 1000000):
+                    return None
+                bb_w, bb_h, bb_d = struct.unpack_from("<3h", data, stats_pos + 16)
+                agl = struct.unpack_from("<h", data, stats_pos + 22)[0]
+                atk = struct.unpack_from("<H", data, stats_pos + 28)[0]
+                int_ = struct.unpack_from("<H", data, stats_pos + 30)[0]
+                drop_id = struct.unpack_from("<H", data, stats_pos + 32)[0]
+                drop_rate = struct.unpack_from("<H", data, stats_pos + 34)[0]
+                lvl = struct.unpack_from("<H", data, stats_pos + 36)[0]
+                def_ = struct.unpack_from("<H", data, stats_pos + 38)[0]
+                guts = struct.unpack_from("<H", data, stats_pos + 40)[0]
+                elem_bytes = list(data[stats_pos + 42 : stats_pos + 50])
+
+                elem_dict = {}
+                for el_idx, el_val in enumerate(elem_bytes):
+                    el_name = ELEMENT_NAMES[el_idx] if el_idx < len(ELEMENT_NAMES) else f"Elem_{el_idx}"
+                    elem_dict[el_name] = RESISTANCE_MAP.get(el_val, f"Code_{el_val}")
+
+                drop_name = item_names.get(drop_id, f"Item #{drop_id}" if drop_id else "None")
+                return {
+                    "name": name_str,
+                    "hp": hp,
+                    "mp": mp,
+                    "exp": exp,
+                    "fol": fol,
+                    "level": lvl,
+                    "atk": atk,
+                    "def": def_,
+                    "int": int_,
+                    "agl": agl,
+                    "guts": guts,
+                    "bounding_box": {"width": bb_w, "height": bb_h, "depth": bb_d},
+                    "drop_item": {
+                        "item_id": drop_id,
+                        "name": drop_name,
+                        "rate_percent": drop_rate
+                    },
+                    "elemental_affinities": elem_dict,
+                    "source_archive_id": arc_id,
+                    "source_disc": disc_num
+                }
+
+            # Layout A: Name at pos, stats at pos + 16
+            for pos in range(0, limit, 4):
                 name_bytes = data[pos : pos + 16]
                 if name_bytes[0] in range(65, 91):  # Capital letter
                     name_end = name_bytes.find(b"\x00")
                     if 2 <= name_end <= 15 and set(name_bytes[name_end:]) == {0}:
                         name_str = name_bytes[:name_end].decode("ascii", errors="ignore")
                         if all(c.isalnum() or c in " -_.'" for c in name_str):
-                            hp, mp, exp, fol = struct.unpack_from("<4I", data, pos + 16)
-                            if 10 <= hp <= 10000000 and 0 <= mp <= 65535 and 0 <= exp <= 5000000 and 0 <= fol <= 1000000:
-                                bb_w, bb_h, bb_d = struct.unpack_from("<3h", data, pos + 32)
-                                agl = struct.unpack_from("<h", data, pos + 38)[0]
-                                atk = struct.unpack_from("<H", data, pos + 44)[0]
-                                int_ = struct.unpack_from("<H", data, pos + 46)[0]
-                                drop_id = struct.unpack_from("<H", data, pos + 48)[0]
-                                drop_rate = struct.unpack_from("<H", data, pos + 50)[0]
-                                lvl = struct.unpack_from("<H", data, pos + 52)[0]
-                                def_ = struct.unpack_from("<H", data, pos + 54)[0]
-                                guts = struct.unpack_from("<H", data, pos + 56)[0]
-                                elem_bytes = list(data[pos + 58 : pos + 66])
+                            entry = _parse_entry(name_str, pos + 16)
+                            if entry:
+                                arc_enemies[name_str] = entry
 
-                                # Element dictionary
-                                elem_dict = {}
-                                for el_idx, el_val in enumerate(elem_bytes):
-                                    el_name = ELEMENT_NAMES[el_idx] if el_idx < len(ELEMENT_NAMES) else f"Elem_{el_idx}"
-                                    elem_dict[el_name] = RESISTANCE_MAP.get(el_val, f"Code_{el_val}")
+            # Layout B: Stats at pos, Name at pos + 76
+            for pos in range(0, limit, 4):
+                name_bytes = data[pos + 76 : pos + 92]
+                if name_bytes[0] in range(65, 91):
+                    name_end = name_bytes.find(b"\x00")
+                    if 2 <= name_end <= 15 and set(name_bytes[name_end:]) == {0}:
+                        name_str = name_bytes[:name_end].decode("ascii", errors="ignore")
+                        if all(c.isalnum() or c in " -_.'" for c in name_str) and name_str not in arc_enemies:
+                            entry = _parse_entry(name_str, pos)
+                            if entry:
+                                arc_enemies[name_str] = entry
 
-                                drop_name = item_names.get(drop_id, f"Item #{drop_id}" if drop_id else "None")
-                                entry: Dict[str, Any] = {
-                                    "name": name_str,
-                                    "hp": hp,
-                                    "mp": mp,
-                                    "exp": exp,
-                                    "fol": fol,
-                                    "level": lvl,
-                                    "atk": atk,
-                                    "def": def_,
-                                    "int": int_,
-                                    "agl": agl,
-                                    "guts": guts,
-                                    "bounding_box": {"width": bb_w, "height": bb_h, "depth": bb_d},
-                                    "drop_item": {
-                                        "item_id": drop_id,
-                                        "name": drop_name,
-                                        "rate_percent": drop_rate
-                                    },
-                                    "elemental_affinities": elem_dict,
-                                    "source_archive_id": arc_id,
-                                    "source_disc": disc_num
-                                }
+            # Special case: Archive 1941 multi-boss encounter (Jibril stats at 0x54)
+            if arc_id == 1941 and b"Jibril\x00" in data and "Jibril" not in arc_enemies:
+                entry = _parse_entry("Jibril", 0x54)
+                if entry:
+                    arc_enemies["Jibril"] = entry
 
-                                # Store or keep highest-stat variant
-                                if name_str not in enemies or enemies[name_str]["hp"] < hp:
-                                    enemies[name_str] = entry
+            # Store or keep highest-stat variant
+            for name_str, entry in arc_enemies.items():
+                if name_str not in enemies or enemies[name_str]["hp"] < entry["hp"]:
+                    enemies[name_str] = entry
 
     return enemies
 

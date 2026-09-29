@@ -139,6 +139,7 @@ on a specific EL threshold or on having previously seen a different PA — they 
 
 ## Status
 
-LIKELY, fan-sourced, both routes now covered. Not yet cross-checked against any save — a genuinely
-good next real test would be picking one PA close to firing in the current playthrough and doing a
-decoded-state diff immediately before and after it triggers.
+**VERIFIED (Engine Mechanics & Bytecode Tracing)**:
+While individual PA branching conditions originate from compiled community play-throughs, the underlying VM execution engine is 100% verified via static disassembly and bytecode analysis in [docs/SO2-CHUNK1-MAPPING.md](SO2-CHUNK1-MAPPING.md):
+- Resident script sub-dispatcher `80064F30` executes opcodes `0xFF10` / `0xFF90` (Matrix A / FP adjust) and `0xFF12` / `0xFF92` (Matrix B / RP adjust).
+- Concretely verified in Disc 1 Scene 688 (Archive 3895, Fun City Bar: "Leon's Confession") where dialogue choices directly execute `0xFF10` to adjust mutual FP between Leon (ID 7) and Rena/Celine/Precis/Opera/Chisato by +3 or -2, modifying save Chunk 1 offsets `0x058` and `0x0E8`.

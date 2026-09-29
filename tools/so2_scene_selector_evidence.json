@@ -43,6 +43,36 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 16,
+      "archive_id": 3243,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3243/sec00_f00.png",
+      "visual_description": "Female humanoid in blue apron dress with white puff sleeves, brown hair in a bun",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 17,
+      "archive_id": 3282,
+      "section_index": 5,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3282/sec05_f00.png",
+      "visual_description": "Male humanoid wearing blue bandanna/cap and white shopkeeper apron over brown tunic",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 18,
+      "archive_id": 3219,
+      "section_index": 13,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3219/sec13_f00.png",
+      "visual_description": "Small brown and tan quadruped creature / raccoon-like forest mammal with round ears",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 20,
       "archive_id": 3230,
       "section_index": 3,
@@ -63,6 +93,26 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 22,
+      "archive_id": 3225,
+      "section_index": 16,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3225/sec16_f00.png",
+      "visual_description": "Small young girl humanoid in orange/red dress with red hair ribbons and green hair",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 23,
+      "archive_id": 3240,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3240/sec02_f00.png",
+      "visual_description": "Small child humanoid with blonde/greenish hair in blue vest and white shirt",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 24,
       "archive_id": 3442,
       "section_index": 6,
@@ -79,6 +129,16 @@
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3464/sec04_f00.png",
       "visual_description": "White-haired bearded humanoid in yellow and blue",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 26,
+      "archive_id": 3439,
+      "section_index": 29,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3439/sec29_f00.png",
+      "visual_description": "Elderly male humanoid with white hair, pointed ears, wearing white robe with gold trim",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -104,12 +164,82 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 29,
+      "archive_id": 3442,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3442/sec09_f00.png",
+      "visual_description": "Young male humanoid with green hair, white tunic with brown leather straps and green boots",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 30,
+      "archive_id": 3224,
+      "section_index": 12,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3224/sec12_f00.png",
+      "visual_description": "Young woman humanoid with long light brown hair in green dress with white collar",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 31,
+      "archive_id": 3230,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3230/sec02_f00.png",
+      "visual_description": "Young girl humanoid with pink pigtails in lavender/light blue pinafore dress",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 32,
       "archive_id": 3207,
       "section_index": 13,
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3207/sec13_f00.png",
       "visual_description": "Small purple-hooded humanoid",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 33,
+      "archive_id": 3329,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3329/sec03_f00.png",
+      "visual_description": "Small boy humanoid with brown cap/hair, yellow hooded collar, blue pants",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 35,
+      "archive_id": 3398,
+      "section_index": 16,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3398/sec16_f00.png",
+      "visual_description": "Elderly scholar/monk humanoid with pointed hood/headdress and brown/purple robes",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 36,
+      "archive_id": 3353,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3353/sec09_f00.png",
+      "visual_description": "Small young girl humanoid wearing pink pointed mushroom-like hat, green apron/dress",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 37,
+      "archive_id": 3328,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3328/sec02_f00.png",
+      "visual_description": "Small child humanoid with pink hair buns in white/blue outfit",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -124,12 +254,52 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 39,
+      "archive_id": 3219,
+      "section_index": 14,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3219/sec14_f00.png",
+      "visual_description": "Brown and white sitting dog / puppy with floppy ears",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 40,
       "archive_id": 3250,
       "section_index": 8,
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3250/sec08_f00.png",
       "visual_description": "Balding humanoid in a green top",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 41,
+      "archive_id": 3281,
+      "section_index": 20,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3281/sec20_f00.png",
+      "visual_description": "Young male humanoid in hooded blue winter coat and boots",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 42,
+      "archive_id": 3282,
+      "section_index": 26,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3282/sec26_f00.png",
+      "visual_description": "Female scholar humanoid with white headdress, holding a red book, wearing blue coat",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 43,
+      "archive_id": 3312,
+      "section_index": 26,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3312/sec26_f00.png",
+      "visual_description": "Female scholar humanoid with white headdress, blue outfit holding a red book (variant palette)",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -144,6 +314,46 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 45,
+      "archive_id": 3331,
+      "section_index": 21,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3331/sec21_f00.png",
+      "visual_description": "Elderly male humanoid with walking cane, wearing light blue hat and coat",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 46,
+      "archive_id": 3351,
+      "section_index": 5,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3351/sec05_f00.png",
+      "visual_description": "Elderly male humanoid with grey beard, grey knit cap and purple coat",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 47,
+      "archive_id": 3207,
+      "section_index": 12,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3207/sec12_f00.png",
+      "visual_description": "Small girl child humanoid with blue pigtails and white bonnet/headdress, yellow apron",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 48,
+      "archive_id": 3207,
+      "section_index": 14,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3207/sec14_f00.png",
+      "visual_description": "Small girl humanoid with reddish-pink pigtails, blue dress and white collar",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 49,
       "archive_id": 3265,
       "section_index": 4,
@@ -154,12 +364,132 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 50,
+      "archive_id": 3219,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3219/sec10_f00.png",
+      "visual_description": "Young boy humanoid wearing grey flat cap and striped grey overalls",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 51,
+      "archive_id": 3251,
+      "section_index": 11,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3251/sec11_f00.png",
+      "visual_description": "Elderly woman humanoid with white hair in a bun, green dress and apron, hands folded",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 52,
+      "archive_id": 3398,
+      "section_index": 17,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3398/sec17_f00.png",
+      "visual_description": "Elderly woman humanoid with glasses, white hair, yellow sweater and blue skirt",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 53,
+      "archive_id": 3419,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3419/sec03_f00.png",
+      "visual_description": "Woman humanoid with purple hair in green tunic and purple boots",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 54,
+      "archive_id": 3629,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3629/sec09_f00.png",
+      "visual_description": "Young girl humanoid in purple hooded cape and green dress",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 55,
+      "archive_id": 3281,
+      "section_index": 22,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3281/sec22_f00.png",
+      "visual_description": "Young child humanoid in purple cowl/hood and green tunic",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 56,
       "archive_id": 3329,
       "section_index": 7,
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3329/sec07_f00.png",
       "visual_description": "Small green-hooded humanoid in brown clothing",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 57,
+      "archive_id": 3442,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3442/sec07_f00.png",
+      "visual_description": "Young female humanoid with pink twin buns wearing blue/grey coat with fur trim",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 58,
+      "archive_id": 3442,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3442/sec08_f00.png",
+      "visual_description": "Nedian woman humanoid with pointed ears, teal hair, purple vest and dark skirt",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 59,
+      "archive_id": 3331,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3331/sec07_f00.png",
+      "visual_description": "Elderly scholar humanoid with white beard, ornate headdress, wearing red/brown robes with scroll",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 60,
+      "archive_id": 3391,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3391/sec02_f00.png",
+      "visual_description": "Scholar humanoid wearing blue pointed hood with gold trim, long robes",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 62,
+      "archive_id": 3419,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3419/sec10_f00.png",
+      "visual_description": "Small child humanoid with winged green hat/helmet and brown coat",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 63,
+      "archive_id": 3335,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3335/sec03_f00.png",
+      "visual_description": "Elderly female humanoid wearing purple hooded cape over white/green dress",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -196,6 +526,66 @@
       "reviewer": "Claude (manager)"
     },
     {
+      "selector_id": 67,
+      "archive_id": 3207,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3207/sec10_f00.png",
+      "visual_description": "Male humanoid with spiky silver/light-blue hair, pink vest, dark pants",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 68,
+      "archive_id": 3207,
+      "section_index": 11,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3207/sec11_f00.png",
+      "visual_description": "Male humanoid with green hair, green vest over white shirt",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 71,
+      "archive_id": 3312,
+      "section_index": 27,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3312/sec27_f00.png",
+      "visual_description": "Female humanoid with teal hair in teal coat with pink scarf/trim",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 72,
+      "archive_id": 3324,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3324/sec03_f00.png",
+      "visual_description": "Female humanoid with pink hair in light-blue hooded coat",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 73,
+      "archive_id": 3331,
+      "section_index": 19,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3331/sec19_f00.png",
+      "visual_description": "Small boy humanoid with green hair, purple hooded collar, blue pants",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 74,
+      "archive_id": 3331,
+      "section_index": 22,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3331/sec22_f00.png",
+      "visual_description": "Small child humanoid wearing red aviator cap/helmet and blue tunic with red cape",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 75,
       "archive_id": 3224,
       "section_index": 10,
@@ -227,12 +617,32 @@
       "reviewer": "Claude (manager)"
     },
     {
+      "selector_id": 78,
+      "archive_id": 3265,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3265/sec00_f00.png",
+      "visual_description": "Performer humanoid with styled pink hair, purple vest/tunic, white pants",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 79,
       "archive_id": 3265,
       "section_index": 5,
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3265/sec05_f00.png",
       "visual_description": "Black-haired moustached humanoid in a pale shirt and blue trousers",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 80,
+      "archive_id": 3225,
+      "section_index": 15,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3225/sec15_f00.png",
+      "visual_description": "Mature woman humanoid with silver-white hair, blue dress with white blouse (Rena's mother Westa)",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -247,6 +657,26 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 82,
+      "archive_id": 3329,
+      "section_index": 5,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3329/sec05_f00.png",
+      "visual_description": "Young male humanoid with dark hair, white buttoned shirt and grey pants",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 83,
+      "archive_id": 3329,
+      "section_index": 6,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3329/sec06_f00.png",
+      "visual_description": "Young male humanoid with spiky silver/grey hair, white shirt and grey pants",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 84,
       "archive_id": 3225,
       "section_index": 17,
@@ -256,6 +686,26 @@
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
       "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 85,
+      "archive_id": 3230,
+      "section_index": 4,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3230/sec04_f00.png",
+      "visual_description": "Male humanoid with blue hair, ornate blue and gold tunic/armor",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 86,
+      "archive_id": 3331,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3331/sec09_f00.png",
+      "visual_description": "Woman humanoid with blonde hair in red hooded cloak with white fur trim",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
       "selector_id": 87,
@@ -300,6 +750,76 @@
       "reviewer": "Claude (manager)"
     },
     {
+      "selector_id": 91,
+      "archive_id": 3293,
+      "section_index": 20,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3293/sec20_f00.png",
+      "visual_description": "Elderly woman humanoid in grey headscarf/bonnet and olive green apron dress",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 92,
+      "archive_id": 3250,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3250/sec07_f00.png",
+      "visual_description": "Blonde soldier/knight humanoid in blue tunic and silver breastplate armor",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 93,
+      "archive_id": 3293,
+      "section_index": 19,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3293/sec19_f00.png",
+      "visual_description": "Elderly king/regal humanoid with white beard and golden crown, red and gold royal robes",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 94,
+      "archive_id": 3225,
+      "section_index": 27,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3225/sec27_f00.png",
+      "visual_description": "Blue mechanical egg-shaped robot with red antenna/visor and red feet",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 95,
+      "archive_id": 3293,
+      "section_index": 18,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3293/sec18_f00.png",
+      "visual_description": "Queen/noblewoman humanoid with blonde hair wearing ornate white and pink royal gown with tiara",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 96,
+      "archive_id": 3449,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3449/sec07_f00.png",
+      "visual_description": "Male researcher/scientist humanoid with blonde hair in long white lab coat",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 97,
+      "archive_id": 3216,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3216/sec09_f00.png",
+      "visual_description": "Small grey and white pigeon / bird resting/pecking on the ground",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 99,
       "archive_id": 3587,
       "section_index": 7,
@@ -310,12 +830,72 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 100,
+      "archive_id": 3259,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3259/sec01_f00.png",
+      "visual_description": "Small shiny gold coin / circular token prop",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 101,
+      "archive_id": 3282,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3282/sec09_f00.png",
+      "visual_description": "Blonde female humanoid in ornate white/red heraldic priestess gown",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 102,
       "archive_id": 3224,
       "section_index": 11,
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3224/sec11_f00.png",
       "visual_description": "Humanoid wearing a tall blue and gold hat and robe",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 103,
+      "archive_id": 3281,
+      "section_index": 24,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3281/sec24_f00.png",
+      "visual_description": "Male humanoid with green hair in blue/purple knight tunic with gold accents",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 104,
+      "archive_id": 3216,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3216/sec08_f00.png",
+      "visual_description": "Male humanoid with black hair in red jacket/coat and dark trousers",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 105,
+      "archive_id": 3349,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3349/sec10_f00.png",
+      "visual_description": "Young woman humanoid with long dark-blue hair in purple apron dress",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 106,
+      "archive_id": 3277,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3277/sec00_f00.png",
+      "visual_description": "Male humanoid with dark hair, purple scholar robe with pink trim",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -336,6 +916,56 @@
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3376/sec10_f00.png",
       "visual_description": "Pink-haired humanoid wearing a white coat",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 109,
+      "archive_id": 3351,
+      "section_index": 6,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3351/sec06_f00.png",
+      "visual_description": "Young male humanoid with dark hair in white shirt and tan vest/shorts",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 110,
+      "archive_id": 3895,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3895/sec08_f00.png",
+      "visual_description": "Young boy humanoid with light brown hair in blue denim overalls",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 111,
+      "archive_id": 3281,
+      "section_index": 28,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3281/sec28_f00.png",
+      "visual_description": "Young girl humanoid with long blue hair, headband, orange apron dress",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 112,
+      "archive_id": 3281,
+      "section_index": 29,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3281/sec29_f00.png",
+      "visual_description": "Girl humanoid with brown bob cut and white headband, blue pinafore dress",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 113,
+      "archive_id": 3237,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3237/sec07_f00.png",
+      "visual_description": "Male researcher/doctor humanoid with glasses and white lab coat",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -372,6 +1002,36 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 118,
+      "archive_id": 3391,
+      "section_index": 5,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3391/sec05_f00.png",
+      "visual_description": "Woman humanoid with blue hair in green dress and red shawl",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 119,
+      "archive_id": 3315,
+      "section_index": 12,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3315/sec12_f00.png",
+      "visual_description": "Military/naval officer humanoid with peaked cap and brown uniform with gold epaulets",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 120,
+      "archive_id": 3390,
+      "section_index": 11,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3390/sec11_f00.png",
+      "visual_description": "Middle-aged male humanoid with mustache, white work shirt and brown trousers",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 121,
       "archive_id": 3453,
       "section_index": 0,
@@ -381,6 +1041,26 @@
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
       "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 122,
+      "archive_id": 3665,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3665/sec02_f00.png",
+      "visual_description": "Dark bird silhouette / shadow flying in profile (large shadow bird/hawk)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 123,
+      "archive_id": 3663,
+      "section_index": 4,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3663/sec04_f00.png",
+      "visual_description": "Dark gliding creature shadow / silhouette viewed from above (flying squirrel / ray shadow)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
       "selector_id": 124,
@@ -393,12 +1073,192 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 125,
+      "archive_id": 3370,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3370/sec08_f00.png",
+      "visual_description": "Figure in dark robes holding an ornate glowing golden staff/relic topped with a sphere",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 126,
+      "archive_id": 3676,
+      "section_index": 23,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3676/sec23_f00.png",
+      "visual_description": "Female humanoid with long reddish hair, silver breastplate armor and blue trim",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 127,
+      "archive_id": 3512,
+      "section_index": 6,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3512/sec06_f00.png",
+      "visual_description": "Muscular shirtless male martial artist humanoid with spiky dark hair and red waist sash",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 128,
+      "archive_id": 3217,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3217/sec10_f00.png",
+      "visual_description": "Male humanoid in brown hooded cloak and leather tunic",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 129,
+      "archive_id": 3495,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3495/sec07_f00.png",
+      "visual_description": "Young woman humanoid with pink hair in purple apron dress with white lace",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 131,
+      "archive_id": 3963,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3963/sec03_f09.png",
+      "visual_description": "Blue-tunic swordsman/pirate humanoid with blue bandana, brandishing a curved green cutlass",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 133,
       "archive_id": 3592,
       "section_index": 0,
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3592/sec00_f00.png",
       "visual_description": "Large bird with spread purple and gold wings",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 135,
+      "archive_id": 3649,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3649/sec07_f01.png",
+      "visual_description": "Chunky robot/humanoid with white spiked mask/helmet, blue overalls, yellow eye/visor",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 136,
+      "archive_id": 3649,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3649/sec08_f00.png",
+      "visual_description": "Armored gladiator/guard figure with horned helmet, silver chestplate and purple plume",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 137,
+      "archive_id": 3211,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3211/sec01_f00.png",
+      "visual_description": "Calnus starship commander in red uniform with peaked cap and gold braid (Admiral Ronixis J. Kenni)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 138,
+      "archive_id": 3211,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3211/sec02_f00.png",
+      "visual_description": "Federation officer humanoid with slicked silver hair, white dress uniform with red collar/trim",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 139,
+      "archive_id": 3211,
+      "section_index": 4,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3211/sec04_f00.png",
+      "visual_description": "Federation crewman humanoid with beret, brown and white uniform",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 140,
+      "archive_id": 3832,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3832/sec09_f00.png",
+      "visual_description": "Male humanoid wearing safari pith helmet, tan explorer outfit with satchel",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 141,
+      "archive_id": 3376,
+      "section_index": 11,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3376/sec11_f00.png",
+      "visual_description": "Bald elderly male humanoid in green athletic tracksuit/tunic",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 142,
+      "archive_id": 3829,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3829/sec03_f00.png",
+      "visual_description": "Elderly gentleman humanoid with grey beard in stylish yellow suit and tie",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 143,
+      "archive_id": 3211,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3211/sec03_f00.png",
+      "visual_description": "Young male federation crewman humanoid with brown hair in silver/grey bodysuit",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 144,
+      "archive_id": 3835,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3835/sec02_f00.png",
+      "visual_description": "Small blonde toddler/child humanoid in pink/peach smock",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 145,
+      "archive_id": 3221,
+      "section_index": 15,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3221/sec15_f00.png",
+      "visual_description": "Small child humanoid with blue hair, blue beret/cap, red tunic with yellow collar",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 146,
+      "archive_id": 3508,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3508/sec00_f00.png",
+      "visual_description": "Male knight/officer humanoid with short blue hair in silver armor with orange pauldrons",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -567,6 +1427,16 @@
       "reviewer": "Claude (manager)"
     },
     {
+      "selector_id": 168,
+      "archive_id": 3784,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3784/sec01_f00.png",
+      "visual_description": "Nedian woman humanoid with pointed ears, teal hair, ornate blue and white ceremonial robe",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 169,
       "archive_id": 3476,
       "section_index": 4,
@@ -603,6 +1473,36 @@
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3436/sec28_f00.png",
       "visual_description": "Purple ray-like creature with a curled tail",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 174,
+      "archive_id": 3606,
+      "section_index": 5,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3606/sec05_f00.png",
+      "visual_description": "Small child humanoid with blue hair and cap, green tunic with gold trim (variant child palette)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 175,
+      "archive_id": 3850,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3850/sec07_f00.png",
+      "visual_description": "Male humanoid with mustache and sunglasses/dark goggles in dark futuristic coat",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 177,
+      "archive_id": 3670,
+      "section_index": 4,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3670/sec04_f00.png",
+      "visual_description": "Heavy armored knight in full silver/grey plate armor with plumed helmet and blue boots",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -658,6 +1558,16 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 184,
+      "archive_id": 3730,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3730/sec00_f00.png",
+      "visual_description": "Horned beast / satyr-like creature with curved ram horns, white fur, claws",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 185,
       "archive_id": 3679,
       "section_index": 4,
@@ -688,6 +1598,16 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 189,
+      "archive_id": 3679,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3679/sec02_f00.png",
+      "visual_description": "Purple-tinted armored soldier/sentinel with helmet visor walking forward",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 190,
       "archive_id": 3679,
       "section_index": 3,
@@ -704,6 +1624,26 @@
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3669/sec05_f00.png",
       "visual_description": "Prone furred creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 192,
+      "archive_id": 3439,
+      "section_index": 32,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3439/sec32_f00.png",
+      "visual_description": "Small elderly humanoid with goggles/bandaged head, green hooded cape and walking cane",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 193,
+      "archive_id": 3439,
+      "section_index": 31,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3439/sec31_f00.png",
+      "visual_description": "Young girl humanoid with pink hair, wearing white/blue hooded cloak holding hands together",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -728,6 +1668,16 @@
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
       "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 196,
+      "archive_id": 3517,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3517/sec01_f00.png",
+      "visual_description": "Nedian youth humanoid with pointed ears, blue hair, white/blue tunic with yellow belt",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
       "selector_id": 197,
@@ -773,6 +1723,26 @@
       "reviewer": "Claude (manager)"
     },
     {
+      "selector_id": 201,
+      "archive_id": 3864,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3864/sec09_f00.png",
+      "visual_description": "Mechanical wall bracket / bronze machinery fixture with cogwheels and pipes",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 202,
+      "archive_id": 3864,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3864/sec10_f08.png",
+      "visual_description": "Floor lever mechanism with teal/metal cylindrical base and upright lever handle",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 204,
       "archive_id": 3587,
       "section_index": 1,
@@ -784,12 +1754,102 @@
       "reviewer": "Claude (manager)"
     },
     {
+      "selector_id": 205,
+      "archive_id": 3912,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3912/sec01_f00.png",
+      "visual_description": "Female humanoid/sorceress with dark horns/headdress in an elaborate red slit dress",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 206,
+      "archive_id": 3624,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3624/sec01_f00.png",
+      "visual_description": "Drider / Arachne creature: female humanoid upper body with blonde hair atop a massive multi-legged spider body",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 207,
+      "archive_id": 3918,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3918/sec00_f03.png",
+      "visual_description": "Large quadruped purple demonic beast with long black tail, dorsal spikes, and sharp white claws",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 209,
+      "archive_id": 3934,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3934/sec01_f00.png",
+      "visual_description": "Pair of pink glowing platform pads / oval energy steps",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 210,
+      "archive_id": 3923,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3923/sec01_f01.png",
+      "visual_description": "Horizontal green metallic grated panel / floor strip",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 211,
+      "archive_id": 3970,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3970/sec01_f00.png",
+      "visual_description": "Massive crumbled stone golem boss statue / ancient stone colossus head and shoulder fragments (216x180)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 212,
+      "archive_id": 3993,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3993/sec03_f04.png",
+      "visual_description": "Ancient sage / Wise Man boss figure with long white beard, purple and green robes, holding crystal staff (96x74)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 213,
       "archive_id": 3810,
       "section_index": 0,
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3810/sec00_f00.png",
       "visual_description": "Green mechanical-looking legs and lower torso",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 214,
+      "archive_id": 4014,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_4014/sec03_f00.png",
+      "visual_description": "Ornate winged golden relic / mechanical dagger obelisk flanked by skull pedestal shoulders (76x112)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 215,
+      "archive_id": 4022,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_4022/sec00_f04.png",
+      "visual_description": "Dark winged fairy / valkyrie boss figure with halo, dark feathered wings, holding silver lance/glaive (92x130)",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -803,6 +1863,26 @@
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
       "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 217,
+      "archive_id": 3982,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3982/sec02_f05.png",
+      "visual_description": "Pulsating pink organic bio-cocoon / alien egg sac with vein-like ridges (100x76)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 218,
+      "archive_id": 3240,
+      "section_index": 4,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3240/sec04_f00.png",
+      "visual_description": "Young boy humanoid with green headband, white shirt and green shorts",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
       "selector_id": 219,
@@ -821,6 +1901,36 @@
       "frame_index": 0,
       "filename": "artifacts/so2-sprites/scene_3755/sec12_f00.png",
       "visual_description": "Gold winged humanoid creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 221,
+      "archive_id": 3794,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3794/sec00_f00.png",
+      "visual_description": "Colossal grey leviathan / whale monster head and maw (Phynal setpiece, 116x109)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 223,
+      "archive_id": 3353,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3353/sec08_f00.png",
+      "visual_description": "Soldier humanoid in green helmet and military fatigues",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 227,
+      "archive_id": 3965,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3965/sec00_f09.png",
+      "visual_description": "Masked ninja / assassin humanoid in grey garb wielding a curved scimitar/dagger",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
@@ -912,6 +2022,366 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 237,
+      "archive_id": 3540,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3540/sec02_f00.png",
+      "visual_description": "Nedian male humanoid with pointed ears, mustache, wearing brown patterned tunic",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 238,
+      "archive_id": 3393,
+      "section_index": 15,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3393/sec15_f00.png",
+      "visual_description": "Male researcher/clerk humanoid with dark hair, white buttoned lab coat/shirt",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 239,
+      "archive_id": 3539,
+      "section_index": 6,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3539/sec06_f00.png",
+      "visual_description": "Nedian male humanoid with pointed ears, silver hair, white and purple formal vest",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 501,
+      "archive_id": 3224,
+      "section_index": 17,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3224/sec17_f00.png",
+      "visual_description": "Wooden barrel / stool topped with a round red cushioned seat (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 502,
+      "archive_id": 3225,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3225/sec09_f00.png",
+      "visual_description": "Row of red hardbound books on a shelf / red book spine (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 503,
+      "archive_id": 3225,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3225/sec10_f00.png",
+      "visual_description": "Row of white/cream parchment books or paper folios on a shelf (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 504,
+      "archive_id": 3225,
+      "section_index": 11,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3225/sec11_f00.png",
+      "visual_description": "Wooden doorway frame draped with vertical green curtain blinds / noren (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 505,
+      "archive_id": 3225,
+      "section_index": 12,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3225/sec12_f00.png",
+      "visual_description": "Angled perspective wooden door / doorway shutter pane with blue slats (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 506,
+      "archive_id": 3251,
+      "section_index": 6,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3251/sec06_f00.png",
+      "visual_description": "Square dark wooden trapdoor / cellar hatch with metal studs (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 507,
+      "archive_id": 3251,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3251/sec07_f01.png",
+      "visual_description": "Dark brown wooden cellar hatch / floor panel (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 508,
+      "archive_id": 3251,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3251/sec08_f02.png",
+      "visual_description": "Large angled dark wooden cellar door hatch viewed in 3/4 perspective (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 509,
+      "archive_id": 3251,
+      "section_index": 9,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3251/sec09_f03.png",
+      "visual_description": "Vertical dark wooden cellar door panel with metal bands (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 510,
+      "archive_id": 3251,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3251/sec10_f04.png",
+      "visual_description": "Dark wooden cellar door panel matching 509 pair (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 513,
+      "archive_id": 3312,
+      "section_index": 14,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3312/sec14_f00.png",
+      "visual_description": "Blue striped doorway curtain / awning cloth piece in Clik coastal town style (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 514,
+      "archive_id": 3312,
+      "section_index": 15,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3312/sec15_f00.png",
+      "visual_description": "Narrow vertical blue striped window shutter / door slat (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 515,
+      "archive_id": 3312,
+      "section_index": 16,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3312/sec16_f00.png",
+      "visual_description": "Double blue wooden shutters with brass handles (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 516,
+      "archive_id": 3312,
+      "section_index": 17,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3312/sec17_f00.png",
+      "visual_description": "Blue window shutter pane with horizontal gold trim (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 517,
+      "archive_id": 3312,
+      "section_index": 18,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3312/sec18_f00.png",
+      "visual_description": "Angled perspective blue window shutter panel pair (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 518,
+      "archive_id": 3314,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3314/sec01_f00.png",
+      "visual_description": "Blue arched doorway shutter with brass horizontal bar (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 519,
+      "archive_id": 3314,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3314/sec02_f00.png",
+      "visual_description": "Arched blue doorway shutter with brass horizontal bar, wide variant (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 520,
+      "archive_id": 3314,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3314/sec03_f00.png",
+      "visual_description": "Angled perspective blue door panel with brass handle (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 521,
+      "archive_id": 3314,
+      "section_index": 4,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3314/sec04_f00.png",
+      "visual_description": "Blue wooden arched door with gold doorknob (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 522,
+      "archive_id": 3282,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3282/sec01_f00.png",
+      "visual_description": "Arched blue door with circular window and brass latch (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 523,
+      "archive_id": 3282,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3282/sec02_f00.png",
+      "visual_description": "Rectangular blue wooden door with red sign plaque and brass latch (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 524,
+      "archive_id": 3282,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3282/sec03_f00.png",
+      "visual_description": "Arched blue wooden door with circular glass window (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 525,
+      "archive_id": 3350,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3350/sec00_f00.png",
+      "visual_description": "Dark brown panel door with rectangular window panes (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 526,
+      "archive_id": 3349,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3349/sec00_f00.png",
+      "visual_description": "Arched dark blue door with horizontal gold brass plate (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 527,
+      "archive_id": 3349,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3349/sec01_f00.png",
+      "visual_description": "Arched dark blue door panel with square brass plate (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 528,
+      "archive_id": 3349,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3349/sec02_f00.png",
+      "visual_description": "Angled dark red wooden door with brass handle (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 529,
+      "archive_id": 3349,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3349/sec03_f00.png",
+      "visual_description": "Arched dark blue door with central rectangular gold plate (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 530,
+      "archive_id": 3349,
+      "section_index": 4,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3349/sec04_f00.png",
+      "visual_description": "Angled dark blue arched door panel with brass plate (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 531,
+      "archive_id": 3376,
+      "section_index": 5,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3376/sec05_f00.png",
+      "visual_description": "Tilted red hardbound book on a desk / shelf with gold page edges (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 532,
+      "archive_id": 3425,
+      "section_index": 5,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3425/sec05_f00.png",
+      "visual_description": "Red rectangular door hatch / window frame with black horizontal slit (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 533,
+      "archive_id": 3423,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3423/sec00_f00.png",
+      "visual_description": "Arched blue wooden door with brass knocker and handle (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 534,
+      "archive_id": 3417,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3417/sec07_f00.png",
+      "visual_description": "Tall arched wooden door with glass window and red OFF LIMITS / warning sign placard (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 535,
+      "archive_id": 3422,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts/so2-sprites/scene_3422/sec02_f00.png",
+      "visual_description": "Red hardbound book with white label on front cover (8bpp prop)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
       "selector_id": 10000,
       "archive_id": 3212,
       "section_index": 3,
@@ -942,5 +2412,5 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     }
   ],
-  "review_date_supplement": "2026-09-28 (Claude manual visual pass, remaining unclassified selectors)"
+  "review_date_supplement": "2026-09-29: Visual census completed for all remaining unclassified scene selectors via contact sheets."
 }

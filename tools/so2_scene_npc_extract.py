@@ -109,21 +109,26 @@ def extract_scene_npc_sprites(
         if desc_end + 36 > len(dec):
             continue
 
-        # Extract 16-color CLUT
-        pal_words = struct.unpack_from("<16H", dec, desc_end + 4)
-        palette_rgb = []
-        for w in pal_words:
-            r = (w & 0x1F) << 3
-            g = ((w >> 5) & 0x1F) << 3
-            b = ((w >> 10) & 0x1F) << 3
-            palette_rgb.extend([r, g, b])
-        while len(palette_rgb) < 768:
-            palette_rgb.extend([0, 0, 0])
+        pal_len = preloff - hsz
+        is_8bpp = (pal_len >= 512)
+        if desc_end + 4 > len(dec):
+            continue
+        color_count = struct.unpack_from("<I", dec, desc_end)[0]
+        num_colors = 256 if is_8bpp else color_count
+
+        # Extract CLUT palette words
+        if desc_end + 4 + num_colors * 2 > len(dec):
+            continue
+        all_pal_words = struct.unpack_from(f"<{num_colors}H", dec, desc_end + 4)
+        num_rows = max(1, color_count // 16)
 
         sec_info = {
             "section_index": s_idx,
             "selector_id": selector,
             "mode": mode,
+            "bpp": 8 if is_8bpp else 4,
+            "color_count": color_count,
+            "palette_rows": num_rows if not is_8bpp else 1,
             "frame_count": fc,
             "extracted_count": 0,
             "frames": []
@@ -141,7 +146,7 @@ def extract_scene_npc_sprites(
             if w == 0 or h == 0 or w > 256 or h > 256:
                 continue
 
-            bpr = w // 2
+            bpr = w if is_8bpp else (w // 2)
             f_start = pix_start + off
             f_end = f_start + bpr * h
             if f_end > len(dec):
@@ -151,20 +156,36 @@ def extract_scene_npc_sprites(
             if not f_bytes or all(b == 0 for b in f_bytes):
                 continue
 
-            exp = bytearray(w * h)
-            for i, b in enumerate(f_bytes):
-                exp[i * 2] = b & 0x0F
-                exp[i * 2 + 1] = (b >> 4) & 0x0F
+            if is_8bpp:
+                exp = f_bytes
+                pal_words = all_pal_words[:256]
+                pal_row = 0
+            else:
+                exp = bytearray(w * h)
+                for i, b in enumerate(f_bytes):
+                    exp[i * 2] = b & 0x0F
+                    exp[i * 2 + 1] = (b >> 4) & 0x0F
+                # desc[0] (flags) is the 16-color palette row selector (verified at 0x80042068/0x8004215C)
+                pal_row = flags if flags < num_rows else 0
+                pal_words = all_pal_words[pal_row * 16 : (pal_row + 1) * 16]
+
+            palette_rgb = []
+            for pw in pal_words:
+                r = (pw & 0x1F) << 3
+                g = ((pw >> 5) & 0x1F) << 3
+                b = ((pw >> 10) & 0x1F) << 3
+                palette_rgb.extend([r, g, b])
+            while len(palette_rgb) < 768:
+                palette_rgb.extend([0, 0, 0])
 
             img = Image.frombytes("P", (w, h), bytes(exp))
             img.putpalette(palette_rgb)
             rgba = img.convert("RGBA")
 
-            # Transparency for color 0 (transparent background)
-            r0, g0, b0 = palette_rgb[0], palette_rgb[1], palette_rgb[2]
+            # Transparency for color index 0 (transparent background)
             rgba_bytes = bytearray(rgba.tobytes())
             for idx in range(0, len(rgba_bytes), 4):
-                if rgba_bytes[idx] == r0 and rgba_bytes[idx + 1] == g0 and rgba_bytes[idx + 2] == b0:
+                if exp[idx // 4] == 0:
                     rgba_bytes[idx + 3] = 0
             rgba = Image.frombytes("RGBA", (w, h), bytes(rgba_bytes))
 
@@ -177,6 +198,7 @@ def extract_scene_npc_sprites(
 
             sec_info["frames"].append({
                 "frame_index": f_idx,
+                "palette_row": pal_row,
                 "width": w,
                 "height": h,
                 "pivot_x": px,

@@ -66,41 +66,127 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | 13 | Purple-hooded humanoid | `artifacts/so2-sprites/scene_3287/sec00_f00.png` |
 | 14 | Blue-helmeted humanoid in a tunic | `artifacts/so2-sprites/scene_3287/sec02_f00.png` |
 | 15 | White-haired humanoid in blue and brown clothing | `artifacts/so2-sprites/scene_3233/sec04_f00.png` |
+| 16 | Female humanoid in blue apron dress with white puff sleeves, brown hair in a bun | `artifacts/so2-sprites/scene_3243/sec00_f00.png` |
+| 17 | Male humanoid wearing blue bandanna/cap and white shopkeeper apron over brown tunic | `artifacts/so2-sprites/scene_3282/sec05_f00.png` |
+| 18 | Small brown and tan quadruped creature / raccoon-like forest mammal with round ears | `artifacts/so2-sprites/scene_3219/sec13_f00.png` |
 | 20 | Brown-haired humanoid in a turquoise top | `artifacts/so2-sprites/scene_3230/sec03_f00.png` |
 | 21 | Humanoid with a closed blue helmet | `artifacts/so2-sprites/scene_3240/sec01_f00.png` |
+| 22 | Small young girl humanoid in orange/red dress with red hair ribbons and green hair | `artifacts/so2-sprites/scene_3225/sec16_f00.png` |
+| 23 | Small child humanoid with blonde/greenish hair in blue vest and white shirt | `artifacts/so2-sprites/scene_3240/sec02_f00.png` |
 | 24 | Balding pointed-eared humanoid in green | `artifacts/so2-sprites/scene_3442/sec06_f00.png` |
 | 25 | White-haired bearded humanoid in yellow and blue | `artifacts/so2-sprites/scene_3464/sec04_f00.png` |
+| 26 | Elderly male humanoid with white hair, pointed ears, wearing white robe with gold trim | `artifacts/so2-sprites/scene_3439/sec29_f00.png` |
 | 27 | Small brown puppy/dog creature | `artifacts\so2-sprites\scene_3234\sec17_f00.png` |
 | 28 | Blue-haired humanoid in blue and white clothing | `artifacts/so2-sprites/scene_3442/sec04_f00.png` |
+| 29 | Young male humanoid with green hair, white tunic with brown leather straps and green boots | `artifacts/so2-sprites/scene_3442/sec09_f00.png` |
+| 30 | Young woman humanoid with long light brown hair in green dress with white collar | `artifacts/so2-sprites/scene_3224/sec12_f00.png` |
+| 31 | Young girl humanoid with pink pigtails in lavender/light blue pinafore dress | `artifacts/so2-sprites/scene_3230/sec02_f00.png` |
 | 32 | Small purple-hooded humanoid | `artifacts/so2-sprites/scene_3207/sec13_f00.png` |
+| 33 | Small boy humanoid with brown cap/hair, yellow hooded collar, blue pants | `artifacts/so2-sprites/scene_3329/sec03_f00.png` |
+| 35 | Elderly scholar/monk humanoid with pointed hood/headdress and brown/purple robes | `artifacts/so2-sprites/scene_3398/sec16_f00.png` |
+| 36 | Small young girl humanoid wearing pink pointed mushroom-like hat, green apron/dress | `artifacts/so2-sprites/scene_3353/sec09_f00.png` |
+| 37 | Small child humanoid with pink hair buns in white/blue outfit | `artifacts/so2-sprites/scene_3328/sec02_f00.png` |
 | 38 | Small pale long-eared animal | `artifacts/so2-sprites/scene_3219/sec16_f00.png` |
+| 39 | Brown and white sitting dog / puppy with floppy ears | `artifacts/so2-sprites/scene_3219/sec14_f00.png` |
 | 40 | Balding humanoid in a green top | `artifacts/so2-sprites/scene_3250/sec08_f00.png` |
+| 41 | Young male humanoid in hooded blue winter coat and boots | `artifacts/so2-sprites/scene_3281/sec20_f00.png` |
+| 42 | Female scholar humanoid with white headdress, holding a red book, wearing blue coat | `artifacts/so2-sprites/scene_3282/sec26_f00.png` |
+| 43 | Female scholar humanoid with white headdress, blue outfit holding a red book (variant palette) | `artifacts/so2-sprites/scene_3312/sec26_f00.png` |
 | 44 | Bald humanoid in purple holding a cane | `artifacts/so2-sprites/scene_3224/sec06_f00.png` |
+| 45 | Elderly male humanoid with walking cane, wearing light blue hat and coat | `artifacts/so2-sprites/scene_3331/sec21_f00.png` |
+| 46 | Elderly male humanoid with grey beard, grey knit cap and purple coat | `artifacts/so2-sprites/scene_3351/sec05_f00.png` |
+| 47 | Small girl child humanoid with blue pigtails and white bonnet/headdress, yellow apron | `artifacts/so2-sprites/scene_3207/sec12_f00.png` |
+| 48 | Small girl humanoid with reddish-pink pigtails, blue dress and white collar | `artifacts/so2-sprites/scene_3207/sec14_f00.png` |
 | 49 | Humanoid in pale blue uniform and peaked cap | `artifacts/so2-sprites/scene_3265/sec04_f00.png` |
+| 50 | Young boy humanoid wearing grey flat cap and striped grey overalls | `artifacts/so2-sprites/scene_3219/sec10_f00.png` |
+| 51 | Elderly woman humanoid with white hair in a bun, green dress and apron, hands folded | `artifacts/so2-sprites/scene_3251/sec11_f00.png` |
+| 52 | Elderly woman humanoid with glasses, white hair, yellow sweater and blue skirt | `artifacts/so2-sprites/scene_3398/sec17_f00.png` |
+| 53 | Woman humanoid with purple hair in green tunic and purple boots | `artifacts/so2-sprites/scene_3419/sec03_f00.png` |
+| 54 | Young girl humanoid in purple hooded cape and green dress | `artifacts/so2-sprites/scene_3629/sec09_f00.png` |
+| 55 | Young child humanoid in purple cowl/hood and green tunic | `artifacts/so2-sprites/scene_3281/sec22_f00.png` |
 | 56 | Small green-hooded humanoid in brown clothing | `artifacts/so2-sprites/scene_3329/sec07_f00.png` |
+| 57 | Young female humanoid with pink twin buns wearing blue/grey coat with fur trim | `artifacts/so2-sprites/scene_3442/sec07_f00.png` |
+| 58 | Nedian woman humanoid with pointed ears, teal hair, purple vest and dark skirt | `artifacts/so2-sprites/scene_3442/sec08_f00.png` |
+| 59 | Elderly scholar humanoid with white beard, ornate headdress, wearing red/brown robes with scroll | `artifacts/so2-sprites/scene_3331/sec07_f00.png` |
+| 60 | Scholar humanoid wearing blue pointed hood with gold trim, long robes | `artifacts/so2-sprites/scene_3391/sec02_f00.png` |
+| 62 | Small child humanoid with winged green hat/helmet and brown coat | `artifacts/so2-sprites/scene_3419/sec10_f00.png` |
+| 63 | Elderly female humanoid wearing purple hooded cape over white/green dress | `artifacts/so2-sprites/scene_3335/sec03_f00.png` |
 | 64 | Grey-bearded humanoid in a blue cap holding a staff | `artifacts/so2-sprites/scene_3333/sec04_f00.png` |
 | 65 | Small burst/spark particle effect | `artifacts\so2-sprites\scene_3219\sec15_f00.png` |
 | 66 | Purple penguin-shaped creature | `artifacts\so2-sprites\scene_3225\sec18_f00.png` |
+| 67 | Male humanoid with spiky silver/light-blue hair, pink vest, dark pants | `artifacts/so2-sprites/scene_3207/sec10_f00.png` |
+| 68 | Male humanoid with green hair, green vest over white shirt | `artifacts/so2-sprites/scene_3207/sec11_f00.png` |
+| 71 | Female humanoid with teal hair in teal coat with pink scarf/trim | `artifacts/so2-sprites/scene_3312/sec27_f00.png` |
+| 72 | Female humanoid with pink hair in light-blue hooded coat | `artifacts/so2-sprites/scene_3324/sec03_f00.png` |
+| 73 | Small boy humanoid with green hair, purple hooded collar, blue pants | `artifacts/so2-sprites/scene_3331/sec19_f00.png` |
+| 74 | Small child humanoid wearing red aviator cap/helmet and blue tunic with red cape | `artifacts/so2-sprites/scene_3331/sec22_f00.png` |
 | 75 | White-haired humanoid in a blue coat holding a cane | `artifacts/so2-sprites/scene_3224/sec10_f00.png` |
 | 76 | Tan quadruped with pointed ears and a raised dark-tipped tail | `artifacts/so2-sprites/scene_3219/sec17_f00.png` |
 | 77 | Small blue-white bird or dove object | `artifacts\so2-sprites\scene_3268\sec12_f00.png` |
+| 78 | Performer humanoid with styled pink hair, purple vest/tunic, white pants | `artifacts/so2-sprites/scene_3265/sec00_f00.png` |
 | 79 | Black-haired moustached humanoid in a pale shirt and blue trousers | `artifacts/so2-sprites/scene_3265/sec05_f00.png` |
+| 80 | Mature woman humanoid with silver-white hair, blue dress with white blouse (Rena's mother Westa) | `artifacts/so2-sprites/scene_3225/sec15_f00.png` |
 | 81 | Humanoid wearing a white chef hat and uniform | `artifacts/so2-sprites/scene_3258/sec01_f00.png` |
+| 82 | Young male humanoid with dark hair, white buttoned shirt and grey pants | `artifacts/so2-sprites/scene_3329/sec05_f00.png` |
+| 83 | Young male humanoid with spiky silver/grey hair, white shirt and grey pants | `artifacts/so2-sprites/scene_3329/sec06_f00.png` |
 | 84 | Small blue round-headed robot creature | `artifacts\so2-sprites\scene_3225\sec17_f00.png` |
+| 85 | Male humanoid with blue hair, ornate blue and gold tunic/armor | `artifacts/so2-sprites/scene_3230/sec04_f00.png` |
+| 86 | Woman humanoid with blonde hair in red hooded cloak with white fur trim | `artifacts/so2-sprites/scene_3331/sec09_f00.png` |
 | 87 | Small rifle or long weapon object | `artifacts\so2-sprites\scene_3331\sec08_f00.png` |
 | 88 | Armored humanoid with a blue helmet and long pole weapon | `artifacts/so2-sprites/scene_3216/sec05_f00.png` |
 | 89 | Armored humanoid with a pale helmet and long pole weapon | `artifacts/so2-sprites/scene_3216/sec06_f00.png` |
 | 90 | Small pale oval object (food or item) | `artifacts\so2-sprites\scene_3293\sec23_f00.png` |
+| 91 | Elderly woman humanoid in grey headscarf/bonnet and olive green apron dress | `artifacts/so2-sprites/scene_3293/sec20_f00.png` |
+| 92 | Blonde soldier/knight humanoid in blue tunic and silver breastplate armor | `artifacts/so2-sprites/scene_3250/sec07_f00.png` |
+| 93 | Elderly king/regal humanoid with white beard and golden crown, red and gold royal robes | `artifacts/so2-sprites/scene_3293/sec19_f00.png` |
+| 94 | Blue mechanical egg-shaped robot with red antenna/visor and red feet | `artifacts/so2-sprites/scene_3225/sec27_f00.png` |
+| 95 | Queen/noblewoman humanoid with blonde hair wearing ornate white and pink royal gown with tiara | `artifacts/so2-sprites/scene_3293/sec18_f00.png` |
+| 96 | Male researcher/scientist humanoid with blonde hair in long white lab coat | `artifacts/so2-sprites/scene_3449/sec07_f00.png` |
+| 97 | Small grey and white pigeon / bird resting/pecking on the ground | `artifacts/so2-sprites/scene_3216/sec09_f00.png` |
 | 99 | Gold-colored cup-shaped object | `artifacts/so2-sprites/scene_3587/sec07_f00.png` |
+| 100 | Small shiny gold coin / circular token prop | `artifacts/so2-sprites/scene_3259/sec01_f00.png` |
+| 101 | Blonde female humanoid in ornate white/red heraldic priestess gown | `artifacts/so2-sprites/scene_3282/sec09_f00.png` |
 | 102 | Humanoid wearing a tall blue and gold hat and robe | `artifacts/so2-sprites/scene_3224/sec11_f00.png` |
+| 103 | Male humanoid with green hair in blue/purple knight tunic with gold accents | `artifacts/so2-sprites/scene_3281/sec24_f00.png` |
+| 104 | Male humanoid with black hair in red jacket/coat and dark trousers | `artifacts/so2-sprites/scene_3216/sec08_f00.png` |
+| 105 | Young woman humanoid with long dark-blue hair in purple apron dress | `artifacts/so2-sprites/scene_3349/sec10_f00.png` |
+| 106 | Male humanoid with dark hair, purple scholar robe with pink trim | `artifacts/so2-sprites/scene_3277/sec00_f00.png` |
 | 107 | Green-haired humanoid wearing a white coat | `artifacts/so2-sprites/scene_3376/sec09_f00.png` |
 | 108 | Pink-haired humanoid wearing a white coat | `artifacts/so2-sprites/scene_3376/sec10_f00.png` |
+| 109 | Young male humanoid with dark hair in white shirt and tan vest/shorts | `artifacts/so2-sprites/scene_3351/sec06_f00.png` |
+| 110 | Young boy humanoid with light brown hair in blue denim overalls | `artifacts/so2-sprites/scene_3895/sec08_f00.png` |
+| 111 | Young girl humanoid with long blue hair, headband, orange apron dress | `artifacts/so2-sprites/scene_3281/sec28_f00.png` |
+| 112 | Girl humanoid with brown bob cut and white headband, blue pinafore dress | `artifacts/so2-sprites/scene_3281/sec29_f00.png` |
+| 113 | Male researcher/doctor humanoid with glasses and white lab coat | `artifacts/so2-sprites/scene_3237/sec07_f00.png` |
 | 114 | Winged angelic figure holding a glowing light orb | `artifacts\so2-sprites\scene_3355\sec04_f00.png` |
 | 115 | Armored winged angelic/guardian figure | `artifacts\so2-sprites\scene_3218\sec08_f00.png` |
 | 116 | Humanoid in a white uniform and cap with a pink cross | `artifacts/so2-sprites/scene_3649/sec04_f00.png` |
+| 118 | Woman humanoid with blue hair in green dress and red shawl | `artifacts/so2-sprites/scene_3391/sec05_f00.png` |
+| 119 | Military/naval officer humanoid with peaked cap and brown uniform with gold epaulets | `artifacts/so2-sprites/scene_3315/sec12_f00.png` |
+| 120 | Middle-aged male humanoid with mustache, white work shirt and brown trousers | `artifacts/so2-sprites/scene_3390/sec11_f00.png` |
 | 121 | Armored robotic or mechanical knight figure | `artifacts\so2-sprites\scene_3453\sec00_f00.png` |
+| 122 | Dark bird silhouette / shadow flying in profile (large shadow bird/hawk) | `artifacts/so2-sprites/scene_3665/sec02_f00.png` |
+| 123 | Dark gliding creature shadow / silhouette viewed from above (flying squirrel / ray shadow) | `artifacts/so2-sprites/scene_3663/sec04_f00.png` |
 | 124 | Long pink serpentine creature | `artifacts/so2-sprites/scene_3278/sec13_f00.png` |
+| 125 | Figure in dark robes holding an ornate glowing golden staff/relic topped with a sphere | `artifacts/so2-sprites/scene_3370/sec08_f00.png` |
+| 126 | Female humanoid with long reddish hair, silver breastplate armor and blue trim | `artifacts/so2-sprites/scene_3676/sec23_f00.png` |
+| 127 | Muscular shirtless male martial artist humanoid with spiky dark hair and red waist sash | `artifacts/so2-sprites/scene_3512/sec06_f00.png` |
+| 128 | Male humanoid in brown hooded cloak and leather tunic | `artifacts/so2-sprites/scene_3217/sec10_f00.png` |
+| 129 | Young woman humanoid with pink hair in purple apron dress with white lace | `artifacts/so2-sprites/scene_3495/sec07_f00.png` |
+| 131 | Blue-tunic swordsman/pirate humanoid with blue bandana, brandishing a curved green cutlass | `artifacts/so2-sprites/scene_3963/sec03_f09.png` |
 | 133 | Large bird with spread purple and gold wings | `artifacts/so2-sprites/scene_3592/sec00_f00.png` |
+| 135 | Chunky robot/humanoid with white spiked mask/helmet, blue overalls, yellow eye/visor | `artifacts/so2-sprites/scene_3649/sec07_f01.png` |
+| 136 | Armored gladiator/guard figure with horned helmet, silver chestplate and purple plume | `artifacts/so2-sprites/scene_3649/sec08_f00.png` |
+| 137 | Calnus starship commander in red uniform with peaked cap and gold braid (Admiral Ronixis J. Kenni) | `artifacts/so2-sprites/scene_3211/sec01_f00.png` |
+| 138 | Federation officer humanoid with slicked silver hair, white dress uniform with red collar/trim | `artifacts/so2-sprites/scene_3211/sec02_f00.png` |
+| 139 | Federation crewman humanoid with beret, brown and white uniform | `artifacts/so2-sprites/scene_3211/sec04_f00.png` |
+| 140 | Male humanoid wearing safari pith helmet, tan explorer outfit with satchel | `artifacts/so2-sprites/scene_3832/sec09_f00.png` |
+| 141 | Bald elderly male humanoid in green athletic tracksuit/tunic | `artifacts/so2-sprites/scene_3376/sec11_f00.png` |
+| 142 | Elderly gentleman humanoid with grey beard in stylish yellow suit and tie | `artifacts/so2-sprites/scene_3829/sec03_f00.png` |
+| 143 | Young male federation crewman humanoid with brown hair in silver/grey bodysuit | `artifacts/so2-sprites/scene_3211/sec03_f00.png` |
+| 144 | Small blonde toddler/child humanoid in pink/peach smock | `artifacts/so2-sprites/scene_3835/sec02_f00.png` |
+| 145 | Small child humanoid with blue hair, blue beret/cap, red tunic with yellow collar | `artifacts/so2-sprites/scene_3221/sec15_f00.png` |
+| 146 | Male knight/officer humanoid with short blue hair in silver armor with orange pauldrons | `artifacts/so2-sprites/scene_3508/sec00_f00.png` |
 | 147 | Blue mechanical robot figure | `artifacts\so2-sprites\scene_3488\sec10_f00.png` |
 | 148 | Helmeted armored figure with a shield emblem | `artifacts\so2-sprites\scene_3645\sec03_f00.png` |
 | 149 | Armored figure with a horned/ram helmet | `artifacts\so2-sprites\scene_3648\sec02_f00.png` |
@@ -117,31 +203,56 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | 160 | Red and gold treasure chest | `artifacts/so2-sprites/scene_3274/sec01_f00.png` |
 | 161 | Red and gold treasure chest | `artifacts/so2-sprites/scene_3574/sec00_f00.png` |
 | 167 | Bald elderly humanoid carrying a bag | `artifacts\so2-sprites\scene_3454\sec05_f00.png` |
+| 168 | Nedian woman humanoid with pointed ears, teal hair, ornate blue and white ceremonial robe | `artifacts/so2-sprites/scene_3784/sec01_f00.png` |
 | 169 | Blue quadrupedal dragon-like creature with red wings | `artifacts/so2-sprites/scene_3476/sec04_f00.png` |
 | 170 | Blue-haired humanoid in a white coat | `artifacts/so2-sprites/scene_3476/sec02_f00.png` |
 | 171 | Bulky horned armored figure carrying a curved blade | `artifacts/so2-sprites/scene_3579/sec01_f00.png` |
 | 172 | Purple ray-like creature with a curled tail | `artifacts/so2-sprites/scene_3436/sec28_f00.png` |
+| 174 | Small child humanoid with blue hair and cap, green tunic with gold trim (variant child palette) | `artifacts/so2-sprites/scene_3606/sec05_f00.png` |
+| 175 | Male humanoid with mustache and sunglasses/dark goggles in dark futuristic coat | `artifacts/so2-sprites/scene_3850/sec07_f00.png` |
+| 177 | Heavy armored knight in full silver/grey plate armor with plumed helmet and blue boots | `artifacts/so2-sprites/scene_3670/sec04_f00.png` |
 | 178 | Small orange blocky mechanical/robotic creature | `artifacts\so2-sprites\scene_3663\sec00_f00.png` |
 | 180 | Green winged humanoid creature | `artifacts/so2-sprites/scene_3655/sec00_f00.png` |
 | 181 | Large crouching green and brown furred creature | `artifacts/so2-sprites/scene_3219/sec01_f00.png` |
 | 182 | Blue humanoid-shaped figure | `artifacts/so2-sprites/scene_3686/sec00_f00.png` |
 | 183 | Gold armored humanoid-shaped figure | `artifacts/so2-sprites/scene_3676/sec11_f00.png` |
+| 184 | Horned beast / satyr-like creature with curved ram horns, white fur, claws | `artifacts/so2-sprites/scene_3730/sec00_f00.png` |
 | 185 | Green reptilian humanoid with a tail | `artifacts/so2-sprites/scene_3679/sec04_f00.png` |
 | 187 | Dark mechanical-looking legs and lower torso | `artifacts/so2-sprites/scene_3849/sec05_f00.png` |
 | 188 | Purple winged humanoid-shaped creature | `artifacts/so2-sprites/scene_3654/sec13_f00.png` |
+| 189 | Purple-tinted armored soldier/sentinel with helmet visor walking forward | `artifacts/so2-sprites/scene_3679/sec02_f00.png` |
 | 190 | Large crouching red and brown furred creature | `artifacts/so2-sprites/scene_3679/sec03_f00.png` |
 | 191 | Prone furred creature | `artifacts/so2-sprites/scene_3669/sec05_f00.png` |
+| 192 | Small elderly humanoid with goggles/bandaged head, green hooded cape and walking cane | `artifacts/so2-sprites/scene_3439/sec32_f00.png` |
+| 193 | Young girl humanoid with pink hair, wearing white/blue hooded cloak holding hands together | `artifacts/so2-sprites/scene_3439/sec31_f00.png` |
 | 194 | Winged dark-robed humanoid with bat-like wings | `artifacts\so2-sprites\scene_3439\sec33_f00.png` |
 | 195 | Woman standing beside a large spider-like creature | `artifacts\so2-sprites\scene_3404\sec07_f00.png` |
+| 196 | Nedian youth humanoid with pointed ears, blue hair, white/blue tunic with yellow belt | `artifacts/so2-sprites/scene_3517/sec01_f00.png` |
 | 197 | Gold armored winged dragon-like creature | `artifacts\so2-sprites\scene_3432\sec23_f00.png` |
 | 198 | Small winged fairy-shaped humanoid creature | `artifacts\so2-sprites\scene_3509\sec01_f00.png` |
 | 199 | Large round pale pink creature with long ears | `artifacts/so2-sprites/scene_3444/sec04_f00.png` |
 | 200 | Large red bird/phoenix-like creature with spread wings | `artifacts\so2-sprites\scene_3803\sec00_f00.png` |
+| 201 | Mechanical wall bracket / bronze machinery fixture with cogwheels and pipes | `artifacts/so2-sprites/scene_3864/sec09_f00.png` |
+| 202 | Floor lever mechanism with teal/metal cylindrical base and upright lever handle | `artifacts/so2-sprites/scene_3864/sec10_f08.png` |
 | 204 | Large dark whale-or-sea-creature silhouette (partial frame) | `artifacts\so2-sprites\scene_3587\sec01_f00.png` |
+| 205 | Female humanoid/sorceress with dark horns/headdress in an elaborate red slit dress | `artifacts/so2-sprites/scene_3912/sec01_f00.png` |
+| 206 | Drider / Arachne creature: female humanoid upper body with blonde hair atop a massive multi-legged spider body | `artifacts/so2-sprites/scene_3624/sec01_f00.png` |
+| 207 | Large quadruped purple demonic beast with long black tail, dorsal spikes, and sharp white claws | `artifacts/so2-sprites/scene_3918/sec00_f03.png` |
+| 209 | Pair of pink glowing platform pads / oval energy steps | `artifacts/so2-sprites/scene_3934/sec01_f00.png` |
+| 210 | Horizontal green metallic grated panel / floor strip | `artifacts/so2-sprites/scene_3923/sec01_f01.png` |
+| 211 | Massive crumbled stone golem boss statue / ancient stone colossus head and shoulder fragments (216x180) | `artifacts/so2-sprites/scene_3970/sec01_f00.png` |
+| 212 | Ancient sage / Wise Man boss figure with long white beard, purple and green robes, holding crystal staff (96x74) | `artifacts/so2-sprites/scene_3993/sec03_f04.png` |
 | 213 | Green mechanical-looking legs and lower torso | `artifacts/so2-sprites/scene_3810/sec00_f00.png` |
+| 214 | Ornate winged golden relic / mechanical dagger obelisk flanked by skull pedestal shoulders (76x112) | `artifacts/so2-sprites/scene_4014/sec03_f00.png` |
+| 215 | Dark winged fairy / valkyrie boss figure with halo, dark feathered wings, holding silver lance/glaive (92x130) | `artifacts/so2-sprites/scene_4022/sec00_f04.png` |
 | 216 | Large red bird creature with spread wings | `artifacts\so2-sprites\scene_4016\sec00_f00.png` |
+| 217 | Pulsating pink organic bio-cocoon / alien egg sac with vein-like ridges (100x76) | `artifacts/so2-sprites/scene_3982/sec02_f05.png` |
+| 218 | Young boy humanoid with green headband, white shirt and green shorts | `artifacts/so2-sprites/scene_3240/sec04_f00.png` |
 | 219 | Red crustacean-like creature with claws | `artifacts/so2-sprites/scene_3619/sec03_f00.png` |
 | 220 | Gold winged humanoid creature | `artifacts/so2-sprites/scene_3755/sec12_f00.png` |
+| 221 | Colossal grey leviathan / whale monster head and maw (Phynal setpiece, 116x109) | `artifacts/so2-sprites/scene_3794/sec00_f00.png` |
+| 223 | Soldier humanoid in green helmet and military fatigues | `artifacts/so2-sprites/scene_3353/sec08_f00.png` |
+| 227 | Masked ninja / assassin humanoid in grey garb wielding a curved scimitar/dagger | `artifacts/so2-sprites/scene_3965/sec00_f09.png` |
 | 228 | Grayscale (monochrome) hooded/robed humanoid figure | `artifacts\so2-sprites\scene_3925\sec00_f00.png` |
 | 229 | Grayscale (monochrome) robed humanoid figure | `artifacts\so2-sprites\scene_3927\sec00_f00.png` |
 | 230 | Grayscale (monochrome) hooded humanoid figure | `artifacts\so2-sprites\scene_3924\sec00_f00.png` |
@@ -150,13 +261,49 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | 233 | Grayscale (monochrome) robed humanoid figure | `artifacts\so2-sprites\scene_3927\sec01_f00.png` |
 | 234 | Grayscale (monochrome) humanoid figure | `artifacts\so2-sprites\scene_3925\sec01_f00.png` |
 | 235 | Gold bird with spread wings | `artifacts/so2-sprites/scene_3566/sec01_f00.png` |
+| 237 | Nedian male humanoid with pointed ears, mustache, wearing brown patterned tunic | `artifacts/so2-sprites/scene_3540/sec02_f00.png` |
+| 238 | Male researcher/clerk humanoid with dark hair, white buttoned lab coat/shirt | `artifacts/so2-sprites/scene_3393/sec15_f00.png` |
+| 239 | Nedian male humanoid with pointed ears, silver hair, white and purple formal vest | `artifacts/so2-sprites/scene_3539/sec06_f00.png` |
+| 501 | Wooden barrel / stool topped with a round red cushioned seat (8bpp prop) | `artifacts/so2-sprites/scene_3224/sec17_f00.png` |
+| 502 | Row of red hardbound books on a shelf / red book spine (8bpp prop) | `artifacts/so2-sprites/scene_3225/sec09_f00.png` |
+| 503 | Row of white/cream parchment books or paper folios on a shelf (8bpp prop) | `artifacts/so2-sprites/scene_3225/sec10_f00.png` |
+| 504 | Wooden doorway frame draped with vertical green curtain blinds / noren (8bpp prop) | `artifacts/so2-sprites/scene_3225/sec11_f00.png` |
+| 505 | Angled perspective wooden door / doorway shutter pane with blue slats (8bpp prop) | `artifacts/so2-sprites/scene_3225/sec12_f00.png` |
+| 506 | Square dark wooden trapdoor / cellar hatch with metal studs (8bpp prop) | `artifacts/so2-sprites/scene_3251/sec06_f00.png` |
+| 507 | Dark brown wooden cellar hatch / floor panel (8bpp prop) | `artifacts/so2-sprites/scene_3251/sec07_f01.png` |
+| 508 | Large angled dark wooden cellar door hatch viewed in 3/4 perspective (8bpp prop) | `artifacts/so2-sprites/scene_3251/sec08_f02.png` |
+| 509 | Vertical dark wooden cellar door panel with metal bands (8bpp prop) | `artifacts/so2-sprites/scene_3251/sec09_f03.png` |
+| 510 | Dark wooden cellar door panel matching 509 pair (8bpp prop) | `artifacts/so2-sprites/scene_3251/sec10_f04.png` |
+| 513 | Blue striped doorway curtain / awning cloth piece in Clik coastal town style (8bpp prop) | `artifacts/so2-sprites/scene_3312/sec14_f00.png` |
+| 514 | Narrow vertical blue striped window shutter / door slat (8bpp prop) | `artifacts/so2-sprites/scene_3312/sec15_f00.png` |
+| 515 | Double blue wooden shutters with brass handles (8bpp prop) | `artifacts/so2-sprites/scene_3312/sec16_f00.png` |
+| 516 | Blue window shutter pane with horizontal gold trim (8bpp prop) | `artifacts/so2-sprites/scene_3312/sec17_f00.png` |
+| 517 | Angled perspective blue window shutter panel pair (8bpp prop) | `artifacts/so2-sprites/scene_3312/sec18_f00.png` |
+| 518 | Blue arched doorway shutter with brass horizontal bar (8bpp prop) | `artifacts/so2-sprites/scene_3314/sec01_f00.png` |
+| 519 | Arched blue doorway shutter with brass horizontal bar, wide variant (8bpp prop) | `artifacts/so2-sprites/scene_3314/sec02_f00.png` |
+| 520 | Angled perspective blue door panel with brass handle (8bpp prop) | `artifacts/so2-sprites/scene_3314/sec03_f00.png` |
+| 521 | Blue wooden arched door with gold doorknob (8bpp prop) | `artifacts/so2-sprites/scene_3314/sec04_f00.png` |
+| 522 | Arched blue door with circular window and brass latch (8bpp prop) | `artifacts/so2-sprites/scene_3282/sec01_f00.png` |
+| 523 | Rectangular blue wooden door with red sign plaque and brass latch (8bpp prop) | `artifacts/so2-sprites/scene_3282/sec02_f00.png` |
+| 524 | Arched blue wooden door with circular glass window (8bpp prop) | `artifacts/so2-sprites/scene_3282/sec03_f00.png` |
+| 525 | Dark brown panel door with rectangular window panes (8bpp prop) | `artifacts/so2-sprites/scene_3350/sec00_f00.png` |
+| 526 | Arched dark blue door with horizontal gold brass plate (8bpp prop) | `artifacts/so2-sprites/scene_3349/sec00_f00.png` |
+| 527 | Arched dark blue door panel with square brass plate (8bpp prop) | `artifacts/so2-sprites/scene_3349/sec01_f00.png` |
+| 528 | Angled dark red wooden door with brass handle (8bpp prop) | `artifacts/so2-sprites/scene_3349/sec02_f00.png` |
+| 529 | Arched dark blue door with central rectangular gold plate (8bpp prop) | `artifacts/so2-sprites/scene_3349/sec03_f00.png` |
+| 530 | Angled dark blue arched door panel with brass plate (8bpp prop) | `artifacts/so2-sprites/scene_3349/sec04_f00.png` |
+| 531 | Tilted red hardbound book on a desk / shelf with gold page edges (8bpp prop) | `artifacts/so2-sprites/scene_3376/sec05_f00.png` |
+| 532 | Red rectangular door hatch / window frame with black horizontal slit (8bpp prop) | `artifacts/so2-sprites/scene_3425/sec05_f00.png` |
+| 533 | Arched blue wooden door with brass knocker and handle (8bpp prop) | `artifacts/so2-sprites/scene_3423/sec00_f00.png` |
+| 534 | Tall arched wooden door with glass window and red OFF LIMITS / warning sign placard (8bpp prop) | `artifacts/so2-sprites/scene_3417/sec07_f00.png` |
+| 535 | Red hardbound book with white label on front cover (8bpp prop) | `artifacts/so2-sprites/scene_3422/sec02_f00.png` |
 | 10000 | Orange and yellow glowing orb | `artifacts/so2-sprites/scene_3212/sec03_f00.png` |
 | 32766 | Purple orb on a slender gold stand | `artifacts/so2-sprites/scene_3211/sec00_f00.png` |
 | 32767 | Small yellow pointed streak | `artifacts/so2-sprites/scene_3212/sec00_f00.png` |
 
 ## 3. Regional Scene Sprite Breakdown
 
-### 3.8 Opening / Expel Setpieces & Intro Sequences
+### 3.16 Opening / Expel Setpieces & Intro Sequences
 *Active Scenes: 17 | Total Sprite Frames: 2,701*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -179,7 +326,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3222`** | `Scene 015` | 3 | 35 | Rena Lanford | 115: 24x43, 10000: 40x42 |
 | **`3223`** | `Scene 016` | 3 | 57 | Opera Vectra, Precis F. Neumann | 32767: 12x17 |
 
-### 3.10 Arlia Village & Shingo Forest (Scene 017..037)
+### 3.17 Arlia Village & Shingo Forest (Scene 017..037)
 *Active Scenes: 20 | Total Sprite Frames: 1,807*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -205,7 +352,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3243`** | `Scene 036` | 3 | 34 | - | 16: 20x40, 32767: 12x18, 32767: 8x5 |
 | **`3244`** | `Scene 037` | 2 | 35 | - | 75: 32x44, 32767: 12x17 |
 
-### 3.11 Salva Town & Salva Drift Cave (Scene 038..062)
+### 3.18 Salva Town & Salva Drift Cave (Scene 038..062)
 *Active Scenes: 25 | Total Sprite Frames: 1,748*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -236,7 +383,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3268`** | `Scene 061` | 14 | 108 | Rena Lanford, Claude Kenni | 32767: 12x17, 10000: 12x12, 104: 24x45, 104: 52x26, 32767: 8x5, 10000: 8x5 |
 | **`3269`** | `Scene 062` | 8 | 70 | Claude Kenni, Rena Lanford | 32767: 12x17, 218: 20x26, 32767: 8x5, 32767: 8x5, 32766: 16x36, 218: 24x41 |
 
-### 3.12 Cross Kingdom, Cross Castle & Clik Approach (Scene 063..098)
+### 3.20 Cross Kingdom, Cross Castle & Clik Approach (Scene 063..098)
 *Active Scenes: 34 | Total Sprite Frames: 3,060*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -276,7 +423,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3304`** | `Scene 097` | 2 | 25 | - | 32767: 16x14, 91: 24x42 |
 | **`3305`** | `Scene 098` | 3 | 63 | - | 88: 24x47, 81: 24x47, 80: 24x45 |
 
-### 3.14 Port Town of Clik & Disaster Ruins (Scene 099..128)
+### 3.22 Port Town of Clik & Disaster Ruins (Scene 099..128)
 *Active Scenes: 27 | Total Sprite Frames: 3,395*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -309,7 +456,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3334`** | `Scene 127` | 1 | 7 | - | 32767: 8x5 |
 | **`3335`** | `Scene 128` | 11 | 121 | - | 32767: 12x17, 32767: 8x5, 32767: 16x14, 63: 20x36, 68: 24x45, 50: 24x45 |
 
-### 3.16 Mars Village & Heraldry Forest (Scene 129..153)
+### 3.23 Mars Village & Heraldry Forest (Scene 129..153)
 *Active Scenes: 22 | Total Sprite Frames: 1,728*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -337,7 +484,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3358`** | `Scene 151` | 4 | 40 | - | 32767: 8x5, 32767: 16x13, 32767: 12x18, 17: 20x43 |
 | **`3359`** | `Scene 152` | 1 | 21 | - | 16: 20x40 |
 
-### 3.17 Linga Academic City & Sanctuary (Scene 154..178)
+### 3.25 Linga Academic City & Sanctuary (Scene 154..178)
 *Active Scenes: 17 | Total Sprite Frames: 1,672*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -360,7 +507,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3384`** | `Scene 177` | 3 | 32 | - | 32767: 16x13, 32767: 16x14, 23: 20x30 |
 | **`3385`** | `Scene 178` | 1 | 4 | - | 32767: 16x14 |
 
-### 3.19 Kingdom of Lacour & Armory Tournaments (Scene 179..208)
+### 3.26 Kingdom of Lacour & Armory Tournaments (Scene 179..208)
 *Active Scenes: 26 | Total Sprite Frames: 3,685*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -392,7 +539,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3414`** | `Scene 207` | 25 | 386 | Precis F. Neumann, Celine Jules, Ashton Anchors, Opera Vectra, Rena Lanford, Claude Kenni, Bowman Jean, Leon D.S. Gehste | 32767: 8x5, 32767: 16x14, 32767: 16x13, 32767: 12x17, 32767: 8x5, 32767: 8x5 |
 | **`3415`** | `Scene 208` | 16 | 171 | Bowman Jean, Claude Kenni, Precis F. Neumann | 32767: 16x14, 32767: 8x5, 32767: 8x5, 32767: 16x13, 32767: 12x17, 32767: 12x9 |
 
-### 3.20 Hoffman Ruins & Lacour Frontline (Scene 209..238)
+### 3.28 Hoffman Ruins & Lacour Frontline (Scene 209..238)
 *Active Scenes: 27 | Total Sprite Frames: 4,159*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -425,7 +572,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3444`** | `Scene 237` | 6 | 109 | Chisato Madison | 32767: 16x14, 32767: 16x13, 32767: 8x5, 39: 12x19, 199: 56x47 |
 | **`3445`** | `Scene 238` | 2 | 28 | - | 28: 24x44, 32767: 8x5 |
 
-### 3.22 Eluria Tower & Calnus Transport (Scene 239..268)
+### 3.29 Eluria Tower & Calnus Transport (Scene 239..268)
 *Active Scenes: 28 | Total Sprite Frames: 2,163*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -459,7 +606,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3474`** | `Scene 267` | 1 | 10 | - | 10000: 8x5 |
 | **`3475`** | `Scene 268` | 9 | 73 | Claude Kenni, Chisato Madison | 32767: 12x17, 32767: 8x5, 32767: 8x5, 32767: 8x5, 32767: 16x14, 16: 20x40 |
 
-### 3.24 Central City & Energy Nede Approach (Scene 269..333)
+### 3.31 Central City & Energy Nede Approach (Scene 269..333)
 *Active Scenes: 59 | Total Sprite Frames: 6,423*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -524,7 +671,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3539`** | `Scene 332` | 8 | 82 | - | 32767: 8x5, 32767: 12x17, 32767: 16x13, 32767: 8x5, 32767: 16x14, 150: 24x21 |
 | **`3540`** | `Scene 333` | 3 | 36 | - | 32767: 8x5, 32767: 8x5, 237: 28x47 |
 
-### 3.27 North City, Giveaway & Library (Scene 334..413)
+### 3.34 North City, Giveaway & Library (Scene 334..413)
 *Active Scenes: 41 | Total Sprite Frames: 1,552*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -571,7 +718,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3619`** | `Scene 412` | 5 | 49 | - | 67: 24x46, 32767: 8x5, 32767: 12x17, 219: 100x36, 156: 24x21 |
 | **`3620`** | `Scene 413` | 1 | 3 | - | 156: 24x21 |
 
-### 3.29 Armlock, Fun City & Nedian Enclaves (Scene 414..493)
+### 3.37 Armlock, Fun City & Nedian Enclaves (Scene 414..493)
 *Active Scenes: 71 | Total Sprite Frames: 7,683*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -648,7 +795,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3699`** | `Scene 492` | 1 | 3 | - | 155: 28x27 |
 | **`3700`** | `Scene 493` | 1 | 3 | - | 155: 28x27 |
 
-### 3.33 Four Fields (Might, Courage, Intellect, Love) (Scene 494..573)
+### 3.40 Four Fields (Might, Courage, Intellect, Love) (Scene 494..573)
 *Active Scenes: 63 | Total Sprite Frames: 1,378*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -717,7 +864,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3779`** | `Scene 572` | 1 | 3 | - | 156: 24x21 |
 | **`3780`** | `Scene 573` | 3 | 5 | Claude Kenni, Rena Lanford | 156: 24x21 |
 
-### 3.36 Phynal Tower, Final Bastion & Endings (Scene 574..643)
+### 3.44 Phynal Tower, Final Bastion & Endings (Scene 574..643)
 *Active Scenes: 54 | Total Sprite Frames: 2,201*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -777,7 +924,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3849`** | `Scene 642` | 9 | 71 | Rena Lanford, Claude Kenni | 10000: 12x12, 32767: 8x5, 10000: 88x94, 10000: 20x31, 32767: 12x17, 187: 80x51 |
 | **`3850`** | `Scene 643` | 8 | 88 | Opera Vectra | 32767: 8x5, 32767: 16x13, 32767: 16x14, 39: 12x19, 32767: 8x5, 175: 20x45 |
 
-### 3.39 Overworld Dungeons, Sub-Levels & Secret Chambers (Scene 644..947)
+### 3.47 Overworld Dungeons, Sub-Levels & Secret Chambers (Scene 644..947)
 *Active Scenes: 95 | Total Sprite Frames: 2,884*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |

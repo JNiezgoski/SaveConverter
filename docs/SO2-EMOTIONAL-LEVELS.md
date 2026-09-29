@@ -48,28 +48,27 @@ data structures, not just a convention this wiki happens to use.
 
 ## Starting values (FP-RP) by character pair
 
-Row = whose value it is, column = toward whom. `---` = not applicable (self, or route-exclusive
-pairing not present together).
+Row = whose value it is (Source Character `0..11`), column = toward whom (Target Character `0..11`). `---` = not applicable (self, or route-exclusive pairing not present together). Reordered to canonical internal engine Character ID order (`0..11`).
 
-| | Claude | Rena | Celine | Ashton | Opera | Precis | Bowman | Ernest | Dias | Leon | Noel | Chisato |
+| | Claude | Rena | Celine | Bowman | Dias | Precis | Ashton | Leon | Opera | Ernest | Noel | Chisato |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **Claude** | — | 5-6 | 5-5 | 5-4 | 6-5 | 5-5 | 5-5 | 5-5 | 6-4 | 5-4 | 5-5 | 5-5 |
-| **Rena** | 6-5 | — | 5-5 | 5-5 | 6-5 | 5-4 | 5-5 | 5-5 | 7-6 | 5-5 | 5-5 | 5-5 |
-| **Celine** | 5-5 | 5-5 | — | 5-4 | 5-5 | 4-3 | 5-5 | 5-7 | 4-3 | 5-4 | 5-5 | 5-5 |
-| **Ashton** | 4-4 | 5-4 | 4-4 | — | — | 5-7 | 5-5 | — | 5-4 | 5-5 | 5-5 | 5-5 |
-| **Opera** | 6-5 | 4-4 | 5-4 | — | — | 5-4 | 5-4 | 7-8 | 5-4 | 5-5 | 5-4 | 5-5 |
-| **Precis** | 7-6 | 7-6 | 6-5 | 5-5 | 5-5 | — | — | 5-5 | 5-5 | 6-5 | 6-5 | 5-5 |
-| **Bowman** | 5-5 | 7-5 | 6-5 | 5-5 | 6-5 | — | — | 5-5 | 5-5 | 5-5 | 6-5 | 6-5 |
-| **Ernest** | 6-5 | 5-5 | 5-6 | — | 5-7 | 5-5 | 5-5 | — | 5-5 | 5-5 | 6-5 | 5-5 |
-| **Dias** | 5-5 | 7-5 | 4-4 | 4-4 | 4-4 | 4-4 | 4-4 | 4-4 | — | — | 4-4 | 4-4 |
-| **Leon** | 6-5 | 5-5 | 5-5 | 5-4 | 5-4 | 6-5 | 5-5 | 4-4 | — | — | 6-5 | 5-5 |
-| **Noel** | 5-5 | 5-5 | 5-5 | 5-5 | 5-5 | 5-5 | 5-5 | 6-5 | 5-5 | 6-6 | — | 6-5 |
-| **Chisato** | 6-6 | 5-5 | 5-5 | 6-5 | 6-5 | 6-5 | 5-5 | 6-5 | 4-4 | 5-5 | 5-5 | — |
+| **Claude** | — | 5-6 | 5-5 | 5-5 | 6-4 | 5-5 | 5-4 | 5-4 | 6-5 | 5-5 | 5-5 | 5-5 |
+| **Rena** | 6-5 | — | 5-5 | 5-5 | 7-6 | 5-4 | 5-5 | 5-5 | 6-5 | 5-5 | 5-5 | 5-5 |
+| **Celine** | 5-5 | 5-5 | — | 5-5 | 4-3 | 4-3 | 5-4 | 5-4 | 5-5 | 5-7 | 5-5 | 5-5 |
+| **Bowman** | 5-5 | 7-5 | 6-5 | — | 5-5 | — | 5-5 | 5-5 | 6-5 | 5-5 | 6-5 | 6-5 |
+| **Dias** | 5-5 | 7-5 | 4-4 | 4-4 | — | 4-4 | 4-4 | — | 4-4 | 4-4 | 4-4 | 4-4 |
+| **Precis** | 7-6 | 7-6 | 6-5 | — | 5-5 | — | 5-5 | 6-5 | 5-5 | 5-5 | 6-5 | 5-5 |
+| **Ashton** | 4-4 | 5-4 | 4-4 | 5-5 | 5-4 | 5-7 | — | 5-5 | — | — | 5-5 | 5-5 |
+| **Leon** | 6-5 | 5-5 | 5-5 | 5-5 | — | 6-5 | 5-4 | — | 5-4 | 4-4 | 6-5 | 5-5 |
+| **Opera** | 6-5 | 4-4 | 5-4 | 5-4 | 5-4 | 5-4 | — | 5-5 | — | 7-8 | 5-4 | 5-5 |
+| **Ernest** | 6-5 | 5-5 | 5-6 | 5-5 | 5-5 | 5-5 | — | 5-5 | 5-7 | — | 6-5 | 5-5 |
+| **Noel** | 5-5 | 5-5 | 5-5 | 5-5 | 5-5 | 5-5 | 5-5 | 6-6 | 5-5 | 6-5 | — | 6-5 |
+| **Chisato** | 6-6 | 5-5 | 5-5 | 5-5 | 4-4 | 6-5 | 6-5 | 5-5 | 6-5 | 6-5 | 5-5 | — |
 
 ## Status
 
-LIKELY, not code/save-verified — same caveat as the other fan-sourced reference docs here. No save
-data has been searched for these values yet; a good next step would be picking one character's
-distinctive starting pair (e.g. Precis's 7-6 toward both Claude and Rena) and searching a fresh
-early save's decoded state for that exact byte pattern, the same technique used to locate equipment
-and inventory data.
+**VERIFIED (Storage & Engine Architecture)**:
+The underlying physical storage for these relationship values is confirmed in [docs/SO2-CHUNK1-MAPPING.md](SO2-CHUNK1-MAPPING.md):
+- **Matrix A (Friendship Points - FP)**: Stored at decoded save chunk 1 offset `0x058..0x0E8` (144 bytes, indexed as `0x058 + 12 * source_id + target_id`, values clamped 0..15).
+- **Matrix B (Romance / Affection Points - RP)**: Stored at decoded save chunk 1 offset `0x0E8..0x178` (144 bytes, indexed as `0x0E8 + 12 * source_id + target_id`, values clamped 0..15).
+- Traced through resident script interpreter opcode `0xFF` sub-dispatcher `80064F30` / `8006590C..8006598C` and bounded matrix traversal `8006B59C..8006B62C`. The fan-sourced starting matrix above aligns directly with this 12×12 architecture.

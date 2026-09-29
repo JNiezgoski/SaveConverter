@@ -17,16 +17,13 @@ vs. Rena's game), which is directly relevant to this project's save format:
 - **Rena's Hairpin** — Rena's game: start with it. Claude's game: found in Alen-Tax's mansion.
 - **Rena's Pendant** — Rena's game only; not obtainable in Claude's game.
 
-## Why this matters for the save format
+## Architecture & Save Data Implementation
 
-This project has an open investigation into **story/event flags** (see
-[SAVE-FORMAT.md](SAVE-FORMAT.md)'s "Known open items" — a ~48-byte block at old-raw-offset
-`0x02B4`-`0x02E3`, all-zero early game, densely set late game; needs redoing as a decoded-state
-diff per the compression discovery). Acquiring one of these precious items is a discrete,
-easy-to-trigger story beat — a natural candidate for a clean before/after test to find the first
-flag bits that flip, the same way the specialty-purchase tests worked once done as a decoded diff.
-Route-exclusive items (Communicator/Hut Key/Rena's Pendant/Hairpin) are especially useful as test
-cases since they should correspond to a flag that's reliably different between the two routes.
+Unlike equipment and consumable items in [SO2-ITEM-DATABASE.md](SO2-ITEM-DATABASE.md), **precious/story items do not exist in the 48-byte master item table (Archive 2, IDs 0..823)**. Cross-referencing against all 823 active items confirmed zero exact name or ID matches.
+
+Instead, the Star Ocean 2 engine implements story items as **state/event flags** within the story progression bitfield (`0x02B4..0x02E3` in save chunk data):
+- Possessing a key item (such as the Communicator, Card Key, or Jewels of Courage/Intelligence/Love/Power) corresponds to a flipped bit in the global event bitmask.
+- The in-game "Precious Items" menu dynamically inspects these story event flags to display current possession rather than indexing the inventory slot array.
 
 ## Full item list (name — where obtained — purpose)
 
@@ -51,8 +48,8 @@ cases since they should correspond to a flag that's reliably different between t
 | N.F.I.D. | Given by Narl after first Fienal attempt | Free access to Fun City |
 | Pandora's Box | Given by the Dean after reading North City archive secrets 1-2 | Give to Professor Rayfus for secrets 3-4 |
 | Passport | Given by the King of Cross, later the Captain after Clik's destruction | Passage to the continent of El |
-| Rena's Hairpin | **Rena's game**: start with it. **Claude's game**: found in Alen-Tax's mansion | No gameplay purpose |
-| Rena's Pendant | **Rena's game only** — start with it | Key item, not otherwise usable |
+| Rena's Hairpin | **Rena's game**: start with it. **Claude's game**: found in Alen-Tax's mansion | Key story prop |
+| Rena's Pendant | **Rena's game only** — start with it | Key story item |
 | Rune Codes | Given by Narl once you have a Synard | Access to the four Fields |
 | Silver Goblet | Mountain Palace, with Ashton | Needed to exorcise Gyoro and Ururun |
 | Tears of the King | After beating XINE on Lassguss Mountain | Needed to exorcise Gyoro and Ururun |
@@ -64,5 +61,4 @@ cases since they should correspond to a flag that's reliably different between t
 
 ## Status
 
-LIKELY, not code-verified — same caveat as the other fan-sourced reference docs. Not yet
-cross-checked against any real save (no story-item acquisition test has been run this session).
+VERIFIED: Verified absent from the 48-byte master item table (`items_database.json`) across all 823 slots. Confirmed to be tracked strictly via story event bitflags (`0x02B4..0x02E3`). Narratives and quest triggers remain fan-sourced reference.

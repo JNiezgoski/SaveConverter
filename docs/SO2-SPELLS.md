@@ -17,7 +17,7 @@ investigation item.
 | Heal | 3 | Rena/Noel (start) | Weak heal, one ally |
 | Antidote | 5 | Rena (3) | Cures Poison, one ally |
 | Cure Light | 11 | Rena (10), Noel (start) | Medium heal, one ally |
-| Silence-curing Dispel | 24 | Rena (25), Noel (60) | Cures Poison/Stone/Paralysis, one ally |
+| Dispel | 24 | Rena (25), Noel (60) | Cures Poison/Stone/Paralysis, one ally |
 | Cure All | 18 | Rena (20), Noel (41) | Medium heal, all allies |
 | Fairy Heal | 30 | Rena (52), Noel (55) | Strong heal, one ally |
 | Fairy Light | 40 | Rena (65), Noel (77) | Strong heal, all allies |

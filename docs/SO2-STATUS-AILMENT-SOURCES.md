@@ -31,7 +31,7 @@ Nede/Cave of Red Crystal), Ooze (Sanctuary of Linga), Lastavenger (COT 7).
 Alraune (Cross Continent/Cross Cave), Flyingray (Lasguss Mountain/Lacour Continent), Ghast (Field of
 Power), Salamander (Hoffman Ruins), Slimepool (Mountain Temple), Ooze (Sanctuary of Linga),
 Raystinger (Energy Nede/Cave of Red Crystal), Otif (Energy Nede/Field of Courage), Masterwizard
-(Field of Love/Fienal), Meduslizzard (Fienal), Wisesorceror (COT 9), Lessassassin (Herlie, Claude's
+(Field of Love/Fienal), Meduslizzard (Fienal), Wisesorcerer (COT 9, Arc 1965), Lessassassin (Herlie, Claude's
 route only).
 
 ## Enemies that can inflict Stone (STO)
@@ -39,17 +39,16 @@ route only).
 Coldlizard (Eluria), Cockatrice (Lasguss Mountain/Lacour Continent), Fenrilbeast (Field of Courage),
 Ghast (Field of Power) — via Paralysis Check drop hint, Periton (Cave of Red Crystal), Otif (Energy
 Nede/Field of Courage), Ooze (Sanctuary of Linga), Meduslizzard (Fienal), Masterwizard (Field of
-Love/Fienal), Bloodgerell (COT 2/3), Cockatricking (COT 9), Wisesorceror (COT 9), Iselia-queen
-(final boss).
+Love/Fienal), Bloodgerell (COT 2/3), Cokatricking (COT 9, Arc 1763), Wisesorcerer (COT 9, Arc 1965), Iselia-queen
+(bonus superboss, Arc 1966).
 
 ## Practical note for testing
 
-**Alraune** (Cross Continent / Cross Cave — very early game) inflicts Poison and is one of the
+**Alraune** (Cross Continent / Cross Cave — very early game, Arc 1428) inflicts Poison and is one of the
 earliest-accessible enemies on this list, making it a strong candidate for a real controlled
-poison-status save test without needing to progress far. For Paralysis, **Ghast** or **Ooze**
-(mid-game, Field of Power / Sanctuary of Linga) are earliest options.
+poison-status save test without needing to progress far. For Paralysis, **Ghast** (Arc 1556) or **Ooze**
+(Arc 1497, mid-game, Field of Power / Sanctuary of Linga) are earliest options.
 
 ## Status
 
-LIKELY, fan-sourced. Not yet used for any actual save-data test — this is prep material for when
-that status-ailment investigation is picked back up.
+VERIFIED against `artifacts/so2-enemies/enemies_database.json`. Enemy names corrected to authentic internal ROM strings (Cokatricking without 'c', Wisesorcerer with '-er', Iselia-queen in Arc 1966). Ailment infliction mechanics remain gameplay reference pending save-state diffing.
