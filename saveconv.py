@@ -15,9 +15,13 @@ Commands:
   extract   card -> one .mcs per save
   import    .mcs saves -> a card (created if it does not exist)
 
+  voice     Star Ocean 2 Voice Collection audit, merger & unlocker
+  so2-edit  Star Ocean 2 save editor (SP, Talents, Skills, Fol)
+
 No arguments opens a small window instead.
 """
 import argparse, hashlib, os, shutil, struct, subprocess, sys, time, unicodedata
+from pathlib import Path
 
 CARD = 131072
 BLOCK = 8192
@@ -438,6 +442,87 @@ def apply_pending(tmp, dest):
     os.remove(tmp)
 
 
+def do_so2_voice(card_path, slot=None, unlock=None, merge=False, out=None):
+    from tools.so2_voice_collection import analyze_card, patch_slot_voice_collection, merge_memory_card_voices
+    card_p = Path(card_path)
+    out_p = Path(out) if out else None
+    if merge:
+        merge_memory_card_voices(card_p, out_p)
+    elif unlock is not None:
+        target_slot = slot or 1
+        patch_slot_voice_collection(card_p, target_slot, percent=unlock, out_path=out_p)
+    else:
+        card_report = analyze_card(card_p)
+        print("=" * 65)
+        print(f"STAR OCEAN 2 - VOICE COLLECTION AUDIT: {card_p.name}")
+        print("=" * 65)
+        for s, report in sorted(card_report.items()):
+            print(f"\n--- Save Slot {s} --- [Total: {report['total_unlocked']}/{report['max_voices']} ({report['percent']}%) ]")
+            for c in report["characters"]:
+                print(f"  {c['character']:10s}: {c['unlocked']:3d} / {c['max']:3d} ({c['percent']:5.1f}%)")
+
+
+def do_so2_edit(card_path, slot=1, fol=None, sp=None, talents=False, skills=False, out=None):
+    import scripts.so2_fol as so2_codec
+    card_p = Path(card_path)
+    cfmt, card_bytes = load_card(card_p)
+    card = bytearray(card_bytes)
+
+    base = slot * BLOCK
+    block = bytearray(card[base : base + BLOCK])
+    if block[0x200:0x20A] != b"STAR OCEAN":
+        raise SaveError(f"Slot {slot} is not a valid Star Ocean 2 save")
+
+    dec = bytearray(so2_codec.state(block))
+
+    # Apply Fol
+    if fol is not None:
+        if not 0 <= fol <= so2_codec.MAX_FOL:
+            raise SaveError(f"Fol must be between 0 and {so2_codec.MAX_FOL}")
+        struct.pack_into("<I", dec, so2_codec.FOL, fol)
+        print(f"  Slot {slot}: Fol set to {fol:,}")
+
+    # Apply Party Member modifications (Secondary array: 0x4A0 + slot * 0xD0)
+    if sp is not None or talents:
+        for c_slot in range(8):
+            sec_base = 0x4A0 + c_slot * 0xD0
+            name = dec[sec_base + 0x24 : sec_base + 0x2C].split(b"\x00")[0].decode("ascii", "replace")
+            if name:
+                if sp is not None:
+                    clamped_sp = max(0, min(sp, 999))
+                    struct.pack_into("<H", dec, sec_base + 0x1A, clamped_sp)
+                if talents:
+                    struct.pack_into("<H", dec, sec_base + 0x20, 0x03FF)
+                print(f"  Party Member '{name}': SP={struct.unpack_from('<H', dec, sec_base + 0x1A)[0]}, Talents=0x{struct.unpack_from('<H', dec, sec_base + 0x20)[0]:04X}")
+
+    # Apply Skill Shop Tiers
+    if skills:
+        dec[0x1A3F] |= 0xF0
+        dec[0x1A40] = 0xFF
+        print(f"  Unlocked all 12 Skill Shop Tiers party-wide (Knowledge, Sensibility, Technique, Combat)")
+
+    # Re-encode and sign
+    compressed = so2_codec.encode(dec)
+    end = so2_codec.STREAM + 2 + len(compressed)
+    if end > len(block):
+        raise SaveError("edited data exceeds one block")
+
+    result = bytearray(block)
+    struct.pack_into("<H", result, so2_codec.STREAM, len(compressed))
+    result[so2_codec.STREAM + 2 : end] = compressed
+    struct.pack_into("<H", result, 0x21A, end)
+    so2_sign(result)
+
+    if not so2_valid(result):
+        raise SaveError("signature verification failed after edit")
+
+    card[base : base + BLOCK] = result
+    out_card = encode(fix_card_checksums(bytes(card)), cfmt)
+    dest_path = Path(out) if out else card_p
+    dest_path.write_bytes(out_card)
+    print(f"Successfully saved edited card to {dest_path}")
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -478,10 +563,32 @@ def main():
     i.add_argument("card")
     i.add_argument("saves", nargs="+")
 
-    if sys.argv[1] not in ("convert", "list", "extract", "import", "combine", "install", "apply-pending", "-h", "--help"):
+    vc = sub.add_parser("voice", help="Star Ocean 2 Voice Collection audit, merger & unlocker")
+    vc.add_argument("card", help="memory card file")
+    vc.add_argument("--slot", type=int, default=None, help="target slot (1..15)")
+    vc.add_argument("--unlock", type=float, default=None, help="unlock voices up to percent (e.g. 100)")
+    vc.add_argument("--merge", action="store_true", help="merge voice collection across all slots on card")
+    vc.add_argument("--out", help="output card path")
+
+    ed = sub.add_parser("so2-edit", help="Star Ocean 2 save editor (SP, Talents, Skills, Fol)")
+    ed.add_argument("card", help="memory card file")
+    ed.add_argument("--slot", type=int, default=1, help="target save slot (1..15, default 1)")
+    ed.add_argument("--fol", type=int, default=None, help="set Fol (0..999,999,999)")
+    ed.add_argument("--sp", type=int, default=None, help="set SP for all active party members (0..999)")
+    ed.add_argument("--talents", action="store_true", help="unlock all 10 talents for all active party members")
+    ed.add_argument("--skills", action="store_true", help="unlock all 12 Skill Shop tiers party-wide")
+    ed.add_argument("--out", help="output card path (default overwrites target slot safely)")
+
+    if sys.argv[1] not in ("convert", "list", "extract", "import", "combine", "install", "apply-pending", "voice", "so2-edit", "-h", "--help"):
         sys.argv.insert(1, "convert")            # bare file arguments = convert
     a = ap.parse_args()
     try:
+        if a.cmd == "voice":
+            do_so2_voice(a.card, a.slot, a.unlock, a.merge, a.out)
+            return 0
+        if a.cmd == "so2-edit":
+            do_so2_edit(a.card, a.slot, a.fol, a.sp, a.talents, a.skills, a.out)
+            return 0
         if a.cmd == "apply-pending":
             apply_pending(a.tmp, a.dest)
             return 0
