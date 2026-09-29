@@ -593,10 +593,25 @@ def main():
     sn.add_argument("--scale", type=int, default=2, help="upscale multiplier (default 2)")
     sn.add_argument("--out", type=Path, default=None, help="output directory")
 
-    if sys.argv[1] not in ("convert", "list", "extract", "import", "combine", "install", "apply-pending", "voice", "so2-edit", "so2-sprites", "so2-scene-npc", "-h", "--help"):
+    si = sub.add_parser("so2-scene-index", help="Star Ocean 2 2D scene sprite indexer (builds master scene-to-sprite index)")
+    si.add_argument("--disc", type=int, choices=[1, 2], default=1, help="disc number (1 or 2, default: 1)")
+    si.add_argument("--out-json", type=Path, default=None, help="output JSON path")
+    si.add_argument("--out-doc", type=Path, default=None, help="output Markdown doc path")
+
+    if sys.argv[1] not in ("convert", "list", "extract", "import", "combine", "install", "apply-pending", "voice", "so2-edit", "so2-sprites", "so2-scene-npc", "so2-scene-index", "-h", "--help"):
         sys.argv.insert(1, "convert")            # bare file arguments = convert
     a = ap.parse_args()
     try:
+        if a.cmd == "so2-scene-index":
+            from tools.so2_scene_sprite_indexer import build_scene_sprite_index, export_index, DEFAULT_DISC1, DEFAULT_DISC2, OUT_JSON, OUT_DOC
+            disc_path = DEFAULT_DISC1 if a.disc == 1 else DEFAULT_DISC2
+            out_json = a.out_json or OUT_JSON
+            out_doc = a.out_doc or OUT_DOC
+            print(f"Building scene sprite index for Disc {a.disc}...")
+            master_index = build_scene_sprite_index(disc_path, disc_num=a.disc)
+            export_index(master_index, out_json, out_doc)
+            print(f"Indexed {master_index['total_scenes_indexed']} scenes ({master_index['total_sprite_frames']:,} frames across {master_index['unique_entity_selectors']} selectors).")
+            return 0
         if a.cmd == "so2-scene-npc":
             from tools.so2_scene_npc_extract import extract_scene_npc_sprites, extract_all_scene_npcs, DEFAULT_DISC1, DEFAULT_DISC2
             disc_path = DEFAULT_DISC1 if a.disc == 1 else DEFAULT_DISC2

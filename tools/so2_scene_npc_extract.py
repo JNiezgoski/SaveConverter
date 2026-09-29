@@ -4,7 +4,8 @@ Extracts 2D field NPC sprites, dungeon creatures, and interactable entity frames
 from scene container archives (Archives 3207..4154) across Disc 1 and Disc 2.
 
 In scene containers (tag == 2), NPC sprite banks are packaged as dynamic multi-section
-containers containing 12-byte frame descriptors, 16-color BGR555 CLUT palettes,
+containers containing a mode-dependent 12/16-byte header, 12-byte frame descriptors,
+16-color BGR555 CLUT palettes,
 and 4bpp indexed pixel streams.
 
 Outputs extracted PNG frames to artifacts/so2-sprites/scene_<id>/.
@@ -90,9 +91,13 @@ def extract_scene_npc_sprites(
         if soff + 0x20 > len(dec):
             continue
 
+        rec_count, selector = struct.unpack_from("<2I", dec, soff)
+        a_off = struct.unpack_from("<I", dec, soff + 0x18)[0]
         sptr = struct.unpack_from("<I", dec, soff + 0x1C)[0]
+        mode = dec[soff + a_off + 2] if soff + a_off + 3 <= len(dec) else 1
+        hdr_len = 12 if mode == 1 else 16
         p3 = soff + sptr
-        if p3 + 12 > len(dec):
+        if p3 + hdr_len > len(dec):
             continue
 
         hsz, preloff, unk, fc = struct.unpack("<IIHH", dec[p3 : p3 + 12])
@@ -100,7 +105,7 @@ def extract_scene_npc_sprites(
             continue
 
         pix_start = p3 + preloff
-        desc_end = p3 + 12 + fc * 12
+        desc_end = p3 + hdr_len + fc * 12
         if desc_end + 36 > len(dec):
             continue
 
@@ -117,13 +122,15 @@ def extract_scene_npc_sprites(
 
         sec_info = {
             "section_index": s_idx,
+            "selector_id": selector,
+            "mode": mode,
             "frame_count": fc,
             "extracted_count": 0,
             "frames": []
         }
 
         for f_idx in range(fc):
-            pos = p3 + 12 + f_idx * 12
+            pos = p3 + hdr_len + f_idx * 12
             if pos + 12 > len(dec):
                 break
 
