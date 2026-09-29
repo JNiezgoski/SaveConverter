@@ -6,3 +6,7 @@ venv/
 # Extracted/disassembled game executable code (copyrighted, not ours to distribute) and
 # other scratch investigation output - regenerate with tools/so2_disc_code.py etc. if needed.
 artifacts/
+
+# Task briefs handed to the Antigravity/Codex "coworker" agents - coordination scratch,
+# not project reference material, never committed.
+ANTIGRAVITY-TASKS.md
