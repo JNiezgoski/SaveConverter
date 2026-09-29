@@ -70,6 +70,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | 21 | Humanoid with a closed blue helmet | `artifacts/so2-sprites/scene_3240/sec01_f00.png` |
 | 24 | Balding pointed-eared humanoid in green | `artifacts/so2-sprites/scene_3442/sec06_f00.png` |
 | 25 | White-haired bearded humanoid in yellow and blue | `artifacts/so2-sprites/scene_3464/sec04_f00.png` |
+| 27 | Small brown puppy/dog creature | `artifacts\so2-sprites\scene_3234\sec17_f00.png` |
 | 28 | Blue-haired humanoid in blue and white clothing | `artifacts/so2-sprites/scene_3442/sec04_f00.png` |
 | 32 | Small purple-hooded humanoid | `artifacts/so2-sprites/scene_3207/sec13_f00.png` |
 | 38 | Small pale long-eared animal | `artifacts/so2-sprites/scene_3219/sec16_f00.png` |
@@ -78,19 +79,31 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | 49 | Humanoid in pale blue uniform and peaked cap | `artifacts/so2-sprites/scene_3265/sec04_f00.png` |
 | 56 | Small green-hooded humanoid in brown clothing | `artifacts/so2-sprites/scene_3329/sec07_f00.png` |
 | 64 | Grey-bearded humanoid in a blue cap holding a staff | `artifacts/so2-sprites/scene_3333/sec04_f00.png` |
+| 65 | Small burst/spark particle effect | `artifacts\so2-sprites\scene_3219\sec15_f00.png` |
+| 66 | Purple penguin-shaped creature | `artifacts\so2-sprites\scene_3225\sec18_f00.png` |
 | 75 | White-haired humanoid in a blue coat holding a cane | `artifacts/so2-sprites/scene_3224/sec10_f00.png` |
 | 76 | Tan quadruped with pointed ears and a raised dark-tipped tail | `artifacts/so2-sprites/scene_3219/sec17_f00.png` |
+| 77 | Small blue-white bird or dove object | `artifacts\so2-sprites\scene_3268\sec12_f00.png` |
 | 79 | Black-haired moustached humanoid in a pale shirt and blue trousers | `artifacts/so2-sprites/scene_3265/sec05_f00.png` |
 | 81 | Humanoid wearing a white chef hat and uniform | `artifacts/so2-sprites/scene_3258/sec01_f00.png` |
+| 84 | Small blue round-headed robot creature | `artifacts\so2-sprites\scene_3225\sec17_f00.png` |
+| 87 | Small rifle or long weapon object | `artifacts\so2-sprites\scene_3331\sec08_f00.png` |
 | 88 | Armored humanoid with a blue helmet and long pole weapon | `artifacts/so2-sprites/scene_3216/sec05_f00.png` |
 | 89 | Armored humanoid with a pale helmet and long pole weapon | `artifacts/so2-sprites/scene_3216/sec06_f00.png` |
+| 90 | Small pale oval object (food or item) | `artifacts\so2-sprites\scene_3293\sec23_f00.png` |
 | 99 | Gold-colored cup-shaped object | `artifacts/so2-sprites/scene_3587/sec07_f00.png` |
 | 102 | Humanoid wearing a tall blue and gold hat and robe | `artifacts/so2-sprites/scene_3224/sec11_f00.png` |
 | 107 | Green-haired humanoid wearing a white coat | `artifacts/so2-sprites/scene_3376/sec09_f00.png` |
 | 108 | Pink-haired humanoid wearing a white coat | `artifacts/so2-sprites/scene_3376/sec10_f00.png` |
+| 114 | Winged angelic figure holding a glowing light orb | `artifacts\so2-sprites\scene_3355\sec04_f00.png` |
+| 115 | Armored winged angelic/guardian figure | `artifacts\so2-sprites\scene_3218\sec08_f00.png` |
 | 116 | Humanoid in a white uniform and cap with a pink cross | `artifacts/so2-sprites/scene_3649/sec04_f00.png` |
+| 121 | Armored robotic or mechanical knight figure | `artifacts\so2-sprites\scene_3453\sec00_f00.png` |
 | 124 | Long pink serpentine creature | `artifacts/so2-sprites/scene_3278/sec13_f00.png` |
 | 133 | Large bird with spread purple and gold wings | `artifacts/so2-sprites/scene_3592/sec00_f00.png` |
+| 147 | Blue mechanical robot figure | `artifacts\so2-sprites\scene_3488\sec10_f00.png` |
+| 148 | Helmeted armored figure with a shield emblem | `artifacts\so2-sprites\scene_3645\sec03_f00.png` |
+| 149 | Armored figure with a horned/ram helmet | `artifacts\so2-sprites\scene_3648\sec02_f00.png` |
 | 150 | Red and gold treasure chest | `artifacts/so2-sprites/scene_3326/sec13_f00.png` |
 | 151 | Red and gold treasure chest | `artifacts/so2-sprites/scene_3623/sec01_f00.png` |
 | 152 | Red and gold treasure chest | `artifacts/so2-sprites/scene_3583/sec00_f00.png` |
@@ -103,10 +116,12 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | 159 | Red and gold treasure chest | `artifacts/so2-sprites/scene_3278/sec11_f00.png` |
 | 160 | Red and gold treasure chest | `artifacts/so2-sprites/scene_3274/sec01_f00.png` |
 | 161 | Red and gold treasure chest | `artifacts/so2-sprites/scene_3574/sec00_f00.png` |
+| 167 | Bald elderly humanoid carrying a bag | `artifacts\so2-sprites\scene_3454\sec05_f00.png` |
 | 169 | Blue quadrupedal dragon-like creature with red wings | `artifacts/so2-sprites/scene_3476/sec04_f00.png` |
 | 170 | Blue-haired humanoid in a white coat | `artifacts/so2-sprites/scene_3476/sec02_f00.png` |
 | 171 | Bulky horned armored figure carrying a curved blade | `artifacts/so2-sprites/scene_3579/sec01_f00.png` |
 | 172 | Purple ray-like creature with a curled tail | `artifacts/so2-sprites/scene_3436/sec28_f00.png` |
+| 178 | Small orange blocky mechanical/robotic creature | `artifacts\so2-sprites\scene_3663\sec00_f00.png` |
 | 180 | Green winged humanoid creature | `artifacts/so2-sprites/scene_3655/sec00_f00.png` |
 | 181 | Large crouching green and brown furred creature | `artifacts/so2-sprites/scene_3219/sec01_f00.png` |
 | 182 | Blue humanoid-shaped figure | `artifacts/so2-sprites/scene_3686/sec00_f00.png` |
@@ -116,10 +131,24 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | 188 | Purple winged humanoid-shaped creature | `artifacts/so2-sprites/scene_3654/sec13_f00.png` |
 | 190 | Large crouching red and brown furred creature | `artifacts/so2-sprites/scene_3679/sec03_f00.png` |
 | 191 | Prone furred creature | `artifacts/so2-sprites/scene_3669/sec05_f00.png` |
+| 194 | Winged dark-robed humanoid with bat-like wings | `artifacts\so2-sprites\scene_3439\sec33_f00.png` |
+| 195 | Woman standing beside a large spider-like creature | `artifacts\so2-sprites\scene_3404\sec07_f00.png` |
+| 197 | Gold armored winged dragon-like creature | `artifacts\so2-sprites\scene_3432\sec23_f00.png` |
+| 198 | Small winged fairy-shaped humanoid creature | `artifacts\so2-sprites\scene_3509\sec01_f00.png` |
 | 199 | Large round pale pink creature with long ears | `artifacts/so2-sprites/scene_3444/sec04_f00.png` |
+| 200 | Large red bird/phoenix-like creature with spread wings | `artifacts\so2-sprites\scene_3803\sec00_f00.png` |
+| 204 | Large dark whale-or-sea-creature silhouette (partial frame) | `artifacts\so2-sprites\scene_3587\sec01_f00.png` |
 | 213 | Green mechanical-looking legs and lower torso | `artifacts/so2-sprites/scene_3810/sec00_f00.png` |
+| 216 | Large red bird creature with spread wings | `artifacts\so2-sprites\scene_4016\sec00_f00.png` |
 | 219 | Red crustacean-like creature with claws | `artifacts/so2-sprites/scene_3619/sec03_f00.png` |
 | 220 | Gold winged humanoid creature | `artifacts/so2-sprites/scene_3755/sec12_f00.png` |
+| 228 | Grayscale (monochrome) hooded/robed humanoid figure | `artifacts\so2-sprites\scene_3925\sec00_f00.png` |
+| 229 | Grayscale (monochrome) robed humanoid figure | `artifacts\so2-sprites\scene_3927\sec00_f00.png` |
+| 230 | Grayscale (monochrome) hooded humanoid figure | `artifacts\so2-sprites\scene_3924\sec00_f00.png` |
+| 231 | Grayscale (monochrome) robed humanoid figure | `artifacts\so2-sprites\scene_3924\sec01_f00.png` |
+| 232 | Grayscale (monochrome) humanoid figure | `artifacts\so2-sprites\scene_3928\sec00_f00.png` |
+| 233 | Grayscale (monochrome) robed humanoid figure | `artifacts\so2-sprites\scene_3927\sec01_f00.png` |
+| 234 | Grayscale (monochrome) humanoid figure | `artifacts\so2-sprites\scene_3925\sec01_f00.png` |
 | 235 | Gold bird with spread wings | `artifacts/so2-sprites/scene_3566/sec01_f00.png` |
 | 10000 | Orange and yellow glowing orb | `artifacts/so2-sprites/scene_3212/sec03_f00.png` |
 | 32766 | Purple orb on a slender gold stand | `artifacts/so2-sprites/scene_3211/sec00_f00.png` |
@@ -127,7 +156,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 
 ## 3. Regional Scene Sprite Breakdown
 
-### 3.7 Opening / Expel Setpieces & Intro Sequences
+### 3.8 Opening / Expel Setpieces & Intro Sequences
 *Active Scenes: 17 | Total Sprite Frames: 2,701*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -150,7 +179,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3222`** | `Scene 015` | 3 | 35 | Rena Lanford | 115: 24x43, 10000: 40x42 |
 | **`3223`** | `Scene 016` | 3 | 57 | Opera Vectra, Precis F. Neumann | 32767: 12x17 |
 
-### 3.8 Arlia Village & Shingo Forest (Scene 017..037)
+### 3.10 Arlia Village & Shingo Forest (Scene 017..037)
 *Active Scenes: 20 | Total Sprite Frames: 1,807*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -176,7 +205,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3243`** | `Scene 036` | 3 | 34 | - | 16: 20x40, 32767: 12x18, 32767: 8x5 |
 | **`3244`** | `Scene 037` | 2 | 35 | - | 75: 32x44, 32767: 12x17 |
 
-### 3.9 Salva Town & Salva Drift Cave (Scene 038..062)
+### 3.11 Salva Town & Salva Drift Cave (Scene 038..062)
 *Active Scenes: 25 | Total Sprite Frames: 1,748*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -207,7 +236,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3268`** | `Scene 061` | 14 | 108 | Rena Lanford, Claude Kenni | 32767: 12x17, 10000: 12x12, 104: 24x45, 104: 52x26, 32767: 8x5, 10000: 8x5 |
 | **`3269`** | `Scene 062` | 8 | 70 | Claude Kenni, Rena Lanford | 32767: 12x17, 218: 20x26, 32767: 8x5, 32767: 8x5, 32766: 16x36, 218: 24x41 |
 
-### 3.11 Cross Kingdom, Cross Castle & Clik Approach (Scene 063..098)
+### 3.12 Cross Kingdom, Cross Castle & Clik Approach (Scene 063..098)
 *Active Scenes: 34 | Total Sprite Frames: 3,060*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -247,7 +276,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3304`** | `Scene 097` | 2 | 25 | - | 32767: 16x14, 91: 24x42 |
 | **`3305`** | `Scene 098` | 3 | 63 | - | 88: 24x47, 81: 24x47, 80: 24x45 |
 
-### 3.13 Port Town of Clik & Disaster Ruins (Scene 099..128)
+### 3.14 Port Town of Clik & Disaster Ruins (Scene 099..128)
 *Active Scenes: 27 | Total Sprite Frames: 3,395*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -280,7 +309,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3334`** | `Scene 127` | 1 | 7 | - | 32767: 8x5 |
 | **`3335`** | `Scene 128` | 11 | 121 | - | 32767: 12x17, 32767: 8x5, 32767: 16x14, 63: 20x36, 68: 24x45, 50: 24x45 |
 
-### 3.15 Mars Village & Heraldry Forest (Scene 129..153)
+### 3.16 Mars Village & Heraldry Forest (Scene 129..153)
 *Active Scenes: 22 | Total Sprite Frames: 1,728*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -308,7 +337,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3358`** | `Scene 151` | 4 | 40 | - | 32767: 8x5, 32767: 16x13, 32767: 12x18, 17: 20x43 |
 | **`3359`** | `Scene 152` | 1 | 21 | - | 16: 20x40 |
 
-### 3.16 Linga Academic City & Sanctuary (Scene 154..178)
+### 3.17 Linga Academic City & Sanctuary (Scene 154..178)
 *Active Scenes: 17 | Total Sprite Frames: 1,672*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -331,7 +360,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3384`** | `Scene 177` | 3 | 32 | - | 32767: 16x13, 32767: 16x14, 23: 20x30 |
 | **`3385`** | `Scene 178` | 1 | 4 | - | 32767: 16x14 |
 
-### 3.17 Kingdom of Lacour & Armory Tournaments (Scene 179..208)
+### 3.19 Kingdom of Lacour & Armory Tournaments (Scene 179..208)
 *Active Scenes: 26 | Total Sprite Frames: 3,685*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -363,7 +392,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3414`** | `Scene 207` | 25 | 386 | Precis F. Neumann, Celine Jules, Ashton Anchors, Opera Vectra, Rena Lanford, Claude Kenni, Bowman Jean, Leon D.S. Gehste | 32767: 8x5, 32767: 16x14, 32767: 16x13, 32767: 12x17, 32767: 8x5, 32767: 8x5 |
 | **`3415`** | `Scene 208` | 16 | 171 | Bowman Jean, Claude Kenni, Precis F. Neumann | 32767: 16x14, 32767: 8x5, 32767: 8x5, 32767: 16x13, 32767: 12x17, 32767: 12x9 |
 
-### 3.19 Hoffman Ruins & Lacour Frontline (Scene 209..238)
+### 3.20 Hoffman Ruins & Lacour Frontline (Scene 209..238)
 *Active Scenes: 27 | Total Sprite Frames: 4,159*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -396,7 +425,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3444`** | `Scene 237` | 6 | 109 | Chisato Madison | 32767: 16x14, 32767: 16x13, 32767: 8x5, 39: 12x19, 199: 56x47 |
 | **`3445`** | `Scene 238` | 2 | 28 | - | 28: 24x44, 32767: 8x5 |
 
-### 3.20 Eluria Tower & Calnus Transport (Scene 239..268)
+### 3.22 Eluria Tower & Calnus Transport (Scene 239..268)
 *Active Scenes: 28 | Total Sprite Frames: 2,163*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -430,7 +459,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3474`** | `Scene 267` | 1 | 10 | - | 10000: 8x5 |
 | **`3475`** | `Scene 268` | 9 | 73 | Claude Kenni, Chisato Madison | 32767: 12x17, 32767: 8x5, 32767: 8x5, 32767: 8x5, 32767: 16x14, 16: 20x40 |
 
-### 3.22 Central City & Energy Nede Approach (Scene 269..333)
+### 3.24 Central City & Energy Nede Approach (Scene 269..333)
 *Active Scenes: 59 | Total Sprite Frames: 6,423*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -495,7 +524,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3539`** | `Scene 332` | 8 | 82 | - | 32767: 8x5, 32767: 12x17, 32767: 16x13, 32767: 8x5, 32767: 16x14, 150: 24x21 |
 | **`3540`** | `Scene 333` | 3 | 36 | - | 32767: 8x5, 32767: 8x5, 237: 28x47 |
 
-### 3.25 North City, Giveaway & Library (Scene 334..413)
+### 3.27 North City, Giveaway & Library (Scene 334..413)
 *Active Scenes: 41 | Total Sprite Frames: 1,552*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -542,7 +571,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3619`** | `Scene 412` | 5 | 49 | - | 67: 24x46, 32767: 8x5, 32767: 12x17, 219: 100x36, 156: 24x21 |
 | **`3620`** | `Scene 413` | 1 | 3 | - | 156: 24x21 |
 
-### 3.28 Armlock, Fun City & Nedian Enclaves (Scene 414..493)
+### 3.29 Armlock, Fun City & Nedian Enclaves (Scene 414..493)
 *Active Scenes: 71 | Total Sprite Frames: 7,683*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -619,7 +648,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3699`** | `Scene 492` | 1 | 3 | - | 155: 28x27 |
 | **`3700`** | `Scene 493` | 1 | 3 | - | 155: 28x27 |
 
-### 3.32 Four Fields (Might, Courage, Intellect, Love) (Scene 494..573)
+### 3.33 Four Fields (Might, Courage, Intellect, Love) (Scene 494..573)
 *Active Scenes: 63 | Total Sprite Frames: 1,378*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -688,7 +717,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3779`** | `Scene 572` | 1 | 3 | - | 156: 24x21 |
 | **`3780`** | `Scene 573` | 3 | 5 | Claude Kenni, Rena Lanford | 156: 24x21 |
 
-### 3.35 Phynal Tower, Final Bastion & Endings (Scene 574..643)
+### 3.36 Phynal Tower, Final Bastion & Endings (Scene 574..643)
 *Active Scenes: 54 | Total Sprite Frames: 2,201*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |
@@ -748,7 +777,7 @@ Other selectors remain unclassified. The hero mapping above is inherited project
 | **`3849`** | `Scene 642` | 9 | 71 | Rena Lanford, Claude Kenni | 10000: 12x12, 32767: 8x5, 10000: 88x94, 10000: 20x31, 32767: 12x17, 187: 80x51 |
 | **`3850`** | `Scene 643` | 8 | 88 | Opera Vectra | 32767: 8x5, 32767: 16x13, 32767: 16x14, 39: 12x19, 32767: 8x5, 175: 20x45 |
 
-### 3.38 Overworld Dungeons, Sub-Levels & Secret Chambers (Scene 644..947)
+### 3.39 Overworld Dungeons, Sub-Levels & Secret Chambers (Scene 644..947)
 *Active Scenes: 95 | Total Sprite Frames: 2,884*
 
 | Archive | Scene ID | Sections | Frames | Heroes Present | Other Selectors (ID: dims) |

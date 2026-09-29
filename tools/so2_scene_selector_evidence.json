@@ -83,6 +83,17 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 27,
+      "archive_id": 3234,
+      "section_index": 17,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3234\\sec17_f00.png",
+      "visual_description": "Small brown puppy/dog creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
       "selector_id": 28,
       "archive_id": 3442,
       "section_index": 4,
@@ -163,6 +174,28 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 65,
+      "archive_id": 3219,
+      "section_index": 15,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3219\\sec15_f00.png",
+      "visual_description": "Small burst/spark particle effect",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 66,
+      "archive_id": 3225,
+      "section_index": 18,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3225\\sec18_f00.png",
+      "visual_description": "Purple penguin-shaped creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
       "selector_id": 75,
       "archive_id": 3224,
       "section_index": 10,
@@ -181,6 +214,17 @@
       "visual_description": "Tan quadruped with pointed ears and a raised dark-tipped tail",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 77,
+      "archive_id": 3268,
+      "section_index": 12,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3268\\sec12_f00.png",
+      "visual_description": "Small blue-white bird or dove object",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
     },
     {
       "selector_id": 79,
@@ -203,6 +247,28 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 84,
+      "archive_id": 3225,
+      "section_index": 17,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3225\\sec17_f00.png",
+      "visual_description": "Small blue round-headed robot creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 87,
+      "archive_id": 3331,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3331\\sec08_f00.png",
+      "visual_description": "Small rifle or long weapon object",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
       "selector_id": 88,
       "archive_id": 3216,
       "section_index": 5,
@@ -221,6 +287,17 @@
       "visual_description": "Armored humanoid with a pale helmet and long pole weapon",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 90,
+      "archive_id": 3293,
+      "section_index": 23,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3293\\sec23_f00.png",
+      "visual_description": "Small pale oval object (food or item)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
     },
     {
       "selector_id": 99,
@@ -263,6 +340,28 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 114,
+      "archive_id": 3355,
+      "section_index": 4,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3355\\sec04_f00.png",
+      "visual_description": "Winged angelic figure holding a glowing light orb",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 115,
+      "archive_id": 3218,
+      "section_index": 8,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3218\\sec08_f00.png",
+      "visual_description": "Armored winged angelic/guardian figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
       "selector_id": 116,
       "archive_id": 3649,
       "section_index": 4,
@@ -271,6 +370,17 @@
       "visual_description": "Humanoid in a white uniform and cap with a pink cross",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 121,
+      "archive_id": 3453,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3453\\sec00_f00.png",
+      "visual_description": "Armored robotic or mechanical knight figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
     },
     {
       "selector_id": 124,
@@ -291,6 +401,39 @@
       "visual_description": "Large bird with spread purple and gold wings",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 147,
+      "archive_id": 3488,
+      "section_index": 10,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3488\\sec10_f00.png",
+      "visual_description": "Blue mechanical robot figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 148,
+      "archive_id": 3645,
+      "section_index": 3,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3645\\sec03_f00.png",
+      "visual_description": "Helmeted armored figure with a shield emblem",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 149,
+      "archive_id": 3648,
+      "section_index": 2,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3648\\sec02_f00.png",
+      "visual_description": "Armored figure with a horned/ram helmet",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
     },
     {
       "selector_id": 150,
@@ -413,6 +556,17 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 167,
+      "archive_id": 3454,
+      "section_index": 5,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3454\\sec05_f00.png",
+      "visual_description": "Bald elderly humanoid carrying a bag",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
       "selector_id": 169,
       "archive_id": 3476,
       "section_index": 4,
@@ -451,6 +605,17 @@
       "visual_description": "Purple ray-like creature with a curled tail",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 178,
+      "archive_id": 3663,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3663\\sec00_f00.png",
+      "visual_description": "Small orange blocky mechanical/robotic creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
     },
     {
       "selector_id": 180,
@@ -543,6 +708,50 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 194,
+      "archive_id": 3439,
+      "section_index": 33,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3439\\sec33_f00.png",
+      "visual_description": "Winged dark-robed humanoid with bat-like wings",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 195,
+      "archive_id": 3404,
+      "section_index": 7,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3404\\sec07_f00.png",
+      "visual_description": "Woman standing beside a large spider-like creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 197,
+      "archive_id": 3432,
+      "section_index": 23,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3432\\sec23_f00.png",
+      "visual_description": "Gold armored winged dragon-like creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 198,
+      "archive_id": 3509,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3509\\sec01_f00.png",
+      "visual_description": "Small winged fairy-shaped humanoid creature",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
       "selector_id": 199,
       "archive_id": 3444,
       "section_index": 4,
@@ -553,6 +762,28 @@
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     },
     {
+      "selector_id": 200,
+      "archive_id": 3803,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3803\\sec00_f00.png",
+      "visual_description": "Large red bird/phoenix-like creature with spread wings",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 204,
+      "archive_id": 3587,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3587\\sec01_f00.png",
+      "visual_description": "Large dark whale-or-sea-creature silhouette (partial frame)",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
       "selector_id": 213,
       "archive_id": 3810,
       "section_index": 0,
@@ -561,6 +792,17 @@
       "visual_description": "Green mechanical-looking legs and lower torso",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 216,
+      "archive_id": 4016,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_4016\\sec00_f00.png",
+      "visual_description": "Large red bird creature with spread wings",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
     },
     {
       "selector_id": 219,
@@ -581,6 +823,83 @@
       "visual_description": "Gold winged humanoid creature",
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
+    },
+    {
+      "selector_id": 228,
+      "archive_id": 3925,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3925\\sec00_f00.png",
+      "visual_description": "Grayscale (monochrome) hooded/robed humanoid figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 229,
+      "archive_id": 3927,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3927\\sec00_f00.png",
+      "visual_description": "Grayscale (monochrome) robed humanoid figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 230,
+      "archive_id": 3924,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3924\\sec00_f00.png",
+      "visual_description": "Grayscale (monochrome) hooded humanoid figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 231,
+      "archive_id": 3924,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3924\\sec01_f00.png",
+      "visual_description": "Grayscale (monochrome) robed humanoid figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 232,
+      "archive_id": 3928,
+      "section_index": 0,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3928\\sec00_f00.png",
+      "visual_description": "Grayscale (monochrome) humanoid figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 233,
+      "archive_id": 3927,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3927\\sec01_f00.png",
+      "visual_description": "Grayscale (monochrome) robed humanoid figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
+    },
+    {
+      "selector_id": 234,
+      "archive_id": 3925,
+      "section_index": 1,
+      "frame_index": 0,
+      "filename": "artifacts\\so2-sprites\\scene_3925\\sec01_f00.png",
+      "visual_description": "Grayscale (monochrome) humanoid figure",
+      "evidence_type": "viewed_extracted_frame",
+      "scope": "This frame only; named character, gameplay role, and other occurrences are not established.",
+      "reviewer": "Claude (manager)"
     },
     {
       "selector_id": 235,
@@ -622,5 +941,6 @@
       "evidence_type": "viewed_extracted_frame",
       "scope": "This frame only; named character, gameplay role, and other occurrences are not established."
     }
-  ]
+  ],
+  "review_date_supplement": "2026-09-28 (Claude manual visual pass, remaining unclassified selectors)"
 }
