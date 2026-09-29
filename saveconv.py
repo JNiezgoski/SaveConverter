@@ -579,10 +579,26 @@ def main():
     ed.add_argument("--skills", action="store_true", help="unlock all 12 Skill Shop tiers party-wide")
     ed.add_argument("--out", help="output card path (default overwrites target slot safely)")
 
-    if sys.argv[1] not in ("convert", "list", "extract", "import", "combine", "install", "apply-pending", "voice", "so2-edit", "-h", "--help"):
+    sp = sub.add_parser("so2-sprites", help="Star Ocean 2 character and combat sprite extractor")
+    sp.add_argument("--archive", type=int, default=None, help="archive ID (e.g. 3026, 3111, 4045)")
+    sp.add_argument("--all", action="store_true", help="extract all verified combat sprite archives")
+    sp.add_argument("--disc", type=Path, default=Path("C:/CodeTesting/StarOcean2/disc/Star Ocean - The Second Story (USA) (Disc 1).bin"), help="path to Disc 1 BIN")
+    sp.add_argument("--out", type=Path, default=None, help="output directory")
+    sp.add_argument("--scale", type=int, default=2, help="upscale multiplier (default 2)")
+
+    if sys.argv[1] not in ("convert", "list", "extract", "import", "combine", "install", "apply-pending", "voice", "so2-edit", "so2-sprites", "-h", "--help"):
         sys.argv.insert(1, "convert")            # bare file arguments = convert
     a = ap.parse_args()
     try:
+        if a.cmd == "so2-sprites":
+            from tools.so2_sprite_extract import extract_all_sprites, extract_sprite_frames
+            if a.all or a.archive is None:
+                extract_all_sprites(a.disc, a.out, a.scale)
+            else:
+                out_dir = a.out or (Path(__file__).resolve().parent / "artifacts" / "so2-sprites" / f"archive_{a.archive:04d}")
+                info = extract_sprite_frames(a.archive, a.disc, out_dir, a.scale)
+                print(f"Extracted {info['total_frames_extracted']} frames across {info['valid_sections']} sections to {out_dir}.")
+            return 0
         if a.cmd == "voice":
             do_so2_voice(a.card, a.slot, a.unlock, a.merge, a.out)
             return 0

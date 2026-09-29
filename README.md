@@ -129,12 +129,13 @@ All of these live in `scripts/` and are run from the repo root, e.g. `python scr
 | `so2_inventory.py` | Gives a character an item type they've never owned before (or tops up one they have) by executing the game's actual add-item routine — the only correct way to create a brand-new inventory entry. `python scripts/so2_inventory.py <card> --save S15 --id 364 --count 20 --out <new card>` (count is an increment; writes a new card file) |
 | `so2_location.py` | Reads/records/names map locations and teleports between recorded ones. `python scripts/so2_location.py show [box]`, `name`, `list`, `map`, `map-html`, `teleport` — see the script's own docstring for full usage. |
 | `so2_voice_collection.py` | Audits, merges, and unlocks the Voice Collection (50% Universe mode, 75% Music Test, 100% Master) across memory card save slots, recomputing both checksums via `so2_sign()`. `python tools/so2_voice_collection.py <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]` |
-| `so2_sprite_extract.py` | Decodes the tri-Ace 4bpp combat sprite container (Disc 1 Archives 3111-3207) into cropped, transparent PNG frames. `python tools/so2_sprite_extract.py --archive <id> [--scale N]` (output PNGs are local-only, not committed — see below) |
+| `so2_sprite_extract.py` | Extracts authentic 16-color BGR555 combat and hero sprites (Hero Roster 3026, Claude 3111..3173, Ashton/monsters 3176..3206, summons 4035..4050) into transparent PNG frames across all animation banks. `python tools/so2_sprite_extract.py [--archive <id>] [--all] [--scale N]` |
 
-`saveconv.py` (repo root) also has two built-in Star Ocean 2 subcommands, no `scripts/` prefix needed:
-`python saveconv.py voice <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]` and
+`saveconv.py` (repo root) also has three built-in Star Ocean 2 subcommands, no `scripts/` prefix needed:
+`python saveconv.py voice <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]`
 `python saveconv.py so2-edit <card> [--slot N] [--fol N] [--sp N] [--talents] [--skills] [--out <new card>]`
-(Fol/SP/Talents/Skill-Shop-tier editing, built on the verified offsets above).
+`python saveconv.py so2-sprites [--archive <id>] [--all] [--scale N] [--out <dir>]`
+(Fol/SP/Talents/Skill-Shop-tier editing and authentic 16-color combat/hero sprite extraction).
 
 **Not committed (local-only by design):** the FMV/audio/character-art media-ripping toolchain
 (`so2_audio_extract.py`, `so2_video_convert.py`, `so2_duckstation_pack.py`, `so2_sync_cutscenes.py`,
