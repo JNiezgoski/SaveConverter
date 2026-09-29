@@ -188,16 +188,75 @@ def extract_scene_npc_sprites(
     return results
 
 
+def extract_all_scene_npcs(
+    disc_path: Path,
+    scale: int = 2,
+    out_base: Optional[Path] = None,
+    archive_range: Tuple[int, int] = (3207, 4155)
+) -> Dict[str, Any]:
+    """Batch-extract tag==2 NPC sprite banks across every scene archive in range."""
+    if out_base is None:
+        out_base = OUT_BASE
+    out_base.mkdir(parents=True, exist_ok=True)
+
+    with open(disc_path, "rb") as f:
+        tbl = dict((idx, (lba, sz)) for idx, lba, sz in archive_table(f))
+
+    catalog: Dict[str, Any] = {
+        "archive_range": list(archive_range),
+        "total_archives_scanned": 0,
+        "total_archives_with_npc_sprites": 0,
+        "total_frames_extracted": 0,
+        "archives": {}
+    }
+
+    lo, hi = archive_range
+    for arc_id in range(lo, hi):
+        if arc_id not in tbl:
+            continue
+        catalog["total_archives_scanned"] += 1
+        try:
+            res = extract_scene_npc_sprites(
+                disc_path, arc_id, scale=scale,
+                out_dir=out_base / f"scene_{arc_id}", verbose=False
+            )
+        except Exception as e:
+            print(f"  [-] Archive {arc_id}: skipped ({e})")
+            continue
+
+        if res.get("extracted_frames", 0) > 0:
+            catalog["archives"][str(arc_id)] = {
+                "num_sections": res["num_sections"],
+                "extracted_frames": res["extracted_frames"],
+                "section_count_with_sprites": len(res["sections"]),
+            }
+            catalog["total_archives_with_npc_sprites"] += 1
+            catalog["total_frames_extracted"] += res["extracted_frames"]
+            print(f"  [+] Archive {arc_id}: {res['extracted_frames']} frames across {len(res['sections'])} sections")
+
+    cat_path = out_base / "scene_npc_catalog.json"
+    cat_path.write_text(json.dumps(catalog, indent=2), encoding="utf-8")
+    print(f"\nScanned {catalog['total_archives_scanned']} archives, "
+          f"{catalog['total_archives_with_npc_sprites']} had NPC sprite banks, "
+          f"{catalog['total_frames_extracted']} total frames extracted.")
+    print(f"Catalog saved to {cat_path}")
+    return catalog
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extract 2D Scene NPC Sprites from Star Ocean 2")
-    parser.add_argument("--archive", "-a", type=int, default=3418, help="Scene Archive ID (default: 3418)")
+    parser.add_argument("--archive", "-a", type=int, default=None, help="Scene Archive ID (single-archive mode)")
+    parser.add_argument("--all", action="store_true", help="Batch extract across all scene archives (3207-4154)")
     parser.add_argument("--disc", "-d", type=int, choices=[1, 2], default=1, help="Disc number (1 or 2, default: 1)")
     parser.add_argument("--scale", "-s", type=int, default=2, help="Nearest-neighbor upscale factor (default: 2)")
     parser.add_argument("--out", "-o", type=Path, default=None, help="Output directory")
     args = parser.parse_args()
 
     disc_path = DEFAULT_DISC1 if args.disc == 1 else DEFAULT_DISC2
-    extract_scene_npc_sprites(disc_path, args.archive, scale=args.scale, out_dir=args.out)
+    if args.all or args.archive is None:
+        extract_all_scene_npcs(disc_path, scale=args.scale, out_base=args.out)
+    else:
+        extract_scene_npc_sprites(disc_path, args.archive, scale=args.scale, out_dir=args.out)
 
 
 if __name__ == "__main__":

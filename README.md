@@ -129,13 +129,15 @@ All of these live in `scripts/` and are run from the repo root, e.g. `python scr
 | `so2_inventory.py` | Gives a character an item type they've never owned before (or tops up one they have) by executing the game's actual add-item routine — the only correct way to create a brand-new inventory entry. `python scripts/so2_inventory.py <card> --save S15 --id 364 --count 20 --out <new card>` (count is an increment; writes a new card file) |
 | `so2_location.py` | Reads/records/names map locations and teleports between recorded ones. `python scripts/so2_location.py show [box]`, `name`, `list`, `map`, `map-html`, `teleport` — see the script's own docstring for full usage. |
 | `so2_voice_collection.py` | Audits, merges, and unlocks the Voice Collection (50% Universe mode, 75% Music Test, 100% Master) across memory card save slots, recomputing both checksums via `so2_sign()`. `python tools/so2_voice_collection.py <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]` |
-| `so2_sprite_extract.py` | Extracts authentic 16-color BGR555 combat and hero sprites (Hero Roster 3026, Claude 3111..3173, Ashton/monsters 3176..3206, summons 4035..4050) into transparent PNG frames across all animation banks. `python tools/so2_sprite_extract.py [--archive <id>] [--all] [--scale N]` |
+| `so2_sprite_extract.py` | Extracts authentic 16-color BGR555 combat and hero sprites (Hero Roster 3026, party combat banks 3111..3206, summons/extras 4035..4050) into transparent PNG frames across all animation banks. `python tools/so2_sprite_extract.py [--archive <id>] [--all] [--scale N]` |
+| `so2_scene_npc_extract.py` | Extracts 2D sprite banks from the `tag==2` section of town/dungeon scene containers (3207..4154). Batch mode scanned all 948 scene archives: 484 contained sprite banks, 42,694 frames extracted, 0 decode failures. What specific content each archive depicts (NPCs, field creatures, item icons, etc.) is not catalogued — that needs a deliberate content pass, not assumed from archive IDs. `python tools/so2_scene_npc_extract.py [--archive <id>] [--all] [--scale N]` |
 
-`saveconv.py` (repo root) also has three built-in Star Ocean 2 subcommands, no `scripts/` prefix needed:
+`saveconv.py` (repo root) also has built-in Star Ocean 2 subcommands, no `scripts/` prefix needed:
 `python saveconv.py voice <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]`
 `python saveconv.py so2-edit <card> [--slot N] [--fol N] [--sp N] [--talents] [--skills] [--out <new card>]`
 `python saveconv.py so2-sprites [--archive <id>] [--all] [--scale N] [--out <dir>]`
-(Fol/SP/Talents/Skill-Shop-tier editing and authentic 16-color combat/hero sprite extraction).
+`python saveconv.py so2-scene-npc [--archive <id>] [--all] [--scale N] [--out <dir>]`
+(Fol/SP/Talents/Skill-Shop-tier editing and combat/hero/scene sprite extraction).
 
 **Not committed (local-only by design):** the FMV/audio/character-art media-ripping toolchain
 (`so2_audio_extract.py`, `so2_video_convert.py`, `so2_duckstation_pack.py`, `so2_sync_cutscenes.py`,

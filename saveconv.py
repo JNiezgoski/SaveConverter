@@ -587,7 +587,8 @@ def main():
     sp.add_argument("--scale", type=int, default=2, help="upscale multiplier (default 2)")
 
     sn = sub.add_parser("so2-scene-npc", help="Star Ocean 2 2D field and dungeon scene NPC sprite extractor")
-    sn.add_argument("--archive", type=int, default=3418, help="scene archive ID (default: 3418 Hoffman Ruins)")
+    sn.add_argument("--archive", type=int, default=None, help="scene archive ID (single-archive mode)")
+    sn.add_argument("--all", action="store_true", help="batch extract across all scene archives (3207-4154)")
     sn.add_argument("--disc", type=int, choices=[1, 2], default=1, help="disc number (1 or 2, default: 1)")
     sn.add_argument("--scale", type=int, default=2, help="upscale multiplier (default 2)")
     sn.add_argument("--out", type=Path, default=None, help="output directory")
@@ -597,9 +598,12 @@ def main():
     a = ap.parse_args()
     try:
         if a.cmd == "so2-scene-npc":
-            from tools.so2_scene_npc_extract import extract_scene_npc_sprites, DEFAULT_DISC1, DEFAULT_DISC2
+            from tools.so2_scene_npc_extract import extract_scene_npc_sprites, extract_all_scene_npcs, DEFAULT_DISC1, DEFAULT_DISC2
             disc_path = DEFAULT_DISC1 if a.disc == 1 else DEFAULT_DISC2
-            extract_scene_npc_sprites(disc_path, a.archive, scale=a.scale, out_dir=a.out)
+            if a.all or a.archive is None:
+                extract_all_scene_npcs(disc_path, scale=a.scale, out_base=a.out)
+            else:
+                extract_scene_npc_sprites(disc_path, a.archive, scale=a.scale, out_dir=a.out)
             return 0
         if a.cmd == "so2-sprites":
             from tools.so2_sprite_extract import extract_all_sprites, extract_sprite_frames
