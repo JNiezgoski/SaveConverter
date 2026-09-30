@@ -31,10 +31,10 @@ real saves in the repo:
 | All 46 skill levels & names/order | `+0x5D..0x8A` (slot 0 `0x4FD..0x52A`) | 1 byte per skill (IDs 1..46), resident getter/setter `80033CB4`/`80033CE0` |
 | Name buffer, combat-strategy bytes, battle-ability proficiency counts | rest of the 208-byte record | Fully mapped alongside the above |
 
-[Full secondary-record map](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) ·
+**Full field-by-field detail:** [secondary record](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) ·
 [primary record](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27)
 
-Everything else party-related:
+#### Everything else party-related
 
 | Area | Status |
 |---|---|
