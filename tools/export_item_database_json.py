@@ -113,6 +113,7 @@ def export_database() -> Dict[str, Any]:
             "hex_id": f"0x{iid:03X}",
             "codebreaker_code": f"{0x5000 + iid:04X}",
             "name": names.get(iid, f"Item_{iid:03X}"),
+            "icon": f"artifacts/so2-items-sprites/item_{iid:04d}_icon.png",
             "category_id": cat,
             "category": CATEGORY_NAMES.get(cat, f"Unknown (0x{cat:02X})"),
             "usage_type_id": use_type,

@@ -85,6 +85,30 @@ actual PS1 game code — see
 compressed region must decode → edit → re-encode → re-sign (see `so2_fol.py` for the pattern) —
 never poke raw bytes there directly.
 
+### Game asset & graphics formats — disassembly-verified
+
+Separate from the save format above: the PS1 disc's own game-data and graphics formats, reverse
+engineered the same way (disassembly and real disc bytes, not fan-wiki guessing).
+
+| Area | Status |
+|---|---|
+| Combat monster graphics (2D texture-atlas format) | ✅ Solved — not a 3D model; a real texture-atlas + palette format traced through the resident renderer (`8007344C`/`80042990`). All 564 combat archives (`1405..1968`) extracted; archive→monster name reference and archive→sprite-file database both built and cross-verified — [details](docs/SO2-COMBAT-GRAPHICS-INVESTIGATION.md) |
+| Enemy stat database (92-byte record) | ✅ Solved — 184 unique species, real names/HP/stats/drops/elemental affinities decoded straight from the 92-byte struct on both discs; a per-archive name-collapsing bug (was silently dropping 69% of archives) found and fixed |
+| Combat sprite piece compositing (body/head/attachment pieces → full poses) | ✅ Solved — traced the real animation-record and sub-piece-attachment struct layout (primary record at `anim_bank+0x14+8i`, 28-byte attachment records) and a **524-byte custom palette container format** (magic `0x11000000 0x02000000 0x0C020000`, 16 rows × 16 BGR555 colors) present in 138 of 184 enemy archives that the compositor was silently ignoring — recoloring is real in-game data, not a coincidence (e.g. Coldlizard/Weirdbeast/Salamander share one body shape in 3 disc-verified distinct colors) |
+| Item struct (48-byte record) & real item 3D model format | ✅ Solved — full 823-item database (stats, equip restrictions, elemental resistances, buy/sell) from the 48-byte struct; separately, the in-game item-inspection "3D spin" presentation is a **genuine 3D triangle mesh + PS1 GTE hardware transform** (not a flat sprite), traced through the real resident renderer (RTPT/NCLIP/AVSZ3 GTE opcodes at `0x80088BA8..0x80088F40`) with its own dedicated model container (Archive 4489, separate from the item stat archive) — all 823 models extracted and rendered |
+| Scene/field sprite format (hero + NPC/field-object sprites) | ✅ Solved — 47,228 frames across 626+ archives; multi-row palette selection mechanism (frame's flags byte selects a CLUT row) disassembly-verified at `0x80042908`/`0x80042974` |
+
+A from-scratch, fully static fan reference site (item gallery, bestiary, equipment lookups) built on
+top of this data lives outside this repo at `C:\Webpages\StarOcean2ndStory` — not itself under version
+control here, ask if you want that folder git-initialized too.
+
+**A note on process, since it happened more than once building the above:** several early attempts at
+the item-icon and monster-sprite work fabricated addresses/struct fields to justify copying images
+from an external fan-wiki mirror instead of the real disc. All of that was caught, reverted, and
+quarantined (`artifacts/_QUARANTINE_fabricated_item_icons/`, `artifacts/_QUARANTINE_external_psf_music/`)
+before it reached this table — everything listed above was independently re-derived from real disc
+bytes and cross-checked (hash comparisons, direct visual inspection, or both) before being accepted.
+
 ## Ongoing tasks
 
 "Disassembly" = disc image + disassembly + existing save files only, no emulator run required.
@@ -131,6 +155,7 @@ All of these live in `scripts/` and are run from the repo root, e.g. `python scr
 | `so2_voice_collection.py` | Audits, merges, and unlocks the Voice Collection (50% Universe mode, 75% Music Test, 100% Master) across memory card save slots, recomputing both checksums via `so2_sign()`. `python tools/so2_voice_collection.py <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]` |
 | `so2_sprite_extract.py` | Extracts authentic 16-color BGR555 combat and hero sprites (Hero Roster 3026, party combat banks 3111..3206, summons/extras 4035..4050) into transparent PNG frames across all animation banks. `python tools/so2_sprite_extract.py [--archive <id>] [--all] [--scale N]` |
 | `so2_scene_npc_extract.py` | Extracts 2D sprite banks from the `tag==2` section of town/dungeon scene containers (3207..4154). Batch mode scanned all 948 scene archives: 484 contained sprite banks, 42,694 frames extracted, 0 decode failures. What specific content each archive depicts (NPCs, field creatures, item icons, etc.) is not catalogued — that needs a deliberate content pass, not assumed from archive IDs. `python tools/so2_scene_npc_extract.py [--archive <id>] [--all] [--scale N]` |
+| `so2_extract_item_models.py` | Renders all 823 items' real in-game 3D models (Archive 4489, disassembly-verified GTE triangle renderer) to 128x128 PNG icons + a manifest, matched to the item database by ID. `python tools/so2_extract_item_models.py [--disc <path>] [--out-dir <dir>] [--size N]` |
 
 `saveconv.py` (repo root) also has built-in Star Ocean 2 subcommands, no `scripts/` prefix needed:
 `python saveconv.py voice <card> [--slot N] [--unlock PCT] [--merge] [--out <new card>]`

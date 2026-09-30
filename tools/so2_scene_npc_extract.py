@@ -165,7 +165,7 @@ def extract_scene_npc_sprites(
                 for i, b in enumerate(f_bytes):
                     exp[i * 2] = b & 0x0F
                     exp[i * 2 + 1] = (b >> 4) & 0x0F
-                # desc[0] (flags) is the 16-color palette row selector (verified at 0x80042068/0x8004215C)
+                # desc[0] is the 16-color palette row selector (verified in streamed sprite renderer at 0x80042908: lbu $t3, 0($s0); 0x80042974: addu $t2, $t2, $t3)
                 pal_row = flags if flags < num_rows else 0
                 pal_words = all_pal_words[pal_row * 16 : (pal_row + 1) * 16]
 
