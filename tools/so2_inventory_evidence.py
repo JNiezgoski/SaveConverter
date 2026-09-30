@@ -9,10 +9,10 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import saveconv
-import so2_fol
+import so2_codec
 import so2_inventory as inv
 from tools.so2_party_mips import Machine
-from tools.verify_so2_fol import run_codec
+from tools.verify_so2_codec import run_codec
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'artifacts/so2-inventory'
@@ -41,7 +41,7 @@ def serialize(code, overlay, decoded, load=False):
             m.put(ptr, struct.pack('<I', addr))
         m.put(addr, bytes(size) if load else decoded[off:off+size])
     if load:
-        stream = so2_fol.encode(decoded)
+        stream = so2_codec.encode(decoded)
         m.put(0x80120000, struct.pack('<H', len(stream)) + stream)
     def allocate(m, r):
         assert r[4] == 0x2000
@@ -124,7 +124,7 @@ def verify(source, candidate, suffix):
     assert len(order) == 1
     start = order[0]*saveconv.BLOCK
     a, b = old[start:start+saveconv.BLOCK], new[start:start+saveconv.BLOCK]
-    before, after = so2_fol.state(a), so2_fol.state(b)
+    before, after = so2_codec.state(a), so2_codec.state(b)
     code = inv.DEFAULT_CODE.read_bytes()
     overlay = (CODEDIR / 'code-2998-lba-36213.bin').read_bytes()
     expected, slot = inv.add_item(a, 364, 20, code)

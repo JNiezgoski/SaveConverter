@@ -13,7 +13,7 @@ _here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _here)
 sys.path.insert(0, os.path.dirname(_here))
 import saveconv
-import so2_fol
+import so2_codec
 from tools.so2_party_mips import initial_records
 
 PRIMARY, PRIMARY_SIZE = 0x1a0, 0x60
@@ -24,7 +24,7 @@ DEFAULT_CODE = Path(__file__).resolve().parent.parent / 'artifacts/so2-fol/disc-
 def add_member(block, character_id, code, slot=None, seed=0):
     if not saveconv.so2_valid(block):
         raise saveconv.SaveError('source checksum mismatch')
-    before = so2_fol.state(block)
+    before = so2_codec.state(block)
     ids = [struct.unpack_from('<h', before, PRIMARY + i * PRIMARY_SIZE)[0] for i in range(8)]
     if character_id in map(abs, ids):
         raise saveconv.SaveError('character already present or retained with negative ID')
@@ -39,16 +39,16 @@ def add_member(block, character_id, code, slot=None, seed=0):
     edited = bytearray(before)
     a, b = PRIMARY + slot * PRIMARY_SIZE, SECONDARY + slot * SECONDARY_SIZE
     edited[a:a + PRIMARY_SIZE], edited[b:b + SECONDARY_SIZE] = primary, secondary
-    compressed = so2_fol.encode(edited)
-    end = so2_fol.STREAM + 2 + len(compressed)
+    compressed = so2_codec.encode(edited)
+    end = so2_codec.STREAM + 2 + len(compressed)
     if end > len(block):
         raise saveconv.SaveError('edited data does not fit one block')
     result = bytearray(block)
-    struct.pack_into('<H', result, so2_fol.STREAM, len(compressed))
-    result[so2_fol.STREAM + 2:end] = compressed
+    struct.pack_into('<H', result, so2_codec.STREAM, len(compressed))
+    result[so2_codec.STREAM + 2:end] = compressed
     struct.pack_into('<H', result, 0x21a, end)
     saveconv.so2_sign(result)
-    if so2_fol.state(result) != edited or not saveconv.so2_valid(result):
+    if so2_codec.state(result) != edited or not saveconv.so2_valid(result):
         raise saveconv.SaveError('round-trip/checksum verification failed')
     if any(x != y and not (a <= i < a + PRIMARY_SIZE or b <= i < b + SECONDARY_SIZE)
            for i, (x, y) in enumerate(zip(before, edited))):

@@ -53,7 +53,7 @@ _root = os.path.dirname(_here)
 sys.path.insert(0, _here)
 sys.path.insert(0, _root)
 import saveconv as s
-import so2_fol as fol
+import so2_codec as codec
 
 X, Y, Z = 0x1750, 0x1754, 0x1758
 FACING = 0x1760
@@ -156,7 +156,7 @@ def show(box):
     db = load_db()
     changed = False
     for sv in s.read_saves(path):
-        decoded = fol.state(sv.data)
+        decoded = codec.state(sv.data)
         loc = read_location(decoded)
         is_new = record_sighting(db, decoded, loc, sv.name, sv.title)
         changed = changed or is_new
@@ -246,21 +246,21 @@ def teleport(box, save_suffix, area_id, sub_index, out_path, scene=None):
         raise s.SaveError("save suffix must identify exactly one save")
     sv = found[0]
 
-    decoded = bytearray(fol.state(sv.data))
+    decoded = bytearray(codec.state(sv.data))
     apply_teleport_ref(decoded, ref_hex)
 
-    compressed = fol.encode(bytes(decoded))
-    end = fol.STREAM + 2 + len(compressed)
+    compressed = codec.encode(bytes(decoded))
+    end = codec.STREAM + 2 + len(compressed)
     if end > s.BLOCK:
         raise s.SaveError("edited data does not fit one block")
 
     block = bytearray(sv.data)
-    struct.pack_into("<H", block, fol.STREAM, len(compressed))
-    block[fol.STREAM + 2:end] = compressed
+    struct.pack_into("<H", block, codec.STREAM, len(compressed))
+    block[codec.STREAM + 2:end] = compressed
     struct.pack_into("<H", block, 0x21A, end)
     s.so2_sign(block)
 
-    if fol.state(bytes(block)) != bytes(decoded) or not s.so2_valid(bytes(block)):
+    if codec.state(bytes(block)) != bytes(decoded) or not s.so2_valid(bytes(block)):
         raise s.SaveError("round-trip/checksum verification failed")
 
     with open(out_path, "xb") as f:

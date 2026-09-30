@@ -40,7 +40,7 @@ the exact two edited files were not supplied.
 Read first and reused: [Fol investigation](SO2-FOL-INVESTIGATION.md),
 [checksum investigation](SO2-CHECKSUM-INVESTIGATION.md), and
 [specialty investigation](SO2-SPECIALTY-INVESTIGATION.md).
-No decoder or state-pointer rediscovery was needed. `so2_fol.state/encode` and
+No decoder or state-pointer rediscovery was needed. `so2_codec.state/encode` and
 the corrected `saveconv.so2_sign/so2_valid` are reused unchanged.
 
 The decoded `0x1B88` bytes are a **serialization of separate allocations**.
@@ -539,7 +539,7 @@ existing party tests pass (`python -m unittest discover -s tests -p test_so2_par
 the existing unclosed-file ResourceWarning remains unrelated. No new game-load
 test was performed, and no source save was modified.
 
-Use `decoded = so2_fol.state(block)`, then `base = 0x1A0 + slot*0x60`;
+Use `decoded = so2_codec.state(block)`, then `base = 0x1A0 + slot*0x60`;
 for example `struct.unpack_from('<h', decoded, base+0x2A)[0]` reads base STR.
 To edit a supported field, make a bytearray copy and use `struct.pack_into`
 at that **decoded** offset, then follow `so2_fol.set_fol`'s encode/length/C/sign/

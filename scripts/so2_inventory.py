@@ -12,7 +12,7 @@ _here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _here)
 sys.path.insert(0, os.path.dirname(_here))
 import saveconv
-import so2_fol
+import so2_codec
 from tools.so2_party_mips import Machine
 
 BASE, SIZE, SLOTS = 0xb20, 0xc28, 0x400
@@ -93,22 +93,22 @@ def execute_add(code, chunk, item_id, count, marked=1):
 def add_item(block, item_id, count, code, marked=1):
     if not saveconv.so2_valid(block):
         raise saveconv.SaveError('source checksum mismatch')
-    before = so2_fol.state(block)
+    before = so2_codec.state(block)
     chunk, slot = execute_add(code, before[BASE:BASE + SIZE], item_id, count, marked)
     edited = before[:BASE] + chunk + before[BASE + SIZE:]
     allowed = set(range(BASE + slot*2, BASE + slot*2 + 2)) | set(range(BASE + RECENT, BASE + RECENT + 32)) | {BASE + FLAG}
     if any(a != b and i not in allowed for i, (a, b) in enumerate(zip(before, edited))):
         raise saveconv.SaveError('unexpected decoded edit')
-    compressed = so2_fol.encode(edited)
-    end = so2_fol.STREAM + 2 + len(compressed)
+    compressed = so2_codec.encode(edited)
+    end = so2_codec.STREAM + 2 + len(compressed)
     if end > len(block):
         raise saveconv.SaveError('edited data does not fit one block')
     result = bytearray(block)
-    struct.pack_into('<H', result, so2_fol.STREAM, len(compressed))
-    result[so2_fol.STREAM + 2:end] = compressed
+    struct.pack_into('<H', result, so2_codec.STREAM, len(compressed))
+    result[so2_codec.STREAM + 2:end] = compressed
     struct.pack_into('<H', result, 0x21a, end)
     saveconv.so2_sign(result)
-    if so2_fol.state(result) != edited or not saveconv.so2_valid(result):
+    if so2_codec.state(result) != edited or not saveconv.so2_valid(result):
         raise saveconv.SaveError('round-trip/checksum verification failed')
     physical_allowed = set(range(0x210, 0x218)) | {0x21a, 0x21b} | set(range(0x380, end))
     if any(a != b and i not in physical_allowed for i, (a, b) in enumerate(zip(block, result))):

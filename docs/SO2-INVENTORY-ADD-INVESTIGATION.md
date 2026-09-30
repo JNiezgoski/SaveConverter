@@ -34,7 +34,7 @@ evidence, not a completed emulator test.
 Read in order and reused: [Fol](SO2-FOL-INVESTIGATION.md),
 [checksum](SO2-CHECKSUM-INVESTIGATION.md), and
 [party membership](SO2-PARTY-MEMBER-INVESTIGATION.md). The established
-`so2_fol.state/encode`, corrected signer, archive extraction, RAM conventions,
+`so2_codec.state/encode`, corrected signer, archive extraction, RAM conventions,
 and bounded MIPS harness were reused. No new disc extraction or RAM dump was
 necessary. The harness gained only MIPS `nor` and explicit executable ranges
 so the existing save overlay could run alongside resident code.

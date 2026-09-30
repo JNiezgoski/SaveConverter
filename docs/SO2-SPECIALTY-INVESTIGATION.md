@@ -15,7 +15,7 @@ separately derived character specialties. Each tier enables SP investment in a g
 Every earlier attempt at this (the "33-byte flag run" and specialty-purchase diffs from earlier
 in this session) used raw-byte diffing and produced 100-200+ changed bytes per test, dominated by
 zero-run re-compression noise (see [SAVE-FORMAT.md](SAVE-FORMAT.md)'s compression note) — not
-usable signal. Decoding both saves first with `so2_fol.py`'s `state()`/`decode()` and diffing the
+usable signal. Decoding both saves first with `so2_codec.py`'s `state()`/`decode()` and diffing the
 *decoded* bytes instead dropped that to single digits. **All future before/after tests on this
 save format should decode first.**
 

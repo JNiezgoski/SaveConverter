@@ -463,7 +463,8 @@ def do_so2_voice(card_path, slot=None, unlock=None, merge=False, out=None):
 
 
 def do_so2_edit(card_path, slot=1, fol=None, sp=None, talents=False, skills=False, out=None):
-    import scripts.so2_fol as so2_codec
+    import scripts.so2_codec as so2_codec
+    import scripts.so2_fol as so2_fol
     card_p = Path(card_path)
     cfmt, card_bytes = load_card(card_p)
     card = bytearray(card_bytes)
@@ -477,9 +478,9 @@ def do_so2_edit(card_path, slot=1, fol=None, sp=None, talents=False, skills=Fals
 
     # Apply Fol
     if fol is not None:
-        if not 0 <= fol <= so2_codec.MAX_FOL:
-            raise SaveError(f"Fol must be between 0 and {so2_codec.MAX_FOL}")
-        struct.pack_into("<I", dec, so2_codec.FOL, fol)
+        if not 0 <= fol <= so2_fol.MAX_FOL:
+            raise SaveError(f"Fol must be between 0 and {so2_fol.MAX_FOL}")
+        struct.pack_into("<I", dec, so2_fol.FOL, fol)
         print(f"  Slot {slot}: Fol set to {fol:,}")
 
     # Apply Party Member modifications (Secondary array: 0x4A0 + slot * 0xD0)

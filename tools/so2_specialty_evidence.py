@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import saveconv
-import so2_fol
+import so2_codec
 from tools.so2_party_mips import Machine
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,7 +80,7 @@ def main():
     first, order = next((f,o) for f,o in saveconv.chains(card) if f['name'].endswith('S13'))
     block = card[order[0]*8192:(order[0]+1)*8192]
     assert saveconv.so2_valid(block)
-    decoded = so2_fol.state(block)
+    decoded = so2_codec.state(block)
     rows = []
     for flag in range(0x2bc,0x2c8):
         # Read actual repeated shop initialization records, not a guessed cost table.

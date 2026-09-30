@@ -10,10 +10,10 @@ _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _root)
 sys.path.insert(0, os.path.join(_root, "scripts"))
 import saveconv
-import so2_fol
+import so2_codec
 import so2_inventory as inv
 from tools.so2_inventory_evidence import serialize
-from tools.verify_so2_fol import run_codec
+from tools.verify_so2_codec import run_codec
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -88,7 +88,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(m.run(0x8003c594, (inv.RAM, 100, 1, 1)), 1)
         self.assertEqual(struct.unpack_from('<H', m.memory, 0x100000)[0], 0x8464)
         self.assertEqual(m.memory[0x100002:0x100004], data[2:4])
-        self.assertEqual(so2_fol.encode(bytes(10)), b'\0\0\x08')
+        self.assertEqual(so2_codec.encode(bytes(10)), b'\0\0\x08')
 
     def test_capacity_and_overflow_game_paths(self):
         data = self.chunk([(i, i+1, 1) for i in range(1023)])
@@ -132,7 +132,7 @@ class InventoryTests(unittest.TestCase):
         new, slot = inv.add_item(block, 364, 20, self.code)
         self.assertEqual(candidate, old[:start]+new+old[start+8192:])
         self.assertEqual(slot, 119)
-        before, after = so2_fol.state(block), so2_fol.state(new)
+        before, after = so2_codec.state(block), so2_codec.state(new)
         self.assertEqual([i for i, (a, b) in enumerate(zip(before, after)) if a != b], [0xc0e, 0xc0f])
         self.assertEqual(struct.unpack_from('<H', after, 0xb20+70*2)[0], 0x5181)
         self.assertTrue(saveconv.so2_valid(new))

@@ -247,7 +247,7 @@ ac6b2a713fd91ac5f14927c459b2050ef69c86956c0552943b3b61d96637797a
 reproduction of 16,782,216 from the two-byte edit, zero-run boundaries, Fol
 width boundaries, and preservation of all other decoded data.
 
-`tools/verify_so2_fol.py` independently executes the extracted game's encoder
+`tools/verify_so2_codec.py` independently executes the extracted game's encoder
 and decoder instructions in a small bounded MIPS leaf-routine interpreter,
 including branch delay slots. This is **not** a full emulator or game-load test.
 The candidate also decoded to 5,000 under those actual decoder instructions.
@@ -268,7 +268,7 @@ MIPS codec routines, canonical encoding, and checksums.
 
 ```powershell
 python tools/so2_disc_code.py "C:\CodeTesting\StarOcean2\disc\Star Ocean - The Second Story (USA) (Disc 1).bin" artifacts/so2-fol/disc-code
-python tools/verify_so2_fol.py artifacts/so2-fol/disc-code/code-2998-lba-36213.bin "C:\CodeTesting\StarOcean2\SaveGames"
+python tools/verify_so2_codec.py artifacts/so2-fol/disc-code/code-2998-lba-36213.bin "C:\CodeTesting\StarOcean2\SaveGames"
 python -m unittest discover -s tests -v
 
 # Choose a NEW output name; existing files are deliberately refused.

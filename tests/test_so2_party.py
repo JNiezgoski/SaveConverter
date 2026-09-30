@@ -9,10 +9,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 import saveconv
-import so2_fol
+import so2_codec
 import so2_party
 from tools.so2_party_mips import Machine, initial_records
-from tools.verify_so2_fol import run_codec
+from tools.verify_so2_codec import run_codec
 
 
 class PartyTests(unittest.TestCase):
@@ -108,10 +108,10 @@ class PartyTests(unittest.TestCase):
         self.assertTrue(saveconv.so2_valid(new))
         overlay = (ROOT / 'artifacts/so2-fol/disc-code/code-2998-lba-36213.bin').read_bytes()
         end = struct.unpack_from('<H', new, 0x21a)[0]
-        decoded = so2_fol.state(new)
+        decoded = so2_codec.state(new)
         self.assertEqual(run_codec(overlay, new[0x380:end]), decoded)
         self.assertEqual(run_codec(overlay, decoded, encode=True), new[0x380:end])
-        for i, (a, b) in enumerate(zip(so2_fol.state(old), decoded)):
+        for i, (a, b) in enumerate(zip(so2_codec.state(old), decoded)):
             if a != b:
                 self.assertTrue(0x260 <= i < 0x2c0 or 0x640 <= i < 0x710)
         with self.assertRaises(saveconv.SaveError): so2_party.add_member(new, 9, self.code)

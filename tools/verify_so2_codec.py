@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import saveconv
-import so2_fol
+import so2_codec
 
 
 def signed(value, bits=32):
@@ -95,7 +95,7 @@ def main():
                 continue
             seen.add(digest)
             try:
-                decoded = so2_fol.state(block)
+                decoded = so2_codec.state(block)
             except saveconv.SaveError as error:
                 rejected += 1
                 print('STRUCTURE REJECT', path.relative_to(args.saves), save.name, str(error))
@@ -104,7 +104,7 @@ def main():
             end = struct.unpack_from('<H', block, 0x21a)[0]
             packed = block[0x380:end]
             assert run_codec(overlay, packed) == decoded, (path, save.name)
-            encoded = so2_fol.encode(decoded)
+            encoded = so2_codec.encode(decoded)
             actual = run_codec(overlay, decoded, encode=True)
             assert actual == struct.pack('<H', len(encoded)) + encoded
             canonical += actual == packed
@@ -115,7 +115,7 @@ def main():
     cases = [bytes(n) for n in (0, 1, 2, 3, 255, 256, 257, 258, 512, 1025)]
     cases += [bytes(rng.choice((0, 0, 0, rng.randrange(256))) for _ in range(1024))]
     for data in cases:
-        encoded = so2_fol.encode(data)
+        encoded = so2_codec.encode(data)
         actual = run_codec(overlay, data, encode=True)
         assert actual == struct.pack('<H', len(encoded)) + encoded
         assert run_codec(overlay, actual) == data

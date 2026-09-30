@@ -167,7 +167,7 @@ Helmet (Ashton only).
 
 ## How to use this for save editing
 
-Before hand-equipping any weapon via `so2_fol.py`-style decoded-state edits: check the target
+Before hand-equipping any weapon via `so2_codec.py`-style decoded-state edits: check the target
 character is listed here (or shares the item across characters). If a weapon has no listed
 restriction, treat it as unconfirmed rather than assuming it's universal — test cautiously (backup
 first) or prefer an item with a clear, matching restriction instead.
