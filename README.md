@@ -15,8 +15,13 @@ here was cut, just merged where multiple rows described the same underlying reco
 
 ### Party members
 
-The primary record (`0x1A0 + slot*0x60`) and secondary record (`0x4A0 + slot*0xD0`, 208 bytes) are
-both **100% mapped with zero gaps**, cross-checked against all 15 real saves in the repo:
+The secondary record (`0x4A0 + slot*0xD0`, 208 bytes) is **100% mapped with zero gaps**. The primary
+record (`0x1A0 + slot*0x60`, 96 bytes) has every named stat (ID, EXP, HP/MP/level, STR/CON/AGL/DEX/INT/
+GUTS, the now-fully-solved status-ailment condition byte) mapped, but still has 18 genuinely opaque
+bytes per slot (`+0x04..0x0F`, `+0x5A..0x5F`) plus a 12-byte "Unknown A/B" region with a real but
+unproven lead (looks tied to which characters have been forced into the field-leader role — see
+`docs/SO2-PARTY-MEMBER-INVESTIGATION.md`'s 2026-09-29 follow-up). Both cross-checked against all 15
+real saves in the repo:
 
 | Field | Decoded offset | Notes |
 |---|---|---|
@@ -38,6 +43,7 @@ Everything else party-related:
 | Field leader / walking sprite mechanism | ✅ Resolved — graphics consumer located (`8003F518`/`80042E4C`); full 12-character selector space mapped (`ID - 1`, Dias = 4); party archive streaming solved (`80061888`); save-edit forced-leader swap ruled out (strictly requires code mod) — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-27-third-follow-up-graphics-selection-consumer-found-12-character-selector-space-solved-save-edit-forced-leader-ruled-out) |
 | Battle-ability quick-assignment slots (4 per character) | ✅ Mapped and disassembly-verified — decoded `0x56C-0x56F` per character — [details](docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md) |
 | Specialties (Skill Shop tiers: Knowledge/Sensibility/Technique/Combat ×3) | ✅ Verified — full 12-tier bit table (`0x1A3F`/`0x1A40`) confirmed by executing the real purchase code; one clean live purchase would close the last loose end — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
+| Status ailments (condition byte, primary `+0x02`) | ✅ Solved & live-confirmed — 4-bit mask: `0x01` Dead, `0x02` Paralysis, `0x04` Stone, `0x08` Poison, freely combinable (tested all four simultaneously on one character); mirrored at header `0x0234 + slot*4 + 0x01`; disassembly-verified against Overlay 2986/2985 — [details](docs/SO2-STATUS-AILMENT-SOURCES.md) |
 
 ### Items & equipment
 
@@ -163,7 +169,7 @@ anything that needs in-game or live testing to advance further.
 
 | # | Task | Status | Validation | Notes |
 |---|---|---|---|---|
-| 1 | Party primary array — full byte-by-byte map | 69% mapped, static leads exhausted | Disassembly exhausted + live stat-change test needed | All 96 bytes covered; 66 named (ID/EXP/HP/MP/level/STR/CON/AGL/DEX/INT/GUTS), 12 are two unnamed stat triplets, 18 unresolved. Generic-accessor lead (selectors 1-17), stat recalculation pipeline, all 12 initializers, and script VM opcodes all audited and ruled out for standalone resident/menu accessors — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-28-second-disassembly-retry-standalone-accessors-recalculation-pipeline-all-12-initializer-tables-and-script-vm-opcodes-disassembly-only--verified). Live in-game combat testing required to establish remaining semantics |
+| 1 | Party primary array — full byte-by-byte map | 69% mapped, static leads exhausted, one live-testable lead identified | Disassembly exhausted + live stat-change test needed | All 96 bytes covered; 66 named (ID/EXP/HP/MP/level/STR/CON/AGL/DEX/INT/GUTS, incl. the now-solved status-ailment byte), 12 are two unnamed stat triplets ("Unknown A/B"), 18 fully opaque. Generic-accessor lead (selectors 1-17), stat recalculation pipeline, all 12 initializers, and script VM opcodes all audited and ruled out for standalone resident/menu accessors — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-28-second-disassembly-retry-standalone-accessors-recalculation-pipeline-all-12-initializer-tables-and-script-vm-opcodes-disassembly-only--verified). **2026-09-29:** mining all 15 real saves found Unknown A/B diverge from their init values only for characters ever forced into the field-leader role (Claude near-universally; Bowman/Chisato/Rena sometimes; never Ashton/Dias/Ernest/Opera/Leon/Precis) — a real correlation, not yet causally confirmed; the 18 fully-opaque bytes remain untouched by this lead — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-29-follow-up-mining-all-15-real-saves-resolves-the-apparent-contradiction-with-the-confirmed-scaled-during-stat-recalculation-claim-below). Next step: grab a before/after save pair around the next story segment that forces a normally-flat character into field-leader |
 
 ## Layout
 

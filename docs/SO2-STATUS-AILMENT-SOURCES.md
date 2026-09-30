@@ -49,6 +49,57 @@ earliest-accessible enemies on this list, making it a strong candidate for a rea
 poison-status save test without needing to progress far. For Paralysis, **Ghast** (Arc 1556) or **Ooze**
 (Arc 1497, mid-game, Field of Power / Sanctuary of Linga) are earliest options.
 
+## Self-inflictable items (no enemy encounter needed — much more practical for a controlled test)
+
+Sourced from `sources/Star Ocean_ The Second Story - Guide and Walkthrough - PlayStation - By A_I_e_x
+- GameFAQs.html` (already saved locally, previously not extracted into this doc). "Always Usable"
+items can be used on yourself outside of battle directly from the item menu; "Battle Only" items
+generally cannot self-target (checked separately, see the incident note below).
+
+| Item | Category | Effect | Notes |
+|---|---|---|---|
+| **Wolfsbane** | Always Usable | Poisons user | ~360 Fol, also a Compounding ingredient — best single candidate for a controlled Poison test |
+| **Danger Pot** / **Nightmare Pot** | Always Usable | Heals the wounded, poisons/petrifies the healthy | Random outcome — use on a full-HP character for a chance at either Poison or Stone in one item |
+| **Rotten Sashimi** | Food (non-battle) | Poisons user | A failed 'Seafood' cooking result, not directly purchasable |
+| **Mandrake** | Always Usable | Kills user | Not useful for ailment testing (death, not poison) despite the name overlap with the Mandrake enemy |
+
+**Confirmed NOT self-targetable** (checked against `Item Encyclopedia - EternalSphere.html`'s own
+effect text before recommending them, then corrected): Killer Poison ("poisons the **nearest
+monster**"), Paralysis Oil ("paralyzes **one enemy**"), Paralysis Mist ("paralyzes **all enemies**") —
+all three are Battle Only and explicitly enemy-targeted by their own in-game description. Don't
+recommend these for self-infliction again without re-checking; this was a real dead-end already hit
+once.
+
+## Save-format result (2026-09-29) — fully solved, live-confirmed
+
+The save-state byte this whole investigation was aimed at is the per-character condition byte at
+decoded `0x1A0 + slot*0x60 + 0x02` (mirrored at uncompressed card-header `0x0234 + slot*4 + 0x01`).
+Full field-map entry and disassembly citations: `docs/SO2-PARTY-MEMBER-INVESTIGATION.md`'s field map,
+`+02` row.
+
+| Bit | Hex | Condition | Visible effect | Menu-blocking? |
+|:---:|:---:|---|---|:---:|
+| 0 | `0x01` | Dead / KO'd | Greyed out, HP shown as-is (doesn't force HP to 0 on its own) | Yes |
+| 1 | `0x02` | Paralysis | No portrait change — icon next to HP bar only | Yes |
+| 2 | `0x04` | Stone / Petrify | Grey stone palette; visually overrides Poison's tint if both are set | Yes |
+| 3 | `0x08` | Poison | Purple palette; character stays fully controllable | No |
+
+Bits 0/1/2 are gated as a group (`primary[2] & 7`) for Equipment/Skills/Specialty menu access; Poison
+sits outside that mask. All four bits are independently tracked and freely combinable — confirmed live
+with all four set simultaneously on one character (Stone's palette just visually hides Poison's tint
+until Stone is cured; the underlying Poison bit was there the whole time).
+
+**Live-testing gotcha worth keeping in mind if anyone else self-inflicts a status for testing:**
+equipped accessories can silently block a status ailment from displaying even when the save byte is
+set correctly. Necklace and Reverse Doll both did this in testing (both have vague "might protect its
+wearer" flavor text). The item master table has a documented "Status Ailment Mask" field
+(`+0x26..+0x27` in the 48-byte item record, see `tools/build_item_database.py`) that in principle
+should predict this, but it read `0x0000` for Necklace, Reverse Doll, **and** "Resistance Ring" (an
+item that should obviously show something) — that field can't be trusted as-is. If testing ailments
+on a character with any accessory equipped, either strip accessories first or swap to an accessory
+already proven neutral in that exact save (e.g. one already worn by a character showing an unblocked
+ailment).
+
 ## Status
 
-VERIFIED against `artifacts/so2-enemies/enemies_database.json`. Enemy names corrected to authentic internal ROM strings (Cokatricking without 'c', Wisesorcerer with '-er', Iselia-queen in Arc 1966). Ailment infliction mechanics remain gameplay reference pending save-state diffing.
+VERIFIED against `artifacts/so2-enemies/enemies_database.json`. Enemy names corrected to authentic internal ROM strings (Cokatricking without 'c', Wisesorcerer with '-er', Iselia-queen in Arc 1966). Save-state side (the condition byte and its 4 bits) is now fully solved and live-confirmed — see the section above. The enemy/item lists above remain useful as gameplay reference for anyone re-running a live test.

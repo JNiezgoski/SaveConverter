@@ -244,7 +244,7 @@ For six-byte stat groups, members are at the three individually listed offsets.
 | Offset(s) / covered bytes | Width | Best-supported meaning and initialization |
 |---|---|---|
 | `+00..01` | i16 | Signed character ID; dispatcher sets 1..12; negative = retained absent member. |
-| `+02` | byte | Status/condition flags, explicitly zero; existing UI tests low three bits. Individual bits not mapped here. |
+| `+02` | byte | Status/condition flags, explicitly zero at init. **Fully mapped and live-confirmed (2026-09-29):** bit 0 (`0x01`) Dead/KO'd, bit 1 (`0x02`) Paralysis, bit 2 (`0x04`) Stone/Petrify, bit 3 (`0x08`) Poison - freely combinable, each independently tracked even with all four set simultaneously. Mirrored at uncompressed card-header `0x0234 + slot*4 + 0x01`. Disassembly-verified (Overlay 2986 debug-menu handlers, Overlay 2985 UI renderer) and confirmed live in DuckStation across every individual bit and combination. `primary[2] & 7` (Dead/Paralysis/Stone) gates menu/action eligibility; Poison (`0x08`) is outside that mask so a poisoned character stays fully controllable. Full writeup: `docs/SO2-STATUS-AILMENT-SOURCES.md`. |
 | `+03` | byte | Character-specific class-like code; full 12-character values in the earlier table. Not the identity ID. |
 | `+04..0F` | 12 bytes; field boundaries unknown | Zero-fill only. Real records contain nonzero bytes; purpose unresolved, **not established padding**. No non-initializer reader/writer found — see "Unknown A/B and the opaque ranges" below. |
 | `+10..13` | word | EXP; explicit literal. |
@@ -398,6 +398,51 @@ outside a 40-instruction lookahead, would not be caught. But combined with the
 accessor finding above, every currently-known avenue into these bytes has been
 checked and found empty. Unknown A, Unknown B, and both opaque ranges remain
 genuinely unnamed.
+
+### 2026-09-29 follow-up: mining all 15+ real saves resolves the apparent contradiction with the "confirmed... scaled during stat recalculation" claim below
+
+The empirical section further down (search "Attribute Triplets A & B") claims Unknown A/B are
+"confirmed as character-intrinsic growth stat triplets... scaled during stat recalculation" based on
+a diff between two live DuckStation states where Noel/Chisato's triplets had grown. That directly
+contradicts the disassembly result immediately above (zero instructions touch these offsets anywhere
+in the stat recalc pipeline). That diff pair is explicitly *not* a clean isolated action — it spans an
+unknown number of battles and level-ups, and both characters leveled up between the two states, so
+"reordering caused it" was never actually isolated as the variable.
+
+Decoded every party primary slot across all 15 real save-card files in `SaveGames/` (USA + Disc 2, both
+card slots) to look for the real pattern with more data points. Result: **three distinct states, not
+a smooth scaling curve**:
+
+1. **Flat `(X,X,X)`** — matches the known per-character recruitment literal exactly. The default.
+2. **Zeroed `(X,0,0)`** — seen only for Bowman, Chisato, and Noel, always in the same handful of
+   early-level (~40) saves, always all three simultaneously. Most likely "recruited but not yet in the
+   active battle party" rather than corruption — all three were still benched-newcomers around that
+   point in a normal playthrough.
+3. **Diverged `(X,X+2,X+2)`** — seen for **Claude/Crawd in nearly every high-level save** (universal),
+   and for **Bowman, Chisato, and Rena in some saves but not others** at high level. Never seen for
+   **Ashton, Dias, Ernest, Opera, Leon, or Precis** in any of the 15+ saves, at any level up to 255.
+   Critically, Unknown A and Unknown B diverge **independently** — e.g. Claude's A reaches `(16,18,18)`
+   while his B stays flat `(9,9,9)`; Rena's A reaches `(15,17,17)` in her one level-97 save while her B
+   stays flat `(6,6,6)`.
+
+The set of characters that ever diverge — Claude (near-universally) plus Bowman/Chisato/Rena
+(sometimes) — lines up exactly with the characters SO2's story forces into the **sole controllable
+field-leader role** during mandatory solo segments (Claude by default almost throughout; Bowman,
+Rena, and others during their own scripted solo stretches). The characters that never diverge in any
+available save are exactly the ones never forced into that role. This is a real, non-coincidental
+correlation across every real save this project has, not a new hypothesis pulled from nowhere — but
+it is **correlation from existing saves, not yet a disassembly-confirmed causal mechanism**, and the
+`(X,0,0)` zeroed state looks like a separate phenomenon from the `(X,X+2,X+2)` diverged state, not a
+midpoint on the same scale.
+
+**Honest status:** not closed. The natural test — grab a save immediately before and after a story
+segment that forces a normally-flat character (Ashton, Dias, Opera, etc.) into the field-leader role —
+would confirm or kill this in one clean before/after diff, the same pattern used for the status-ailment
+work. No need to engineer this artificially; catching the next naturally-occurring leader-swap segment
+during normal play and saving on both sides of it is enough. One data script for this:
+`_scan_unknown_ab.py` pattern (decode every save's party primary array, print Level +
+Unknown A/B triplets per character) — worth promoting to a real tool in `tools/` if this gets chased
+further, not yet done since it was a one-off analysis.
 
 ### Secondary LUC/STM and real-save checks
 
