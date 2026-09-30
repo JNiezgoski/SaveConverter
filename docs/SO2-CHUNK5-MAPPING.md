@@ -296,6 +296,8 @@ Confirmed story milestones span both Range A (`0x1F..0x1FF`, bits 31..511) and R
 | `1B0C` | 4 | 2340 (`0x0924`) | SET | 809 (4016) | **Cave of Trials Level 12 Boss**: Phoenix defeat flag |
 | `1B0C` | 6 | 2342 (`0x0926`) | SET | 272 (3479) | **Central City**: Artis coordination flag |
 
+**2026-09-30 addition (live save-diff evidence, not a script-archive scan):** `1A1B` bit 7, flag 415 (`0x019F`), was empirically caught SET (0→1) in a real DuckStation session — before/after saves one minute apart (SO2 10 → SO2 09, USA card slot 2), with essentially no other change besides player position/facing and routine counters, immediately following talking to Ernest at Kross Castle. This byte already sits inside the "densely referenced, 51-byte" span (`0x19F5..0x1A27`) identified in section 3 below as script-VM-active but not individually named bit-by-bit — this is the first specific bit in that span tied to a named event. Unlike every other row in this table, this entry has **no corresponding script-archive/opcode citation yet** (the Kross Castle scene archive hasn't been scanned for this) — treat it as a real, reproducible empirical finding, not yet disassembly-verified to the same standard as the rows above it.
+
 #### 3. Verification and byte closure
 
 - **Bounded Execution Verification**:
