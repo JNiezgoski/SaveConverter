@@ -475,6 +475,60 @@ Leon citation being a clean counterexample, and it may not be. Until Task U reso
 question, treat this as "no evidence the generic mechanism writes these fields, but the field-leader
 correlation itself is not yet disproven" rather than fully closed either way.
 
+#### 2026-09-30 live-test breakthrough: real movement caught in both Unknown A/B and the 18 fully-opaque bytes — field-leadership is very likely the wrong variable entirely
+
+A real before/after save pair (USA card slot 2, save #8 → save #7, 4:18 → 4:20 playtime) caught Dias
+(slot 1, a temporary high-level guest party member, Level 35) going through what appears to be his
+first real battle as an active party member — an event/scripted fight in the swamp sequence, not a
+field-leader segment. Decoded state, byte-for-byte:
+
+| Field | Save #8 (before) | Save #7 (after) |
+|---|---|---|
+| Level / HP | 35 / 2500,2500 | 35 / 2500,2500 (unchanged — no damage, no level-up) |
+| Unknown A (`+4E/+50/+52`) | `(16, 0, 0)` — Zeroed | `(16, 16, 16)` — now Flat |
+| Unknown B (`+54/+56/+58`) | `(8, 0, 0)` — Zeroed | `(8, 8, 8)` — now Flat |
+| Opaque `+04..0F` | all zero | byte `+0x08`: `0x00 → 0x01` |
+| Opaque `+5A..5F` | all zero | byte `+0x5A`: `0x00 → 0x0A`; byte `+0x5C`: `0x00 → 0x04` |
+
+**Control in the same exact battle:** Rena (slot 0) leveled up three times (4 → 7) and clearly took
+damage/fought hard in this same fight. Her Unknown A/B (`15,15,15` / `6,6,6`, already Flat from earlier
+play) and all of her opaque bytes were **completely unchanged** — ruling out leveling and taking damage
+as the trigger for whatever moved on Dias.
+
+**This is the first real, reproducible movement caught in either the Unknown A/B fields or the 18
+previously-fully-opaque bytes**, in any test this project has run — disassembly or live. Two
+conclusions follow:
+
+1. The Zeroed → Flat transition (and at least 3 of the 18 opaque bytes) is very likely written once,
+   the first time a character completes a real battle as an active party member — **not** by being
+   recruited, **not** by being controllable/in-party (Dias was both of those *before* this fight and
+   still showed Zeroed), and **not** by leveling or taking damage (Rena did both with zero effect).
+   This refines the earlier "(X,0,0) = recruited but not yet in active battle party" guess: Dias was
+   already in the active battle party and still Zeroed — "hasn't completed a battle yet" is the more
+   precise condition.
+2. **Field leadership is very likely not the right variable at all.** Dias never became a field leader
+   in this test — this was a party-wide event fight, not a solo segment — yet his fields moved anyway.
+   Combined with Task T's disassembly finding (zero writes to these offsets from the generic
+   leader-swap code), "has this character ever completed a battle" is now a much stronger candidate
+   causal variable than "has this character ever been field leader." The original field-leader
+   correlation (Claude/Crawd near-universal, Bowman/Chisato/Rena sometimes, never
+   Ashton/Dias/Ernest/Opera/Leon/Precis) may simply be a proxy for "characters who get fielded often
+   enough to complete a battle" rather than leadership itself.
+
+**Still open:**
+- Whether this is a true one-time lifetime flag (fires exactly once per character) or an early stage
+  of a counter that later reaches the previously-documented `(X,X+2,X+2)` "Diverged" state after further
+  battles — i.e. is Flat a permanent resting state, or does Dias's `(16,16,16)`/`(8,8,8)` eventually
+  become `(16,18,18)`/`(8,10,10)` after more fights? A second before/after pair on Dias across another
+  battle would answer this directly.
+- The exact meaning of opaque bytes `+0x08`, `+0x5A`, `+0x5C` specifically, and why only some of the 18
+  moved and not others — this single test doesn't resolve per-byte meaning, only that the region is
+  live and battle-triggered.
+- Whether this generalizes to the other previously-seen Zeroed characters (Bowman/Chisato/Noel) —
+  one data point (Dias) is strong but not exhaustive.
+- Task U (the Leon/Hoffman-Ruins field-leader script check) is no longer the most promising lead given
+  this finding, though it's still worth closing out for completeness since it was already in progress.
+
 ### Secondary LUC/STM and real-save checks
 
 Replace the earlier "six additional u16 fields" description with these two
