@@ -10,3 +10,14 @@ artifacts/
 # Task briefs handed to the Antigravity/Codex "coworker" agents - coordination scratch,
 # not project reference material, never committed.
 ANTIGRAVITY-TASKS.md
+
+# FMV/audio/character-art media-ripping toolchain - rips actual copyrighted game assets via
+# third-party tools (jPSXdec/FFmpeg). Kept local-only by design, never pushed to this public
+# repo (see README.md's "Not committed" note).
+docs/SO2-GRAPHICS-MEDIA-PIPELINE.md
+tools/so2_audio_extract.py
+tools/so2_duckstation_pack.py
+tools/so2_fullbody_extract.py
+tools/so2_media_extract.py
+tools/so2_sync_cutscenes.py
+tools/so2_video_convert.py
