@@ -444,6 +444,37 @@ during normal play and saving on both sides of it is enough. One data script for
 Unknown A/B triplets per character) — worth promoting to a real tool in `tools/` if this gets chased
 further, not yet done since it was a one-off analysis.
 
+#### 2026-09-29 update (post Task T): strong disassembly evidence against causation, but the cited counterexample is disputed — still not fully closed
+
+Antigravity (`ANTIGRAVITY-TASKS.md` Task T) traced the real resident code for story-forced leader
+swaps (route flag read at `0x800540b0`, Script VM "Story Solo Leader Isolation"/"Restoration" opcodes
+at `0x8006a7ac`/`0x8006ab4c`, party slot swap engine at `0x8006a8ec`) and did a forward-trace audit of
+every store reachable from those functions: **zero halfword stores anywhere in that code path touch
+primary `+4E..+53` or `+54..+59`.** This is real, cited, independently-checkable disassembly and is
+strong evidence that the generic leader-swap mechanism itself does not write these fields.
+
+To back this up empirically, Antigravity's `tools/scan_unknown_ab.py` scan across 62 save-card files
+cited Leon as a disproof: "Leon (ID -8, Benched, Lv 36): A: Diverged (+2) (15,17,17) — Leon is benched
+and has never led the party, yet has diverged." I independently re-verified the raw data (Leon at slot
+7, Save 15 of the real backup card, is exactly `id=-8, lvl=36, A=(15,17,17), B=(6,6,6)` — confirmed).
+
+**But Josh flagged a problem with the interpretation, not the data:** Leon has a temporary/partial
+field-leader story segment around the Hoffman Ruins, per his recollection of the game. If that's
+correct, "Leon has never led the party" is false, and Leon stops being a counterexample — his
+divergence would be *consistent* with the field-leader hypothesis, not evidence against it. This
+wasn't checked against any real script/story data before being asserted; it's exactly the kind of
+citation this project's rules require verifying, not assuming. Handed to Antigravity as Task U (see
+`ANTIGRAVITY-TASKS.md`) to check directly: does any script archive in the Hoffman Ruins sequence
+(3416..3435, already catalogued for Task 3c) invoke the Story Solo Leader Isolation opcode
+(`0x80065bfc` / target `0x8006a7ac`) with Leon as the selected actor?
+
+Net effect: the disassembly finding (no writes from the *generic* leader-swap code) still stands on
+its own regardless of how Leon's case resolves. What's not yet safe to claim is the "Definitive
+Conclusion" that field leadership has *no* relationship to the divergence at all — that leaned on the
+Leon citation being a clean counterexample, and it may not be. Until Task U resolves the Hoffman Ruins
+question, treat this as "no evidence the generic mechanism writes these fields, but the field-leader
+correlation itself is not yet disproven" rather than fully closed either way.
+
 ### Secondary LUC/STM and real-save checks
 
 Replace the earlier "six additional u16 fields" description with these two
