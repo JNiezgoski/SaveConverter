@@ -516,11 +516,14 @@ conclusions follow:
    enough to complete a battle" rather than leadership itself.
 
 **Still open:**
-- Whether this is a true one-time lifetime flag (fires exactly once per character) or an early stage
-  of a counter that later reaches the previously-documented `(X,X+2,X+2)` "Diverged" state after further
-  battles — i.e. is Flat a permanent resting state, or does Dias's `(16,16,16)`/`(8,8,8)` eventually
-  become `(16,18,18)`/`(8,10,10)` after more fights? A second before/after pair on Dias across another
-  battle would answer this directly.
+- ~~Whether this is a true one-time lifetime flag or an early stage of a counter that later reaches the
+  `(X,X+2,X+2)` "Diverged" state~~ — **answered (2026-09-30, same session, save #7 → #6):** a second
+  before/after pair on Dias across another battle, this time with him taking real damage (HP 2500 →
+  1302, so genuinely fighting, not just present), showed **zero further change** — Unknown A/B and both
+  affected opaque bytes stayed exactly `(16,16,16)`/`(8,8,8)` / unchanged. This is a one-time transition,
+  not a counter that keeps advancing with every battle. Flat is a stable resting state; whatever later
+  produces the `(X,X+2,X+2)` Diverged pattern for other characters is a separate, later trigger, not
+  "more battles from here."
 - The exact meaning of opaque bytes `+0x08`, `+0x5A`, `+0x5C` specifically, and why only some of the 18
   moved and not others — this single test doesn't resolve per-byte meaning, only that the region is
   live and battle-triggered.
