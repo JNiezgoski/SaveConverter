@@ -178,6 +178,7 @@ saveconv.py, saveconv.bat    core library + launcher (double-click opens saveman
 area_data.json                map/location database (so2_location.py's data)
 scripts/                      every other user-facing tool (see table below)
 tools/                        disassembly/evidence scripts behind each investigation doc
+tools/archive/                 dead one-off scratch scripts (findings already absorbed into docs/) - not meant to be re-run
 tests/                        unit tests (python -m pytest, from the repo root)
 docs/                         investigation write-ups and the byte-level reference
 ```
