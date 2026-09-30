@@ -8,37 +8,77 @@ the actual PS1 code that reads and writes it.
 
 ## What's solved
 
+Grouped by subsystem — every fact and doc link below was previously scattered across a flat 29-row
+table with real duplication (skills/SP/talents and "the secondary array" were 4 rows describing one
+208-byte struct; two "chunk accounting" rows mostly restated content already given its own row). Nothing
+here was cut, just merged where multiple rows described the same underlying record.
+
+### Party members
+
+The primary record (`0x1A0 + slot*0x60`) and secondary record (`0x4A0 + slot*0xD0`, 208 bytes) are
+both **100% mapped with zero gaps**, cross-checked against all 15 real saves in the repo:
+
+| Field | Decoded offset | Notes |
+|---|---|---|
+| Level, HP, MP, STR/CON/AGL/DEX/INT | `0x1A0 + slot*0x60` | 3-stage stat triplets (base/intermediate/final) via resident accessors `80033218`/`800332F8`; recalculation rules mapped, write safety uncapped |
+| SP (skill points) | `+0x1A` (u16, slot 0 `0x4BA..0x4BB`) | Clamped 0..999; script opcode `0xFE0A`/`0xFE8A`, level-up UI in Overlay 3014 |
+| Talents (all 10) | `+0x20` (u32) | Bits 0..11; corrects an earlier wrong `u16` assumption |
+| All 46 skill levels & names/order | `+0x5D..0x8A` (slot 0 `0x4FD..0x52A`) | 1 byte per skill (IDs 1..46), resident getter/setter `80033CB4`/`80033CE0` |
+| Name buffer, combat-strategy bytes, battle-ability proficiency counts | rest of the 208-byte record | Fully mapped alongside the above |
+
+[Full secondary-record map](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) ·
+[primary record](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27)
+
+Everything else party-related:
+
 | Area | Status |
 |---|---|
 | Checksums, party list, character ID swaps | ✅ Verified |
-| Level, HP, MP, STR/CON/AGL/DEX/INT | ✅ Mapped & resident-verified — decoded `0x1A0 + slot*0x60`, 3-stage stat triplets (base, intermediate, final) via resident accessors `80033218`/`800332F8`; stat recalculation rules mapped in code, in-game write safety uncapped — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#primary-record-complete-byte-coverage-partial-semantic-map-2026-09-27) |
-| All 46 skill levels **and** all 46 skill names/order | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x5D..0x8A` (slot 0 `0x4FD..0x52A`), 1 byte per skill (IDs 1..46), resident getter/setter `80033CB4`/`80033CE0` — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
-| SP (skill points) — every internal form, all 12 characters | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x1A` (slot 0 `0x4BA..0x4BB`), u16 clamped 0..999, script opcode `0xFE0A` / `0xFE8A` and level-up UI in Overlay 3014 — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
-| Talents (all 10) | ✅ Verified — decoded `0x4A0 + slot*0xD0 + 0x20` (slot 0 `0x4C0..0x4C3`), 32-bit u32 word, bits 0..11 — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
+| Adding/recruiting a party member | ✅ Mapped and disassembly-verified (via `so2_party.py`) — two parallel per-slot arrays, identity is a numeric ID not the name string; real initializer code executed under bounded MIPS execution, **not yet booted in an emulator** — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md) |
+| Field leader / walking sprite mechanism | ✅ Resolved — graphics consumer located (`8003F518`/`80042E4C`); full 12-character selector space mapped (`ID - 1`, Dias = 4); party archive streaming solved (`80061888`); save-edit forced-leader swap ruled out (strictly requires code mod) — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-27-third-follow-up-graphics-selection-consumer-found-12-character-selector-space-solved-save-edit-forced-leader-ruled-out) |
+| Battle-ability quick-assignment slots (4 per character) | ✅ Mapped and disassembly-verified — decoded `0x56C-0x56F` per character — [details](docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md) |
+| Specialties (Skill Shop tiers: Knowledge/Sensibility/Technique/Combat ×3) | ✅ Verified — full 12-tier bit table (`0x1A3F`/`0x1A40`) confirmed by executing the real purchase code; one clean live purchase would close the last loose end — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
+
+### Items & equipment
+
+| Area | Status |
+|---|---|
 | Item ID table, inventory counts for items already owned (max 20) | ✅ Verified |
 | Giving a character an item type they've **never** owned before | ✅ Mapped and disassembly-verified (via `so2_inventory.py`) — Seraphic Garb 0→20 candidate for save 15 reproduces the real add routine and serializer exactly under bounded MIPS execution; **not yet booted in an emulator** — [details](docs/SO2-INVENTORY-ADD-INVESTIGATION.md) |
-| Inventory word bit-15 flag meaning | ✅ Verified — transient "new acquisition / pending auto-equip evaluation" flag; set to 1 by all 14 item grant paths (`8003C594`), checked by field auto-equip upgrade evaluator (`800310A0`), mass-cleared to 0 across all 1,024 slots (`80030F84`), excluded from runtime integrity checksum (`8003C8A0`) — [details](docs/SO2-INVENTORY-ADD-INVESTIGATION.md#2026-09-28-follow-up-investigation-meaning-and-lifecycle-of-inventory-bit-15) |
-| Equipment — full 7-slot characters (incl. Noel, Chisato) | ✅ Verified |
-| Equipment — compressed 6-slot (missing one accessory) | ✅ Verified |
-| Fol (money) | ✅ Verified in-game (via `so2_fol.py` — see below) |
-| Specialties (shop-bought Skill Shop tiers: Knowledge/Sensibility/Technique/Combat ×3 levels) | ✅ Verified — mechanism explained and full 12-tier bit table (`0x1A3F`/`0x1A40`) confirmed by executing the real purchase code; one clean live purchase would close out the last loose end — [details](docs/SO2-SPECIALTY-INVESTIGATION.md) |
-| Adding/recruiting a party member | ✅ Mapped and disassembly-verified (via `so2_party.py`) — two parallel per-slot arrays, identity is a numeric ID not the name string; real initializer code executed under bounded MIPS execution, **not yet booted in an emulator** — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md) |
-| Battle-ability quick-assignment slots (4 per character) | ✅ Mapped and disassembly-verified — decoded `0x56C-0x56F` per character, real candidate/read/write code executed against real saves — [details](docs/SO2-SPECIAL-ATTACK-LIST-CHECK.md) |
-| Map position (X/Y/Z, facing, area ID + real scene selector) and area/scene → name lookup | ✅ Verified in-game — tool: `so2_location.py`. 8 areas / 24 sightings recorded, including all 13 floors of Cave of Trials plus 2 in-cave escape points — [details](docs/SO2-MAP-LOCATION-CHECK.md) |
-| Same-area repositioning (teleport within your current area) | ✅ Verified in-game — first successful save-edit teleport in this project |
-| Cross-area teleport | ✅ Verified in-game — copying position/area plus a newly-found 48-byte region (`0x1B58-0x1B88`) from a real reference save works; `so2_location.py teleport` implements it — [details](docs/SO2-MAP-LOCATION-CHECK.md) |
-| Required disc (Disc 1 vs Disc 2) | ✅ Verified — decoded byte `0x4C` (0=Disc 1, 1=Disc 2), confirmed by executing the real disc-check code against both actual disc images — [details](docs/SO2-DISC-AND-PSYNARD-CHECK.md) |
-| Psynard (flying mount) teleport | ✅ Verified in-game — editing its parking coordinates (`0x19B4-0x19D8`) moves it to the new spot, confirmed live twice — [details](docs/SO2-DISC-AND-PSYNARD-CHECK.md) |
-| Options menu — all 8 settings (see table below) | ✅ Mapped and disassembly-verified — [details](docs/SO2-OPTIONS-MENU-INVESTIGATION.md) |
-| The "stuck area ID" mystery | ✅ Resolved — decoded `0x1769` (long assumed to be a location ID) is actually a saved sprite drawing-order value; the real location selector is decoded `0x1762` ("scene"), confirmed by real code. `so2_location.py` uses scene throughout — [details](docs/SO2-MAP-LOCATION-CHECK.md#2026-09-27-disassembly-follow-up-0x1769-is-saved-drawing-order-not-an-area-id) |
-| Field leader / walking sprite mechanism | ✅ Resolved — graphics consumer located (`8003F518` / `80042E4C`); full 12-character selector space mapped (`ID - 1`, Dias = 4); party archive streaming solved (`80061888`); save-edit leader forced swap ruled out (strictly requires code mod) — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#2026-09-27-third-follow-up-graphics-selection-consumer-found-12-character-selector-space-solved-save-edit-forced-leader-ruled-out) |
-| Map terrain / collision data (dungeon + overworld) | ✅ Solved — dungeon: 88-byte triangle records, plane-equation height formula. Overworld: 9-slot streaming cache, 4×4 sub-cell mesh per world cell, packed triangle/quad polygons, PS1 GTE hardware point-in-polygon test, exact plane-equation elevation. Real Area-0 height cross-check verified against disc assets — exact integer match — [details](docs/SO2-MAP-TERRAIN-INVESTIGATION.md) |
-| Party secondary array (SP, talents, skill levels — full 208-byte record) | ✅ Solved — decoded `0x4A0..0xB20`, all 8 slots, 100% mapped with zero gaps. SP is a `u16` at `+0x1A` (script opcode `0xFE0A`/`0xFE8A`); talents a `u32` word at `+0x20` (corrects an earlier `u16` assumption); all 46 skill levels at `+0x5D..0x8A` via canonical getter/setter `80033CB4`/`80033CE0`; plus name buffer, combat-strategy bytes, and battle-ability proficiency counts. Cross-checked against all 15 real saves in the repo — [details](docs/SO2-PARTY-MEMBER-INVESTIGATION.md#secondary-record-complete-208-byte-map-sp-opcode-u32-talent-word-and-46-skill-levels-2026-09-27) |
-| Private Actions / emotion levels / ending thresholds / item-creation recipes | ✅ Solved — Matrix A = Friendship, Matrix B = Romance/Affection (both `0xFF10-13`), proven via named PAs (Leon's confession, the Arlia rescue scene). **Ending thresholds**: Disc 2 Archive 3788 (`0xBE80..0xC600`) confirms the fan hypothesis — opposite-sex pairs need mutual Matrix B ≥ 10, same-sex pairs need mutual Matrix A ≥ 10, qualifying pairs sorted by combined score and assigned greedily, unpaired characters get solo endings; follow-up fully enumerates all 3 hardcoded special ending pairs (Celine+Chris, Ashton+Eleanor, Opera+Ernest). **Item-creation recipes**: Disc Archive 2990 holds a static recipe table (119 Customization recipes, plus 108 Cooking/Master Cooking dishes across 16 ingredient groups), executed via Overlay 3012; Disc Archive 3008 holds Art (39 item recipes across 5 skill tiers with 12 character portraits) and Compounding (21 herb pairs / 84 medicine variants across a 6x6 matrix) — e.g. Minus Sword + Mithril → Eternal Sphere (Claude's best weapon, 80% success) — [details](docs/SO2-CHUNK1-MAPPING.md#2026-09-28-follow-up-disc-2-ending-threshold-system--item-creation-recipes) |
-| Decoded chunk 1 (`0x000..0x1A0`, 416 bytes) | ✅ 100% accounted for — 401 bytes (96.4%) mapped, 15 bytes partial, 0 unknown. Two 12×12 emotion matrices (Friendship/Romance, 288 bytes), script system-call return words (`S+01C`/`02C` via VM dispatch table `8007380C`), Formation-menu cursor byte, window/palette shading bytes, field step-rate modifiers, and route/rename/counters all mapped; remaining 15 bytes are confirmed alignment padding and transition-state operands — [details](docs/SO2-CHUNK1-MAPPING.md#resolution-of-final-remaining-chunk-1-gaps-2026-09-28) |
-| Decoded chunk 5 (`0x1748..0x1B88`, 1,088 bytes) | ✅ 100% accounted for — 549 bytes (50.5%) mapped, 539 bytes partial, 0 unknown. Includes the fully-solved 368-byte story/event flag bitmap (99 named, 269 confirmed silent), 12 character names, 48 clock snapshots, pending deliveries, Object-14/Psynard coordinates, and the overworld minimap-mode cycler (`800889A4`); remaining partial bytes are confirmed operational parameters or exhaustively-proven-silent padding capacity, not unexamined gaps — [details](docs/SO2-CHUNK5-MAPPING.md#resolution-of-remaining-miscellaneous-chunk-5-gaps-2026-09-28) |
-| Story/event flags — global 368-byte bitmap (`0x19E8..0x1B58`) | ✅ Solved — every byte accounted for: 99 bytes mapped to real plot/game systems (Expel prologue, Lacour tournament, Nede Four Fields quest, Skill Guild tiers, Battle Stadium, Cave of Trials bosses, and more), 269 bytes exhaustively proven to hold zero references anywhere — disc scripts, overlays, and resident code all audited, not just script VM opcodes. The remaining 269 bytes are genuine unused padding capacity in the allocation, not an unexamined gap — [details](docs/SO2-CHUNK5-MAPPING.md#script-vm-flag-opcodes-and-named-story-milestones--part-3--final-2026-09-28) |
-| Voice Collection save data & cross-slot merge | ✅ Solved & Verified — raw `0x0280..0x031F` (160 bytes / 1,280 bits capacity), 1,278 total voice quotas mapped across all 12 characters (`0x8009C138` in RAM). Zero-decompression multi-save bitwise OR on boot; tool `so2_voice_collection.py` audits, merges, and unlocks 50% (Universe mode) or 100% — [details](docs/SO2-VOICE-COLLECTION.md) |
+| Inventory word bit-15 flag meaning | ✅ Verified — transient "new acquisition / pending auto-equip evaluation" flag; set by all 14 item grant paths (`8003C594`), checked by the field auto-equip evaluator (`800310A0`), mass-cleared across all 1,024 slots (`80030F84`), excluded from the runtime checksum (`8003C8A0`) — [details](docs/SO2-INVENTORY-ADD-INVESTIGATION.md#2026-09-28-follow-up-investigation-meaning-and-lifecycle-of-inventory-bit-15) |
+| Equipment — full 7-slot characters (incl. Noel, Chisato) & compressed 6-slot (missing one accessory) | ✅ Verified |
+| Fol (money) | ✅ Verified in-game (via `so2_fol.py` — see Tools) |
+| Item-creation recipes | ✅ Solved — Disc Archive 2990: 119 Customization recipes + 108 Cooking/Master Cooking dishes across 16 ingredient groups (Overlay 3012). Disc Archive 3008: Art (39 recipes, 5 tiers, 12 portraits) and Compounding (21 herb pairs / 84 medicine variants, 6x6 matrix) — e.g. Minus Sword + Mithril → Eternal Sphere (80% success) — [details](docs/SO2-CHUNK1-MAPPING.md#2026-09-28-follow-up-disc-2-ending-threshold-system--item-creation-recipes) |
+
+### Map & world state
+
+| Area | Status |
+|---|---|
+| Map position (X/Y/Z, facing, area ID + real scene selector) and area/scene → name lookup | ✅ Verified in-game — tool: `so2_location.py`. 8 areas / 24 sightings recorded, incl. all 13 floors of Cave of Trials plus 2 in-cave escape points — [details](docs/SO2-MAP-LOCATION-CHECK.md) |
+| Same-area repositioning & cross-area teleport | ✅ Verified in-game — cross-area also copies a 48-byte region (`0x1B58-0x1B88`) from a reference save; `so2_location.py teleport` implements both — [details](docs/SO2-MAP-LOCATION-CHECK.md) |
+| The "stuck area ID" mystery | ✅ Resolved — decoded `0x1769` (long assumed a location ID) is actually a saved sprite drawing-order value; the real location selector is `0x1762` ("scene"). `so2_location.py` uses scene throughout — [details](docs/SO2-MAP-LOCATION-CHECK.md#2026-09-27-disassembly-follow-up-0x1769-is-saved-drawing-order-not-an-area-id) |
+| Map terrain / collision (dungeon + overworld) | ✅ Solved — dungeon: 88-byte triangle records, plane-equation height formula. Overworld: 9-slot streaming cache, 4×4 sub-cell mesh per world cell, packed triangle/quad polygons, PS1 GTE point-in-polygon test, exact plane-equation elevation — Area-0 height cross-check is an exact integer match against disc assets — [details](docs/SO2-MAP-TERRAIN-INVESTIGATION.md) |
+| Required disc (Disc 1 vs Disc 2) | ✅ Verified — decoded byte `0x4C`, confirmed by executing the real disc-check code against both actual disc images — [details](docs/SO2-DISC-AND-PSYNARD-CHECK.md) |
+| Psynard (flying mount) teleport | ✅ Verified in-game — editing parking coordinates (`0x19B4-0x19D8`) moves it, confirmed live twice — [details](docs/SO2-DISC-AND-PSYNARD-CHECK.md) |
+
+### Story & social systems
+
+| Area | Status |
+|---|---|
+| Private Actions / emotion levels | ✅ Solved — Matrix A = Friendship, Matrix B = Romance/Affection (both `0xFF10-13`), proven via named PAs (Leon's confession, the Arlia rescue scene) |
+| Ending thresholds | ✅ Solved — Disc 2 Archive 3788 (`0xBE80..0xC600`) confirms the fan hypothesis: opposite-sex pairs need mutual Matrix B ≥ 10, same-sex pairs need mutual Matrix A ≥ 10, pairs sorted by combined score and assigned greedily, unpaired characters get solo endings; all 3 hardcoded special pairs enumerated (Celine+Chris, Ashton+Eleanor, Opera+Ernest) — [details](docs/SO2-CHUNK1-MAPPING.md#2026-09-28-follow-up-disc-2-ending-threshold-system--item-creation-recipes) |
+| Story/event flags — global 368-byte bitmap (`0x19E8..0x1B58`) | ✅ Solved — every byte accounted for: 99 mapped to real plot/game systems (Expel prologue, Lacour tournament, Nede Four Fields quest, Skill Guild tiers, Battle Stadium, Cave of Trials bosses, and more), 269 exhaustively proven silent (scripts, overlays, and resident code all audited) and confirmed as genuine unused padding, not a gap — [details](docs/SO2-CHUNK5-MAPPING.md#script-vm-flag-opcodes-and-named-story-milestones--part-3--final-2026-09-28) |
+| Voice Collection save data & cross-slot merge | ✅ Solved & Verified — raw `0x0280..0x031F` (160 bytes / 1,280 bits), 1,278 voice quotas across all 12 characters (`0x8009C138` in RAM). Zero-decompression multi-save bitwise OR on boot; `so2_voice_collection.py` audits, merges, and unlocks 50% (Universe) or 100% — [details](docs/SO2-VOICE-COLLECTION.md) |
+
+### Full byte-range accounting
+
+Beyond the named systems above, two full save-block regions have been swept byte-by-byte so nothing
+is left unexamined: **chunk 1** (`0x000..0x1A0`, 416 bytes — 96.4% mapped, remainder confirmed
+alignment padding, [details](docs/SO2-CHUNK1-MAPPING.md#resolution-of-final-remaining-chunk-1-gaps-2026-09-28))
+and **chunk 5** (`0x1748..0x1B88`, 1,088 bytes — includes the story-flag bitmap above plus 12
+character names, 48 clock snapshots, pending deliveries, and the minimap-mode cycler (`800889A4`);
+remainder confirmed operational parameters or proven-silent padding, [details](docs/SO2-CHUNK5-MAPPING.md#resolution-of-remaining-miscellaneous-chunk-5-gaps-2026-09-28)).
+0 unknown bytes in either.
 
 ### Menu settings — verified
 
