@@ -280,3 +280,40 @@ python tools/extract_so2_ram.py "C:\CodeTesting\StarOcean2\SaveGames\SCUS-94421_
 
 All investigation writes were confined to `C:/CodeTesting/SaveConverter`.
 No file under `C:/CodeTesting/StarOcean2/SaveGames` was modified.
+
+## 2026-09-30 — DuckStation cheat warning: a mislabeled "Fol Never Decreases" code breaks ALL item pickups, not Fol
+
+**Not a save-format bug. Not caused by anything this project's tools write.** Found while investigating
+two separate symptoms Josh hit live in DuckStation the same night: (1) GameShark Fol-editing codes he tried
+had no effect, and (2) unequipping Rena's starting Knuckles made them vanish instead of returning to
+inventory. Both traced to the same single cause.
+
+**Root cause:** DuckStation ships a built-in cheat for this game (`SCUS-94421.cht`, inside its own
+`cheats.zip`) called **`[Fol Never Decreases]`**:
+```ini
+[Fol Never Decreases]
+Type = Gameshark
+Activation = EndFrame
+8003C64E 2400
+```
+The author who wrote this code assumed `0x8003C64E` was part of a Fol-decrement check. It isn't. Diffing
+Josh's live RAM dump (`SCUS-94421_resume.sav`) against the real disc binary (`code-2576-lba-30736.bin`)
+found exactly one instruction difference in the entire resident executable: the real instruction at
+`0x8003C64C` (`sh $v0, 0($a3)` — the store that writes a newly-granted item into its inventory slot inside
+the actual `add_item` routine, `0x8003C594`) is replaced by this cheat with `addiu $zero, $zero, 0` (`nop`).
+
+**Effect:** `add_item` still runs, computes the correct inventory word, and reports success (return code
+`1`) — but the write to memory never happens. Any time the game tries to grant an item that isn't already
+sitting in an existing stack (a pickup, a shop purchase, a quest reward, or an unequip returning gear to
+inventory), the item silently never appears. Fol itself (a separate field, decoded offset `0x18`, see
+above) is never touched by this instruction at all — the cheat's name is simply wrong about what it does.
+
+Reproduced in both directions with `tools.so2_party_mips.Machine` simulating `add_item(inv, 539, 1, 1)`
+(Knuckles): with the cheat's patched byte in place, the target inventory slot stays `0x0000`; with the real
+disc instruction, it correctly becomes `0x861B` (item 539, count 1, bit-15 set).
+
+**Takeaway for anyone using third-party GameShark/cheat codes alongside this toolchain:** a cheat's name is
+not reliable evidence of what it does. If items (or anything else routed through `add_item`) stop appearing
+after a cheat is enabled, suspect the cheat before suspecting a save edit or this project's tools — check
+DuckStation's active cheat list and disable anything patching code addresses near `0x8003C590..0x8003C650`
+first. See `ANTIGRAVITY-TASKS.md` Task V, Part 2 for the full disassembly trace.

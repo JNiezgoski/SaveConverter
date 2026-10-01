@@ -223,6 +223,7 @@ public repo; extracted sprite/media output under `artifacts/` is gitignored for 
 - These tools always back up a card before writing to it.
 - After any manual edit, both checksums must be recomputed (`so2_sign()` in `saveconv.py` does this automatically in every tool above).
 - Character identity inside a save is tracked by the name string embedded in each entry, not by slot position — characters can be freely reordered between party slots.
+- **Third-party GameShark/cheat codes can silently break item pickups regardless of this toolchain.** DuckStation's built-in `[Fol Never Decreases]` cheat for this game is misnamed — it actually NOPs out the real `add_item` routine's inventory-write instruction (`0x8003C64C`), so new items (pickups, purchases, unequip returns) vanish while it's active, with zero relation to Fol or anything this project writes. If items seem to disappear, check active DuckStation cheats before suspecting a save edit — [details](docs/SO2-FOL-INVESTIGATION.md#2026-09-30--duckstation-cheat-warning-a-mislabeled-fol-never-decreases-code-breaks-all-item-pickups-not-fol).
 
 ## Card formats supported
 
